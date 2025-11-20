@@ -1,0 +1,108 @@
+`timescale 1ns / 1ps
+`default_nettype none
+
+`ifdef SYNTHESIS
+`define FPATH(X) `"X`"
+`else /* ! SYNTHESIS */
+`define FPATH(X) `"../data/X`"
+`endif  /* ! SYNTHESIS */
+
+module image_sprite #(
+        parameter WIDTH=256, HEIGHT=256)
+    (
+        input wire pixel_clk,
+        input wire rst,
+        input wire [10:0] x, h_count,
+        input wire [9:0]  y, v_count,
+        output logic [7:0] pixel_red,
+        output logic [7:0] pixel_green,
+        output logic [7:0] pixel_blue
+    );
+
+    // calculate ROM address
+    logic [$clog2(WIDTH*HEIGHT)-1:0] image_addr_s1;
+    logic [$clog2(WIDTH*HEIGHT)-1:0] image_addr_s2;
+
+    //in frame sort of?
+    logic in_sprite_s0;
+    logic in_sprite_s1;
+    logic in_sprite_s2;
+    logic in_sprite_s3;
+
+    always_comb begin
+        in_sprite_s0 = ((h_count >= x && h_count < (x + WIDTH)) &&
+                        (v_count >= y && v_count < (y + HEIGHT)));
+    end
+
+    always_ff @(posedge pixel_clk) begin
+        if (rst) begin
+            in_sprite_s1  <= 1'b0;
+            in_sprite_s2  <= 1'b0;
+            in_sprite_s3  <= 1'b0;
+            image_addr_s1 <= '0;
+            image_addr_s2 <= '0;
+        end else begin
+            in_sprite_s1  <= in_sprite_s0;
+            in_sprite_s2  <= in_sprite_s1;
+            in_sprite_s3  <= in_sprite_s2;
+            if (in_sprite_s0) begin
+                image_addr_s1 <= (h_count - x) + ((v_count - y) * WIDTH);
+            end else begin
+                image_addr_s1 <= '0;
+            end
+            image_addr_s2 <= image_addr_s1;
+        end
+    end
+
+    logic [7:0] img_idx;
+    logic [23:0] rgb24;
+
+    // 2 cycle delay to read and output
+    xilinx_single_port_ram_read_first #(
+        .RAM_WIDTH(8), //8bits
+        .RAM_DEPTH(WIDTH*HEIGHT),
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE"),
+        .INIT_FILE(`FPATH(image.mem))
+    ) u_img_rom (
+        .addra  (image_addr_s2),
+        .dina   ('0),
+        .clka   (pixel_clk),
+        .wea    (1'b0), //no writing
+        .ena    (1'b1), //enable
+        .rsta   (rst),
+        .regcea (1'b1),
+        .douta  (img_idx)
+    );
+
+    //also 2 cycle delay to read and output
+    xilinx_single_port_ram_read_first #(
+        .RAM_WIDTH(24), //24 rgb color
+        .RAM_DEPTH(256), //palette 256 entries
+        .RAM_PERFORMANCE("HIGH_PERFORMANCE"),
+        .INIT_FILE(`FPATH(palette.mem))
+    ) u_pal_rom (
+        .addra  (img_idx), //color corresponding to palette idx
+        .dina   ('0),
+        .clka   (pixel_clk),
+        .wea    (1'b0),
+        .ena    (1'b1),
+        .rsta   (rst),
+        .regcea (1'b1),            
+        .douta  (rgb24)
+    );
+
+    always_comb begin
+        if (in_sprite_s3) begin
+            pixel_red   = rgb24[23:16];
+            pixel_green = rgb24[15:8];
+            pixel_blue  = rgb24[7:0];
+        end else begin
+            pixel_red   = 8'd0;
+            pixel_green = 8'd0;
+            pixel_blue  = 8'd0;
+        end
+    end
+endmodule
+
+`default_nettype wire
+
