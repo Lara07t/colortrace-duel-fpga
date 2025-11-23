@@ -554,7 +554,7 @@ module top_level
         if (sys_rst_pixel)begin
             x_com <= 0;
             y_com <= 0;
-        end if(new_com)begin
+        end else if(new_com)begin
             x_com <= x_com_calc;
             y_com <= y_com_calc;
         end
@@ -650,9 +650,114 @@ module top_level
         .thresholded_pixel(mask), //one bit mask signal 
         .crosshair({ch_red, ch_green, ch_blue}), 
         .com_sprite_pixel({img_red, img_green, img_blue}), 
-        .muxed_pixel({red,green,blue}) //output to tmds
+        .muxed_pixel({base_red, base_green, base_blue})
     );
 
+    // AUTO PATH OVERLAY (10x10 grid, one instance per half-screen)
+    localparam int GRID_W = 10;
+    localparam int GRID_H = 10;
+    localparam int HALF_W = 640;
+    localparam int CELL_W = HALF_W / GRID_W; // 640/10 = 64 pixels per cell
+    localparam int CELL_H = 720   / GRID_H;  // 720/10 = 72 pixels per cell
+
+    logic [7:0] base_red, base_green, base_blue;
+    // Logical grid coords for each half
+    logic [$clog2(GRID_W)-1:0] cell_x_left,  cell_x_right;
+    logic [$clog2(GRID_H)-1:0] cell_y_left,  cell_y_right;
+    logic region_left,  region_right;
+    logic [10:0] x_rel;
+
+    // Map HDMI pixel coordinates to 10x10 grid indices per half.
+    // Make sure we stay in-bounds and don't leak into the other side.
+    always_comb begin
+        cell_x_left  = '0;
+        cell_y_left  = '0;
+        cell_x_right = '0;
+        cell_y_right = '0;
+        region_left  = 1'b0;
+        region_right = 1'b0;
+        x_rel = 11'd0;
+
+        if (active_draw_hdmi && (v_count_hdmi < 720)) begin
+            // Left half: 0 .. 639
+            if (h_count_hdmi < HALF_W) begin
+                region_left  = 1'b1;
+                cell_x_left  = h_count_hdmi / CELL_W; // 0..9
+                cell_y_left  = v_count_hdmi / CELL_H; // 0..9
+            end
+            // Right half: 640 .. 1279
+            else if (h_count_hdmi < 2*HALF_W) begin
+                region_right = 1'b1;
+                x_rel        = h_count_hdmi - HALF_W; // 0..639
+                cell_x_right = x_rel / CELL_W;        // 0..9
+                cell_y_right = v_count_hdmi / CELL_H; // 0..9
+            end
+        end
+    end
+
+    // Path bits for each half-screen
+    logic cell_on_left, cell_on_right;
+
+    // Left player auto path (10x10 static pattern from BRAM, shrinks after 30s)
+    autopath_gen #(
+        .GRID_W(GRID_W),
+        .GRID_H(GRID_H),
+        .FPS(60),
+        .INIT_FILE("data/autopath_init.mem") // 10 rows of 10-bit hex
+    ) path_left (
+        .clk(clk_pixel),
+        .rst(sys_rst_pixel),
+        .new_frame(new_frame_hdmi),
+        .cell_x(cell_x_left),
+        .cell_y(cell_y_left),
+        .shift_left_req(1'b0),  // hook to buttons later if desired
+        .shift_right_req(1'b0),
+        .cell_on(cell_on_left)
+    );
+
+    // Right player auto path (can use same or different init file)
+    autopath_gen #(
+        .GRID_W(GRID_W),
+        .GRID_H(GRID_H),
+        .FPS(60),
+        .INIT_FILE("data/autopath_init.mem")
+    ) path_right (
+        .clk(clk_pixel),
+        .rst(sys_rst_pixel),
+        .new_frame(new_frame_hdmi),
+        .cell_x(cell_x_right),
+        .cell_y(cell_y_right),
+        .shift_left_req(1'b0),
+        .shift_right_req(1'b0),
+        .cell_on(cell_on_right)
+    );
+
+    // Final overlay: draw path cells on top of base video.
+    // Left half path = red, right half path = blue (just for visualization).
+    wire path_pix_left  = cell_on_left  && region_left  && active_draw_hdmi;
+    wire path_pix_right = cell_on_right && region_right && active_draw_hdmi;
+
+    always_comb begin
+        // default: camera / filter / COM pipeline colors
+        red   = base_red;
+        green = base_green;
+        blue  = base_blue;
+
+        if (active_draw_hdmi) begin
+            if (path_pix_left) begin
+                // left player path color
+                red   = 8'hFF;
+                green = 8'h00;
+                blue  = 8'h00;
+            end else if (path_pix_right) begin
+                // right player path color
+                red = 8'h00;
+                green = 8'h00;
+                blue  = 8'hFF;
+            end
+        end
+    end
+////////////////////////////////////////
     // HDMI Output: just like before!
 
     logic [9:0] tmds_10b [0:2]; //output of each TMDS encoder!
