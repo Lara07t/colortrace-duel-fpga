@@ -464,8 +464,57 @@ module top_level
 
     //channel select module (select which of six color channels to mask):
     logic [2:0] channel_sel;
-    logic [7:0] selected_channel; //selected channels
+    // logic [7:0] selected_channel; //selected channels
     //selected_channel could contain any of the six color channels depend on selection
+
+    // Hard-coded thresholds & channels
+    // Threshold1: Cr red (strong red)
+    localparam logic [7:0] THRESH1 = 8'd160;
+    localparam logic [1:0] CHAN1   = 2'b01;  // 01 → Cr
+
+    // Threshold2: Cb yellow-ish
+    localparam logic [7:0] THRESH2 = 8'd80;
+    localparam logic [1:0] CHAN2   = 2'b10;  // 10 → Cb
+
+
+    // From thresh_chan_ctrl
+    // logic [7:0]  thresh_p1, thresh_p2;
+    // logic [1:0]  chan_sel_p1, chan_sel_p2;
+
+    // Per-pixel active selection (based on left/right half)
+    logic [7:0]  thresh_active;
+    logic [1:0]  chan_sel_active;
+    logic half_sel;
+
+    // For existing channel_select module (still 3-bit select)
+    logic [2:0]  channel_sel_active_3b;
+    logic [7:0]  selected_channel; //selected channels
+
+
+    // threshold_2 cfg (
+    //     .sw          (sw),
+    //     .thresh_p1   (thresh_p1),
+    //     .thresh_p2   (thresh_p2),
+    //     .chan_sel_p1 (chan_sel_p1),
+    //     .chan_sel_p2 (chan_sel_p2)
+    // );
+
+    screen_half #(.H_RES(1280)) half_det (
+        .x (h_count_hdmi),
+        .half_sel (half_sel)
+    );
+
+    half_mux mux_inst (
+        .half_sel       (half_sel),
+        .thresh_p1      (THRESH1),   // left half → Threshold 1 (Cr red)
+        .thresh_p2      (THRESH2),   // right half → Threshold 2 (Cb yellow)
+        .chan_sel_p1    (CHAN1),
+        .chan_sel_p2    (CHAN2),
+        .thresh_active  (thresh_active),
+        .chan_sel_active(chan_sel_active)
+    );
+
+
 
     //threshold module (apply masking threshold):
     logic [7:0] lower_threshold;
@@ -478,7 +527,23 @@ module top_level
     logic new_com; //used to know when to update x_com and y_com ...
 
 
-    assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
+    // Map 2-bit channel selection to the 3-bit channel_select encoding:
+    // * 2'b00 → y  (3'b100)
+    // * 2'b01 → Cr (3'b101)
+    // * 2'b10 → Cb (3'b110)
+    // * 2'b11 → red fallback (3'b001)
+    always_comb begin
+        case (chan_sel_active)
+            2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
+            2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
+            2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
+            default: channel_sel_active_3b = 3'b001; // red (fallback)
+        endcase
+    end
+
+    //assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
+    assign channel_sel = channel_sel_active_3b;
+
     // * 3'b000: green
     // * 3'b001: red
     // * 3'b010: blue
@@ -489,8 +554,19 @@ module top_level
     // * 3'b111: not valid
     //Channel Select: Takes in the full RGB and YCrCb inew_frameormation and
     // chooses one of them to output as an 8 bit value
+    // channel_select mcs(
+    //     .select(channel_sel),
+    //     .r(fb_red),    
+    //     .g(fb_green), 
+    //     .b(fb_blue), 
+    //     .y(y),
+    //     .cr(cr),
+    //     .cb(cb),
+    //     .selected_channel(selected_channel)
+    // );
+
     channel_select mcs(
-        .select(channel_sel),
+        .select(channel_sel_active_3b),
         .r(fb_red),    
         .g(fb_green), 
         .b(fb_blue), 
@@ -500,9 +576,12 @@ module top_level
         .selected_channel(selected_channel)
     );
 
+
     //threshold values used to determine what value  passes:
-    assign lower_threshold = {sw[11:8],4'b0};
-    assign upper_threshold = {sw[15:12],4'b0};
+    // assign lower_threshold = {sw[11:8],4'b0};
+    // assign upper_threshold = {sw[15:12],4'b0};
+    assign lower_threshold = thresh_active;
+    assign upper_threshold = 8'hFF;
 
     //Thresholder: Takes in the full selected channedl and
     //based on upper and lower bounds provides a binary mask bit
@@ -620,14 +699,14 @@ module top_level
 
     // Video Mux: select from the different display modes based on switch values
     //used with switches for display selections
-    logic [1:0] background_choice;
-    logic [1:0] target_choice;
+    // logic [1:0] background_choice;
+    // logic [1:0] target_choice;
 
     //assign background_choice = sw[5:4];
     //assign target_choice =  sw[7:6];
 
-    assign background_choice = sw[6:5]; //was [5:4]; not anymore
-    assign target_choice =  {1'b0,sw[7]}; //was [7:6]; not anymore
+    // assign background_choice = sw[6:5]; //was [5:4]; not anymore
+    // assign target_choice =  {1'b0,sw[7]}; //was [7:6]; not anymore
 
     //choose what background from the camera:
     // * 'b00:  normal camera out
@@ -641,26 +720,32 @@ module top_level
     // * 'b10: sprite on top
     // * 'b11: nothing
 
-    video_mux mvm(
-        .background_choice(background_choice), //choose background
-        .target_choice(target_choice), //choose target
-        .camera_pixel({fb_red, fb_green, fb_blue}), 
-        .camera_y_channel(y), //luminance 
-        .selected_channel(selected_channel), //current channel being drawn 
-        .thresholded_pixel(mask), //one bit mask signal 
-        .crosshair({ch_red, ch_green, ch_blue}), 
-        .com_sprite_pixel({img_red, img_green, img_blue}), 
-        .muxed_pixel({base_red, base_green, base_blue})
-    );
+    // video_mux mvm(
+    //     .background_choice(background_choice), //choose background
+    //     .target_choice(target_choice), //choose target
+    //     .camera_pixel({fb_red, fb_green, fb_blue}), 
+    //     .camera_y_channel(y), //luminance 
+    //     .selected_channel(selected_channel), //current channel being drawn 
+    //     .thresholded_pixel(mask), //one bit mask signal 
+    //     .crosshair({ch_red, ch_green, ch_blue}), 
+    //     .com_sprite_pixel({img_red, img_green, img_blue}), 
+    //     .muxed_pixel({base_red, base_green, base_blue})
+    // );
 
     // AUTO PATH OVERLAY (10x10 grid, one instance per half-screen)
     localparam int GRID_W = 10;
     localparam int GRID_H = 10;
     localparam int HALF_W = 640;
     localparam int CELL_W = HALF_W / GRID_W; // 640/10 = 64 pixels per cell
-    localparam int CELL_H = 720   / GRID_H;  // 720/10 = 72 pixels per cell
+    localparam int CELL_H = 720 / GRID_H;  // 720/10 = 72 pixels per cell
 
     logic [7:0] base_red, base_green, base_blue;
+
+    always_ff @(posedge clk_pixel) begin
+        base_red <= fb_red;
+        base_green <= fb_green;
+        base_blue  <= fb_blue;
+    end
     // Logical grid coords for each half
     logic [$clog2(GRID_W)-1:0] cell_x_left,  cell_x_right;
     logic [$clog2(GRID_H)-1:0] cell_y_left,  cell_y_right;

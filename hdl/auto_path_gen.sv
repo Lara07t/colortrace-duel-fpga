@@ -1,144 +1,154 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// autopath_gen
 module autopath_gen #(
-    parameter int GRID_W = 10,
-    parameter int GRID_H = 10,
-    parameter int FPS = 60,
+    parameter int GRID_W   = 10,
+    parameter int GRID_H   = 10,
+    parameter int FPS      = 60,
     parameter string INIT_FILE = "data/autopath_init.mem"
 )(
     input  wire clk,
     input  wire rst,
     input  wire new_frame,
-    input  wire [$clog2(GRID_W)-1:0]  cell_x, //x idx into 10*10 grid
+    input  wire [$clog2(GRID_W)-1:0]  cell_x,
     input  wire [$clog2(GRID_H)-1:0]  cell_y,
     input  wire shift_left_req,
     input  wire shift_right_req,
-    output logic cell_on //(cell_x,cell_y)
+    output logic cell_on
 );
 
-    localparam int FRAMES_30S = 30 * FPS;
-    localparam int SHRINK_STEP_FRAMES = FPS; // shrink once every 30s
+    logic [GRID_W-1:0] grid [0:GRID_H-1];
+    logic [$clog2(GRID_W)-1:0] head_x;
 
-    logic [$clog2(GRID_W)-1:0] cell_x_r; //cellx curr
-    logic [$clog2(GRID_H)-1:0] cell_y_r; //celly_cur
+    localparam int TRACK_HALF_WIDTH = 3;
+    logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width;
 
-    logic [$clog2(GRID_H)-1:0] row_cur; 
-    logic [GRID_W-1:0] row_bits;
-    logic [ $clog2(GRID_W)-1:0] col_offset;
+    logic [7:0] lfsr;
 
-    logic [$clog2(FRAMES_30S+1)-1:0] frame_cnt_30s;
-    logic [$clog2(SHRINK_STEP_FRAMES+1)-1:0] shrink_frame_cnt;
-    logic shrink_mode;
+    localparam int STEP_BITS = 23;
+    logic [STEP_BITS-1:0] step_cnt;
 
-    logic [$clog2(GRID_W)-1:0] min_x, max_x;
-    logic [ $clog2(GRID_W)-1:0] col_idx_BRAM_row; // which col we look at
-    logic [ $clog2(GRID_W):0] sum_x;
-    wire in_window;
-    wire base_cell_on; 
+    localparam int STEPS_BEFORE_SHRINK = 60;
+    localparam int STEPS_PER_SHRINK    = 50;
 
+    logic [$clog2(STEPS_BEFORE_SHRINK+1)-1:0] step_count_before_shrink;
+    logic [$clog2(STEPS_PER_SHRINK+1)-1:0]    shrink_step_cnt;
+    logic                                      shrink_mode;
 
-    // Xilinx single-port, read-first RAM wrapper (you already have this file).
-    xilinx_single_port_ram_read_first #(
-        .RAM_WIDTH(GRID_W),
-        .RAM_DEPTH(GRID_H),
-        .RAM_PERFORMANCE("LOW_LATENCY"),
-        .INIT_FILE(INIT_FILE)
-    ) path_rom (
-        .addra(row_cur),         
-        .dina({GRID_W{1'b0}}),  
-        .clka(clk),
-        .wea(1'b0),       
-        .ena(1'b1),   
-        .rsta(rst),
-        .regcea(1'b1),
-        .douta(row_bits)     
+    logic [$clog2(GRID_W)-1:0] cell_x_r;
+    logic [$clog2(GRID_H)-1:0] cell_y_r;
+
+    integer y;
+
+    localparam int MIN_CENTER = TRACK_HALF_WIDTH;
+    localparam int MAX_CENTER = GRID_W - 1 - TRACK_HALF_WIDTH;
+
+    function automatic logic [GRID_W-1:0] build_track_row(
+        input logic [$clog2(GRID_W)-1:0] center,
+        input logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] half_width
     );
+        logic [GRID_W-1:0] row;
+        int c, hw;
+        int left_idx, right_idx;
+        row = '0;
+        c   = center;
+        hw  = half_width;
 
+        left_idx  = c - hw;
+        right_idx = c + hw;
 
-    assign base_cell_on = row_bits[col_idx_BRAM_row];
+        if (left_idx < 1)         left_idx  = 1;
+        if (right_idx > GRID_W-2) right_idx = GRID_W-2;
 
-    always_comb begin
-        sum_x = cell_x_r + col_offset;
-        if (sum_x >= GRID_W)
-            col_idx_BRAM_row = sum_x - GRID_W;
-        else
-            col_idx_BRAM_row = sum_x[ $clog2(GRID_W)-1:0];
+        for (int i = 0; i < GRID_W; i++) begin
+            if (i >= left_idx && i <= right_idx) begin
+                row[i] = 1'b1;
+            end
+        end
+        return row;
+    endfunction
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            lfsr <= 8'hA5;
+            step_cnt <= '0;
+
+            step_count_before_shrink <= '0;
+            shrink_step_cnt          <= '0;
+            shrink_mode              <= 1'b0;
+            cur_half_width           <= TRACK_HALF_WIDTH;
+
+            if (MIN_CENTER <= (GRID_W/2) && (GRID_W/2) <= MAX_CENTER)
+                head_x <= (GRID_W/2);
+            else
+                head_x <= MIN_CENTER[$clog2(GRID_W)-1:0];
+
+            for (y = 0; y < GRID_H; y = y + 1) begin
+                grid[y] <= build_track_row(head_x, cur_half_width);
+            end
+
+        end else begin
+            lfsr <= {lfsr[6:0], lfsr[7] ^ lfsr[5]};
+
+            if (step_cnt == {STEP_BITS{1'b1}}) begin
+                step_cnt <= '0;
+
+                if (!shrink_mode) begin
+                    if (step_count_before_shrink == STEPS_BEFORE_SHRINK-1) begin
+                        shrink_mode <= 1'b1;
+                    end else begin
+                        step_count_before_shrink <= step_count_before_shrink + 1'b1;
+                    end
+                end else begin
+                    if (cur_half_width > 1) begin
+                        if (shrink_step_cnt == STEPS_PER_SHRINK-1) begin
+                            shrink_step_cnt <= '0;
+                            cur_half_width  <= cur_half_width - 1'b1;
+                        end else begin
+                            shrink_step_cnt <= shrink_step_cnt + 1'b1;
+                        end
+                    end
+                end
+
+                if (lfsr[3:0] <= 4'd8) begin
+                    if (head_x > MIN_CENTER[$clog2(GRID_W)-1:0])
+                        head_x <= head_x - 1'b1;
+                    else if (head_x < MAX_CENTER[$clog2(GRID_W)-1:0])
+                        head_x <= head_x + 1'b1;
+                    else
+                        head_x <= head_x;
+                end else begin
+                    if (head_x < MAX_CENTER[$clog2(GRID_W)-1:0])
+                        head_x <= head_x + 1'b1;
+                    else if (head_x > MIN_CENTER[$clog2(GRID_W)-1:0])
+                        head_x <= head_x - 1'b1;
+                    else
+                        head_x <= head_x;
+                end
+
+                for (y = GRID_H-1; y > 0; y = y - 1) begin
+                    grid[y] <= grid[y-1];
+                end
+
+                grid[0] <= build_track_row(head_x, cur_half_width);
+
+            end else begin
+                step_cnt <= step_cnt + 1'b1;
+            end
+        end
     end
-
-    assign in_window = (cell_x_r >= min_x) && (cell_x_r <= max_x);
-
 
     always_ff @(posedge clk) begin
         if (rst) begin
             cell_x_r <= '0;
             cell_y_r <= '0;
-            row_cur <= '0;
-            col_offset <= '0;
-            frame_cnt_30s <= '0;
-            shrink_mode <= 1'b0;
-            shrink_frame_cnt <= '0;
-            min_x <= '0;
-            max_x <= GRID_W-1;
-            cell_on <= 1'b0;
-
+            cell_on  <= 1'b0;
         end else begin
-            // pipeline
             cell_x_r <= cell_x;
             cell_y_r <= cell_y;
-            row_cur <= cell_y_r;
-
-            // sift left
-            if (shift_left_req && !shift_right_req) begin
-                if (col_offset == GRID_W-1)
-                    col_offset <= '0;
-                else
-                    col_offset <= col_offset + 1'b1;
-
-            //shift right
-            end else if (shift_right_req && !shift_left_req) begin
-                if (col_offset == '0) begin
-                    col_offset <= GRID_W-1;
-                end else begin 
-                    col_offset <= col_offset - 1'b1;
-                end
-            end
-
-            //shrink by 1
-            if (!shrink_mode && new_frame) begin
-                if (frame_cnt_30s == FRAMES_30S-1) begin
-                    shrink_mode <= 1'b1; // start shrinking
-                    frame_cnt_30s <= frame_cnt_30s; // hold
-                end else begin
-                    frame_cnt_30s <= frame_cnt_30s + 1'b1;
-                end
-            end
-
-            if (shrink_mode && new_frame) begin
-                if (shrink_frame_cnt == SHRINK_STEP_FRAMES-1) begin
-                    shrink_frame_cnt <= '0;
-                    // Shrink 
-                    if (min_x < max_x) begin
-                        min_x <= min_x + 1'b1;
-                        max_x <= max_x - 1'b1;
-                    end
-
-                // min_x==max_x
-                end else begin
-                    shrink_frame_cnt <= shrink_frame_cnt + 1'b1;
-                end
-            end
-            cell_on <= base_cell_on && in_window;
-
+            cell_on  <= grid[cell_y_r][cell_x_r];
         end
     end
-
-
-
-
-
-
 
 endmodule
 
