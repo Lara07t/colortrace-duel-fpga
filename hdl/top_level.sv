@@ -113,7 +113,9 @@ module top_level
 
     // your pixel_reconstruct module, from the exercise!
     // hook it up to buffered inputs.
-    pixel_reconstruct(
+    // your pixel_reconstruct module, from the exercise!
+    // hook it up to buffered inputs.
+    pixel_reconstruct pixel_rec (
         .clk(clk_camera),
         .rst(sys_rst_camera),
         .camera_pclk(cam_pclk_buf[0]),
@@ -125,6 +127,7 @@ module top_level
         .pixel_v_count(camera_v_count),
         .pixel_data(camera_pixel)
     );
+
 
     //----------------BEGIN NEW STUFF FOR LAB 07------------------
     //clock domain cross (from clk_camera to clk_pixel)
@@ -462,69 +465,79 @@ module top_level
     assign cr = {!cr_full[7],cr_full[6:0]};
     assign cb = {!cb_full[7],cb_full[6:0]};
 
-    //channel select module (select which of six color channels to mask):
+    logic [10:0] h_d1;
+    logic [9:0]  v_d1;
+    logic active_d1;
+
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel) begin
+            h_d1 <= 11'd0;
+            v_d1 <= 10'd0;
+            active_d1 <= 1'b0;
+        end else begin
+            h_d1 <= h_count_hdmi;
+            v_d1 <= v_count_hdmi;
+            active_d1 <= active_draw_hdmi;
+        end
+    end
+
+
+
     logic [2:0] channel_sel;
-    // logic [7:0] selected_channel; //selected channels
-    //selected_channel could contain any of the six color channels depend on selection
+    // Red player (chroma red): Cr in [160, 240]
+    // can change based on light
+    localparam logic [7:0] RED_CR_MIN = 8'd144;
+    localparam logic [7:0] RED_CR_MAX = 8'd240;
+    localparam logic [7:0] THRESH1 = RED_CR_MIN; // left: show red's Cr lower
+    localparam logic [1:0] CHAN1 = 2'b01;     // Cr
 
-    // Hard-coded thresholds & channels
-    // Threshold1: Cr red (strong red)
-    localparam logic [7:0] THRESH1 = 8'd160;
-    localparam logic [1:0] CHAN1   = 2'b01;  // 01 → Cr
+    // Yellow player: Cb in [0, 80]
+    localparam logic [7:0] YEL_CB_MIN = 8'd00;
+    localparam logic [7:0] YEL_CB_MAX = 8'd80;
+    localparam logic [7:0] THRESH2 = YEL_CB_MAX; // right: show yellow's Cb upper
+    localparam logic [1:0] CHAN2 = 2'b10;      // Cb
 
-    // Threshold2: Cb yellow-ish
-    localparam logic [7:0] THRESH2 = 8'd80;
-    localparam logic [1:0] CHAN2   = 2'b10;  // 10 → Cb
-
-
-    // From thresh_chan_ctrl
-    // logic [7:0]  thresh_p1, thresh_p2;
-    // logic [1:0]  chan_sel_p1, chan_sel_p2;
-
-    // Per-pixel active selection (based on left/right half)
     logic [7:0]  thresh_active;
     logic [1:0]  chan_sel_active;
     logic half_sel;
-
-    // For existing channel_select module (still 3-bit select)
     logic [2:0]  channel_sel_active_3b;
-    logic [7:0]  selected_channel; //selected channels
+    logic [7:0]  selected_channel; 
 
-
-    // threshold_2 cfg (
-    //     .sw          (sw),
-    //     .thresh_p1   (thresh_p1),
-    //     .thresh_p2   (thresh_p2),
-    //     .chan_sel_p1 (chan_sel_p1),
-    //     .chan_sel_p2 (chan_sel_p2)
-    // );
 
     screen_half #(.H_RES(1280)) half_det (
-        .x (h_count_hdmi),
+        .x (h_d1),
         .half_sel (half_sel)
     );
 
     half_mux mux_inst (
-        .half_sel       (half_sel),
-        .thresh_p1      (THRESH1),   // left half → Threshold 1 (Cr red)
-        .thresh_p2      (THRESH2),   // right half → Threshold 2 (Cb yellow)
-        .chan_sel_p1    (CHAN1),
-        .chan_sel_p2    (CHAN2),
-        .thresh_active  (thresh_active),
+        .half_sel (half_sel),
+        .thresh_p1 (THRESH1),
+        .thresh_p2 (THRESH2),
+        .chan_sel_p1 (CHAN1),
+        .chan_sel_p2 (CHAN2),
+        .thresh_active (thresh_active),
         .chan_sel_active(chan_sel_active)
     );
-
 
 
     //threshold module (apply masking threshold):
     logic [7:0] lower_threshold;
     logic [7:0] upper_threshold;
-    logic mask; //Whether or not thresholded pixel is 1 or 0
 
-    //Center of Mass variables (tally all mask=1 pixels for a frame and calculate their center of mass)
-    logic [10:0] x_com, x_com_calc; //long term x_com and output from module, resp
-    logic [9:0] y_com, y_com_calc; //long term y_com and output from module, resp
-    logic new_com; //used to know when to update x_com and y_com ...
+    // Per-player masks
+    logic mask_red_raw;
+    logic mask_yel_raw; 
+    logic mask_p1;   
+    logic mask_p2;
+
+    // Center of Mass variables (two players)
+    logic [10:0] x_com1, x_com1_calc;
+    logic [9:0]  y_com1, y_com1_calc;
+    logic new_com1;
+
+    logic [10:0] x_com2, x_com2_calc;
+    logic [9:0]  y_com2, y_com2_calc;
+    logic new_com2;
 
 
     // Map 2-bit channel selection to the 3-bit channel_select encoding:
@@ -554,17 +567,6 @@ module top_level
     // * 3'b111: not valid
     //Channel Select: Takes in the full RGB and YCrCb inew_frameormation and
     // chooses one of them to output as an 8 bit value
-    // channel_select mcs(
-    //     .select(channel_sel),
-    //     .r(fb_red),    
-    //     .g(fb_green), 
-    //     .b(fb_blue), 
-    //     .y(y),
-    //     .cr(cr),
-    //     .cb(cb),
-    //     .selected_channel(selected_channel)
-    // );
-
     channel_select mcs(
         .select(channel_sel_active_3b),
         .r(fb_red),    
@@ -576,25 +578,40 @@ module top_level
         .selected_channel(selected_channel)
     );
 
-
     //threshold values used to determine what value  passes:
     // assign lower_threshold = {sw[11:8],4'b0};
     // assign upper_threshold = {sw[15:12],4'b0};
     assign lower_threshold = thresh_active;
     assign upper_threshold = 8'hFF;
 
-    //Thresholder: Takes in the full selected channedl and
-    //based on upper and lower bounds provides a binary mask bit
-    // * 1 if selected channel is within the bounds (inclusive)
-    // * 0 if selected channel is not within the bounds
-    threshold mt(
-       .clk(clk_pixel),
-       .rst(sys_rst_pixel),
-       .pixel(selected_channel),
-       .lower_bound(lower_threshold),
-       .upper_bound(upper_threshold),
-       .mask(mask) //single bit if pixel within mask.
+    threshold red_thresh (
+        .clk         (clk_pixel),
+        .rst         (sys_rst_pixel),
+        .pixel       (cr),
+        .lower_bound (RED_CR_MIN),
+        .upper_bound (RED_CR_MAX),
+        .mask        (mask_red_raw)
     );
+
+    // Yellow player = Cb in [0, 80]
+    threshold yel_thresh (
+        .clk         (clk_pixel),
+        .rst         (sys_rst_pixel),
+        .pixel       (cb),
+        .lower_bound (YEL_CB_MIN),
+        .upper_bound (YEL_CB_MAX),
+        .mask        (mask_yel_raw)
+    );
+
+
+    assign mask_p1 = mask_red_raw 
+                    && active_d1 
+                    && (h_d1 < 11'd640);   // left half only
+
+    assign mask_p2 = mask_yel_raw 
+                    && active_d1 
+                    && (h_d1 >= 11'd640);  // right half only
+
 
 
     logic [6:0] ss_c;
@@ -616,26 +633,50 @@ module top_level
     //Center of Mass Calculation: (you need to do)
     //using x_com_calc and y_com_calc values
     //Center of Mass:
-    center_of_mass com_m(
-        .clk(clk_pixel),
-        .rst(sys_rst_pixel),
-        .pixel_x(h_count_hdmi),  
-        .pixel_y(v_count_hdmi), 
-        .pixel_valid(mask), //aka threshold
-        .calculate((new_frame_hdmi)),
-        .com_x(x_com_calc),
-        .com_y(y_com_calc),
-        .com_valid(new_com)
+
+
+    // Center of Mass: Player 1 (red / Cr)
+    center_of_mass com_p1 (
+        .clk         (clk_pixel),
+        .rst         (sys_rst_pixel),
+        .pixel_x     (h_d1),
+        .pixel_y     (v_d1),
+        .pixel_valid (mask_p1),
+        .calculate   (new_frame_hdmi),
+        .com_x       (x_com1_calc),
+        .com_y       (y_com1_calc),
+        .com_valid   (new_com1)
     );
-    //grab logic for above
-    //update center of mass x_com, y_com based on new_com signal
-    always_ff @(posedge clk_pixel)begin
-        if (sys_rst_pixel)begin
-            x_com <= 0;
-            y_com <= 0;
-        end else if(new_com)begin
-            x_com <= x_com_calc;
-            y_com <= y_com_calc;
+
+    center_of_mass com_p2 (
+        .clk         (clk_pixel),
+        .rst         (sys_rst_pixel),
+        .pixel_x     (h_d1),
+        .pixel_y     (v_d1),
+        .pixel_valid (mask_p2),
+        .calculate   (new_frame_hdmi),
+        .com_x       (x_com2_calc),
+        .com_y       (y_com2_calc),
+        .com_valid   (new_com2)
+    );
+
+
+    // Latch COM values once per frame
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel) begin
+            x_com1 <= 0;
+            y_com1 <= 0;
+            x_com2 <= 0;
+            y_com2 <= 0;
+        end else begin
+            if (new_com1) begin
+                x_com1 <= x_com1_calc;
+                y_com1 <= y_com1_calc;
+            end
+            if (new_com2) begin
+                x_com2 <= x_com2_calc;
+                y_com2 <= y_com2_calc;
+            end
         end
     end
 
@@ -665,8 +706,10 @@ module top_level
     .pop(pop),
     .h_count(h_count_hdmi),   
     .v_count(v_count_hdmi),   
-    .x(x_com>128 ? x_com-128 : 0),
-    .y(y_com>128 ? y_com-128 : 0),
+    // .x(x_com>128 ? x_com-128 : 0),
+    // .y(y_com>128 ? y_com-128 : 0),
+    .x(x_com1>128 ? x_com1-128 : 0),
+    .y(y_com1>128 ? y_com1-128 : 0),
     .pixel_red(img_red),
     .pixel_green(img_green),
     .pixel_blue(img_blue)); //output colors
@@ -676,10 +719,16 @@ module top_level
 
     //Create Crosshair patter on center of mass:
     //0 cycle latency
+    // always_comb begin
+    //     ch_red   = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
+    //     ch_green = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
+    //     ch_blue  = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
+    // end
+
     always_comb begin
-        ch_red   = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
-        ch_green = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
-        ch_blue  = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
+        ch_red   = ((v_count_hdmi==y_com1) || (h_count_hdmi==x_com1))?8'hFF:8'h00;
+        ch_green = ((v_count_hdmi==y_com1) || (h_count_hdmi==x_com1))?8'hFF:8'h00;
+        ch_blue  = ((v_count_hdmi==y_com1) || (h_count_hdmi==x_com1))?8'hFF:8'h00;
     end
 
 
@@ -732,7 +781,6 @@ module top_level
     //     .muxed_pixel({base_red, base_green, base_blue})
     // );
 
-    // AUTO PATH OVERLAY (10x10 grid, one instance per half-screen)
     localparam int GRID_W = 10;
     localparam int GRID_H = 10;
     localparam int HALF_W = 640;
@@ -752,8 +800,7 @@ module top_level
     logic region_left,  region_right;
     logic [10:0] x_rel;
 
-    // Map HDMI pixel coordinates to 10x10 grid indices per half.
-    // Make sure we stay in-bounds and don't leak into the other side.
+
     always_comb begin
         cell_x_left  = '0;
         cell_y_left  = '0;
@@ -817,31 +864,75 @@ module top_level
         .cell_on(cell_on_right)
     );
 
+    localparam int PLAYER_RADIUS = 24;
+    localparam int PLAYER_RADIUS_SQ  = PLAYER_RADIUS * PLAYER_RADIUS; // 784
+
+    logic signed [11:0] dx1, dy1, dx2, dy2;
+    logic        [23:0] dx1_sq, dy1_sq, dx2_sq, dy2_sq;
+    logic        [24:0] dist2_1, dist2_2;
+    logic               player1_pix, player2_pix;
+
+    always_comb begin
+        // Player 1 (red)
+        dx1 = $signed({1'b0, h_count_hdmi}) - $signed({1'b0, x_com1});
+        dy1 = $signed({1'b0, v_count_hdmi}) - $signed({1'b0, y_com1});
+        dx1_sq = dx1 * dx1;
+        dy1_sq = dy1 * dy1;
+        dist2_1 = dx1_sq + dy1_sq;
+
+        // Player 2 (yellow)
+        dx2 = $signed({1'b0, h_count_hdmi}) - $signed({1'b0, x_com2});
+        dy2 = $signed({1'b0, v_count_hdmi}) - $signed({1'b0, y_com2});
+        dx2_sq = dx2 * dx2;
+        dy2_sq = dy2 * dy2;
+        dist2_2 = dx2_sq + dy2_sq;
+
+        // True circle: dx^2 + dy^2 <= R^2
+        player1_pix = active_draw_hdmi && (dist2_1 <= PLAYER_RADIUS_SQ);
+        player2_pix = active_draw_hdmi && (dist2_2 <= PLAYER_RADIUS_SQ);
+    end
+
+
+
     // Final overlay: draw path cells on top of base video.
     // Left half path = red, right half path = blue (just for visualization).
     wire path_pix_left  = cell_on_left  && region_left  && active_draw_hdmi;
     wire path_pix_right = cell_on_right && region_right && active_draw_hdmi;
 
     always_comb begin
-        // default: camera / filter / COM pipeline colors
+        // Default: camera image
         red   = base_red;
         green = base_green;
         blue  = base_blue;
 
         if (active_draw_hdmi) begin
+            // PATH background
             if (path_pix_left) begin
-                // left player path color
-                red   = 8'hFF;
-                green = 8'h00;
-                blue  = 8'h00;
+                red   = 8'hC0;
+                green = 8'h10;
+                blue  = 8'h10;
             end else if (path_pix_right) begin
-                // right player path color
-                red = 8'h00;
-                green = 8'h00;
+                red   = 8'h10;
+                green = 8'h10;
+                blue  = 8'hC0;
+            end
+
+            // CIRCLES on top
+            if (player1_pix) begin
+                red   = 8'hFF;
+                green = 8'hFF;
                 blue  = 8'hFF;
+            end else if (player2_pix) begin
+                red   = 8'hFF;
+                green = 8'hFF;
+                blue  = 8'h00;
             end
         end
     end
+
+
+
+
 ////////////////////////////////////////
     // HDMI Output: just like before!
 
