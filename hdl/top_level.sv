@@ -1112,6 +1112,64 @@ module top_level
     assign led[3] = cr_init_valid;
     assign led[4] = cr_init_ready;
     assign led[15:5] = 0;
+
+       //*********************************************************
+    //PATH CHECKER
+
+    // TODO give path grid values 
+    // TODO also center of mass values XCOM YCOM 1 & 2
+    logic [99:0] path_grid;
+    logic p1_life_lost_raw, p2_life_lost_raw;
+
+    assign p1_life_lost = (game_state == PLAY) ? p1_life_lost_raw : 1'b0;
+    assign p2_life_lost = (game_state == PLAY) ? p2_life_lost_raw : 1'b0;
+
+    path_checker_circle_tiles_2p #(
+        .GRID_W(10),
+        .GRID_H(10),
+        .CELL_W(64),
+        .CELL_H(72),
+        .RADIUS(32)
+    ) checker_inst (
+        .clk(clk_pixel),
+        .rst(sys_rst_pixel),
+        .new_frame(new_frame_hdmi),
+        .p1_x(x_com),       // COM from camera pipeline
+        .p1_y(y_com),
+        .p2_x(x_com2),      // second COM from 2nd threshold pipeline
+        .p2_y(y_com2),
+        .path_grid(path_grid),
+        .p1_life_lost(p1_life_lost_raw),
+        .p2_life_lost(p2_life_lost_raw)
+    );
+
+    //*********************************************************
+    //GAME FSM 
+
+    logic [2:0] game_state;
+    logic [1:0] p1_lives, p2_lives;
+    logic       blink_p1, blink_p2;
+    logic [1:0] winner;
+
+    game_fsm fsm_inst (
+        .clk(clk_pixel),
+        .rst(sys_rst_pixel),
+        .new_frame(new_frame_hdmi),
+        .p1_life_lost(p1_life_lost),
+        .p2_life_lost(p2_life_lost),
+        .state(game_state),
+        .p1_lives(p1_lives),
+        .p2_lives(p2_lives),
+        .blink_p1(blink_p1),
+        .blink_p2(blink_p2),
+        .winner(winner)
+    );
+
+    //*********************************************************
+    //GAME RENDERER 
+
+    // TODO 
+
 endmodule // top_level
 
 
