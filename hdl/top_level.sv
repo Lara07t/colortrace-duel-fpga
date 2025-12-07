@@ -615,18 +615,32 @@ module top_level
 
 
     logic [6:0] ss_c;
+
+    score_ssc #(.COUNT_TO(100000)) score_disp (
+        .clk     (clk_pixel),
+        .rst     (sys_rst_pixel),
+        .state   (game_state),  // from game_fsm
+        .p1_lives(p1_lives),
+        .p2_lives(p2_lives),
+        .cathode (ss_c),
+        .anode   ({ss0_an, ss1_an})
+    );
+
+    ////////lab5 related code start 
     //modified version of seven segment display for showing
     // thresholds and selected channel
     // special customized version
-    lab05_ssc mssc(
-        .clk(clk_pixel),
-        .rst(sys_rst_pixel),
-        .lower_threshold(lower_threshold),
-        .upper_threshold(upper_threshold),
-        .channel_select(channel_sel),
-        .cathode(ss_c),
-        .anode({ss0_an, ss1_an})
-    );
+    //lab05_ssc mssc(
+    //    .clk(clk_pixel),
+    //    .rst(sys_rst_pixel),
+    //    .lower_threshold(lower_threshold),
+    //    .upper_threshold(upper_threshold),
+    //    .channel_select(channel_sel),
+    //    .cathode(ss_c),
+    //    .anode({ss0_an, ss1_an})
+    //);
+    ////////lab5 related code end
+
     assign ss0_c = ss_c; //control upper four digit's cathodes!
     assign ss1_c = ss_c; //same as above but for lower four digits!
 
@@ -1121,10 +1135,10 @@ module top_level
     logic [99:0] path_grid;
     logic p1_life_lost_raw, p2_life_lost_raw;
 
-    assign p1_life_lost = (game_state == PLAY) ? p1_life_lost_raw : 1'b0;
-    assign p2_life_lost = (game_state == PLAY) ? p2_life_lost_raw : 1'b0;
+    assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
+    assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
 
-    path_checker_circle_tiles_2p #(
+    path_checker #(
         .GRID_W(10),
         .GRID_H(10),
         .CELL_W(64),
