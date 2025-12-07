@@ -1134,7 +1134,7 @@ module top_level
     // TODO also center of mass values XCOM YCOM 1 & 2
     logic [99:0] path_grid;
     logic p1_life_lost_raw, p2_life_lost_raw;
-
+    logic p1_life_lost,p2_life_lost;
     assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
     assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
 
@@ -1148,8 +1148,8 @@ module top_level
         .clk(clk_pixel),
         .rst(sys_rst_pixel),
         .new_frame(new_frame_hdmi),
-        .p1_x(x_com),       // COM from camera pipeline
-        .p1_y(y_com),
+        .p1_x(x_com1),       // COM from camera pipeline
+        .p1_y(y_com1),
         .p2_x(x_com2),      // second COM from 2nd threshold pipeline
         .p2_y(y_com2),
         .path_grid(path_grid),
