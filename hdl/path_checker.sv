@@ -18,7 +18,8 @@ module path_checker #(
     input  wire [9:0]                    p2_y,
 
     // 10x10 path grid: 1 = on path, 0 = off path (row-major)
-    input  wire [GRID_W*GRID_H-1:0]      path_grid,
+    input  wire [GRID_W*GRID_H-1:0]      path_grid_p1,
+    input  wire [GRID_W*GRID_H-1:0]      path_grid_p2, 
 
     output logic                         p1_life_lost,
     output logic                         p2_life_lost
@@ -54,7 +55,7 @@ module path_checker #(
                 for (tx = 0; tx < GRID_W; tx = tx + 1) begin
                     idx = ty * GRID_W + tx;
 
-                    if (path_grid[idx] == 1'b0) begin
+                    if (path_grid_p1[idx] == 1'b0) begin
                         // tile bounds in pixels
                         x_min = tx * CELL_W;
                         x_max = x_min + CELL_W - 1;
@@ -85,7 +86,7 @@ module path_checker #(
                 for (tx = 0; tx < GRID_W; tx = tx + 1) begin
                     idx = ty * GRID_W + tx;
 
-                    if (path_grid[idx] == 1'b0) begin
+                    if (path_grid_p2[idx] == 1'b0) begin
                         x_min = tx * CELL_W;
                         x_max = x_min + CELL_W - 1;
                         y_min = ty * CELL_H;

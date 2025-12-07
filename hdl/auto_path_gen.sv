@@ -15,6 +15,8 @@ module autopath_gen #(
     input  wire shift_left_req,
     input  wire shift_right_req,
     output logic cell_on
+
+    output logic [GRID_W*GRID_H-1:0] path_grid_out
 );
 
     logic [GRID_W-1:0] grid [0:GRID_H-1];
@@ -39,6 +41,8 @@ module autopath_gen #(
     logic [$clog2(GRID_H)-1:0] cell_y_r;
 
     integer y;
+    integer r;  // extra loop index
+
 
     localparam int MIN_CENTER = TRACK_HALF_WIDTH;
     localparam int MAX_CENTER = GRID_W - 1 - TRACK_HALF_WIDTH;
@@ -150,6 +154,14 @@ module autopath_gen #(
         end
     end
 
+    // Flatten 2D grid[y][x] into row-major vector path_grid_out
+    always_comb begin
+        for (r = 0; r < GRID_H; r = r + 1) begin
+            path_grid_out[r*GRID_W +: GRID_W] = grid[r];
+        end
+    end
 endmodule
+
+
 
 `default_nettype wire

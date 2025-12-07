@@ -843,6 +843,8 @@ module top_level
 
     // Path bits for each half-screen
     logic cell_on_left, cell_on_right;
+    logic [GRID_W*GRID_H-1:0] path_grid_left;
+    logic [GRID_W*GRID_H-1:0] path_grid_right;
 
     // Left player auto path (10x10 static pattern from BRAM, shrinks after 30s)
     autopath_gen #(
@@ -859,6 +861,7 @@ module top_level
         .shift_left_req(1'b0),  // hook to buttons later if desired
         .shift_right_req(1'b0),
         .cell_on(cell_on_left)
+        .path_grid_out(path_grid_left) 
     );
 
     // Right player auto path (can use same or different init file)
@@ -876,7 +879,13 @@ module top_level
         .shift_left_req(1'b0),
         .shift_right_req(1'b0),
         .cell_on(cell_on_right)
+        .path_grid_out(path_grid_right) 
     );
+
+    logic [10:0] p1_x_local, p2_x_local;
+    assign p1_x_local = x_com1;
+    assign p2_x_local = (x_com2 > HALF_W) ? (x_com2 - HALF_W) : 11'd0;
+
 
     localparam int PLAYER_RADIUS = 24;
     localparam int PLAYER_RADIUS_SQ  = PLAYER_RADIUS * PLAYER_RADIUS; // 784
@@ -1132,9 +1141,13 @@ module top_level
 
     // TODO give path grid values 
     // TODO also center of mass values XCOM YCOM 1 & 2
-    logic [99:0] path_grid;
+    //*********************************************************
+    // PATH CHECKER
+
     logic p1_life_lost_raw, p2_life_lost_raw;
-    logic p1_life_lost,p2_life_lost;
+    logic p1_life_lost, p2_life_lost;
+
+    // Only count hits while in PLAY state
     assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
     assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
 
@@ -1148,14 +1161,20 @@ module top_level
         .clk(clk_pixel),
         .rst(sys_rst_pixel),
         .new_frame(new_frame_hdmi),
-        .p1_x(x_com1),       // COM from camera pipeline
+
+        .p1_x(p1_x_local),
         .p1_y(y_com1),
-        .p2_x(x_com2),      // second COM from 2nd threshold pipeline
+
+        .p2_x(p2_x_local),
         .p2_y(y_com2),
-        .path_grid(path_grid),
+
+        .path_grid_p1(path_grid_left), 
+        .path_grid_p2(path_grid_right), 
+
         .p1_life_lost(p1_life_lost_raw),
         .p2_life_lost(p2_life_lost_raw)
     );
+
 
     //*********************************************************
     //GAME FSM 
