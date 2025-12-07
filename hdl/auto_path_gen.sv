@@ -2,8 +2,8 @@
 `default_nettype none
 
 module autopath_gen #(
-    parameter int GRID_W   = 10,
-    parameter int GRID_H   = 10,
+    parameter int GRID_W   = 40,
+    parameter int GRID_H   = 40,
     parameter int FPS      = 60,
     parameter string INIT_FILE = "data/autopath_init.mem"
 )(
@@ -14,7 +14,7 @@ module autopath_gen #(
     input  wire [$clog2(GRID_H)-1:0]  cell_y,
     input  wire shift_left_req,
     input  wire shift_right_req,
-    output logic cell_on
+    output logic cell_on,
 
     output logic [GRID_W*GRID_H-1:0] path_grid_out
 );

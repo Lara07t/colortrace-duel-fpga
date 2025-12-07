@@ -486,7 +486,7 @@ module top_level
     logic [2:0] channel_sel;
     // Red player (chroma red): Cr in [160, 240]
     // can change based on light
-    localparam logic [7:0] RED_CR_MIN = 8'd144;
+    localparam logic [7:0] RED_CR_MIN = 8'd160;
     localparam logic [7:0] RED_CR_MAX = 8'd240;
     localparam logic [7:0] THRESH1 = RED_CR_MIN; // left: show red's Cr lower
     localparam logic [1:0] CHAN1 = 2'b01;     // Cr
@@ -795,8 +795,8 @@ module top_level
     //     .muxed_pixel({base_red, base_green, base_blue})
     // );
 
-    localparam int GRID_W = 10;
-    localparam int GRID_H = 10;
+    localparam int GRID_W = 40;
+    localparam int GRID_H = 40;
     localparam int HALF_W = 640;
     localparam int CELL_W = HALF_W / GRID_W; // 640/10 = 64 pixels per cell
     localparam int CELL_H = 720 / GRID_H;  // 720/10 = 72 pixels per cell
@@ -860,7 +860,7 @@ module top_level
         .cell_y(cell_y_left),
         .shift_left_req(1'b0),  // hook to buttons later if desired
         .shift_right_req(1'b0),
-        .cell_on(cell_on_left)
+        .cell_on(cell_on_left),
         .path_grid_out(path_grid_left) 
     );
 
@@ -878,7 +878,7 @@ module top_level
         .cell_y(cell_y_right),
         .shift_left_req(1'b0),
         .shift_right_req(1'b0),
-        .cell_on(cell_on_right)
+        .cell_on(cell_on_right),
         .path_grid_out(path_grid_right) 
     );
 
@@ -1152,11 +1152,11 @@ module top_level
     assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
 
     path_checker #(
-        .GRID_W(10),
-        .GRID_H(10),
-        .CELL_W(64),
-        .CELL_H(72),
-        .RADIUS(32)
+        .GRID_W(GRID_W),
+        .GRID_H(GRID_H),
+        .CELL_W(CELL_W),
+        .CELL_H(CELL_H),
+        .RADIUS(PLAYER_RADIUS)
     ) checker_inst (
         .clk(clk_pixel),
         .rst(sys_rst_pixel),
