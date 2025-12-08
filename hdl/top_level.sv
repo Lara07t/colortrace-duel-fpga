@@ -465,19 +465,53 @@ module top_level
     assign cr = {!cr_full[7],cr_full[6:0]};
     assign cb = {!cb_full[7],cb_full[6:0]};
 
-    logic [10:0] h_d1;
-    logic [9:0]  v_d1;
-    logic active_d1;
 
+    logic [10:0] h_d1, h_d2, h_d3, h_d4;
+    logic [9:0]  v_d1, v_d2, v_d3, v_d4;
+    logic active_d1, active_d2, active_d3, active_d4;
+
+
+    // logic [10:0] h_d1;
+    // logic [9:0]  v_d1;
+    // logic active_d1;
+
+    // always_ff @(posedge clk_pixel) begin
+    //     if (sys_rst_pixel) begin
+    //         h_d1 <= 11'd0;
+    //         v_d1 <= 10'd0;
+    //         active_d1 <= 1'b0;
+    //     end else begin
+    //         h_d1 <= h_count_hdmi;
+    //         v_d1 <= v_count_hdmi;
+    //         active_d1 <= active_draw_hdmi;
+    //     end
+    // end
+
+    // pipelined
     always_ff @(posedge clk_pixel) begin
         if (sys_rst_pixel) begin
-            h_d1 <= 11'd0;
-            v_d1 <= 10'd0;
+            h_d1 <= 0; h_d2 <= 0; h_d3 <= 0; h_d4 <= 0;
+            v_d1 <= 0; v_d2 <= 0; v_d3 <= 0; v_d4 <= 0;
             active_d1 <= 1'b0;
+            active_d2 <= 1'b0;
+            active_d3 <= 1'b0;
+            active_d4 <= 1'b0;
         end else begin
-            h_d1 <= h_count_hdmi;
-            v_d1 <= v_count_hdmi;
+            h_d1      <= h_count_hdmi;
+            v_d1      <= v_count_hdmi;
             active_d1 <= active_draw_hdmi;
+
+            h_d2      <= h_d1;
+            v_d2      <= v_d1;
+            active_d2 <= active_d1;
+
+            h_d3      <= h_d2;
+            v_d3      <= v_d2;
+            active_d3 <= active_d2;
+
+            h_d4      <= h_d3;
+            v_d4      <= v_d3;
+            active_d4 <= active_d3;
         end
     end
 
@@ -505,7 +539,7 @@ module top_level
 
 
     screen_half #(.H_RES(1280)) half_det (
-        .x (h_d1),
+        .x (h_d4),
         .half_sel (half_sel)
     );
 
@@ -605,14 +639,12 @@ module top_level
 
 
     assign mask_p1 = mask_red_raw 
-                    && active_d1 
-                    && (h_d1 < 11'd640);   // left half only
+                    && active_d4 
+                    && (h_d4 < 11'd640);
 
     assign mask_p2 = mask_yel_raw 
-                    && active_d1 
-                    && (h_d1 >= 11'd640);  // right half only
-
-
+                    && active_d4 
+                    && (h_d4 >= 11'd640);
 
     logic [6:0] ss_c;
 
@@ -653,8 +685,8 @@ module top_level
     center_of_mass com_p1 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d1),
-        .pixel_y     (v_d1),
+        .pixel_x     (h_d4),
+        .pixel_y     (v_d4),
         .pixel_valid (mask_p1),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com1_calc),
@@ -665,8 +697,8 @@ module top_level
     center_of_mass com_p2 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d1),
-        .pixel_y     (v_d1),
+        .pixel_x     (h_d4),
+        .pixel_y     (v_d4),
         .pixel_valid (mask_p2),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com2_calc),
@@ -929,6 +961,20 @@ module top_level
         blue  = base_blue;
 
         if (active_draw_hdmi) begin
+                        // === DEBUG: show masks first ===
+            // Player 1 mask: draw solid RED
+            if (mask_p1) begin
+                red   = 8'hFF;
+                green = 8'h00;
+                blue  = 8'h00;
+            end
+            // Player 2 mask: draw solid CYAN
+            else if (mask_p2) begin
+                red   = 8'h00;
+                green = 8'hFF;
+                blue  = 8'hFF;
+            end
+            // === END DEBUG ===
             // PATH background
             if (path_pix_left) begin
                 red   = 8'hC0;
