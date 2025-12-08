@@ -10,10 +10,12 @@ module score_ssc #(
     input  wire [2:0]  state,      // from game_fsm
     input  wire [1:0]  p1_lives,   // 0..3
     input  wire [1:0]  p2_lives,   // 0..3
+    input  wire [1:0]  winner,     // 0=none,1=P1,2=P2
 
-    output logic [6:0] cathode,    // to ss*_c (active-low after inversion)
-    output logic [7:0] anode       // {ss0_an, ss1_an}, active-low after inversion
+    output logic [6:0] cathode,
+    output logic [7:0] anode
 );
+
 
     //which of the 8 digits is currently active
     logic [7:0]  segment_state;
@@ -54,26 +56,56 @@ module score_ssc #(
     always_comb begin
         // default = blank
         routed_vals = 4'h0;
-        led_out     = 7'b0000000;  // all segments off after inversion
+        led_out     = 7'b0000000;
 
-        unique case (segment_state)
-            // Lower-right digit player 1 lives
-            8'b0000_0001: begin
-                routed_vals = {2'b00, p1_lives};  // convert 0..3 to 0..3
-                led_out     = bto7s_led_out;
-            end
+        if (state == 3'd4) begin
+            // GAME_OVER: show "P1" or "P2"
+            unique case (segment_state)
+                // Lower-right digit: show "1" or "2"
+                8'b0000_0001: begin
+                    case (winner)
+                        2'd1: routed_vals = 4'd1;  // P1
+                        2'd2: routed_vals = 4'd2;  // P2
+                        default: routed_vals = 4'd0;
+                    endcase
+                    led_out = bto7s_led_out;       // use normal digit encoding
+                end
 
-            // Upper-right digit player 2 lives
-            8'b0001_0000: begin
-                routed_vals = {2'b00, p2_lives};
-                led_out     = bto7s_led_out;
-            end
-            default: begin
-                routed_vals = 4'h0;
-                led_out     = 7'b0000000;
-            end
-        endcase
+                // Upper-right digit: show "P"
+                8'b0001_0000: begin
+                    // segments for "P": a, b, e, f, g on; c, d off
+                    // {g,f,e,d,c,b,a} = 7'b1110011
+                    led_out = 7'b1110011;
+                end
+
+                default: begin
+                    led_out     = 7'b0000000; // blank other digits
+                    routed_vals = 4'h0;
+                end
+            endcase
+        end else begin
+            // NORMAL GAME: show lives
+            unique case (segment_state)
+                // Lower-right digit: player 1 lives
+                8'b0000_0001: begin
+                    routed_vals = {2'b00, p1_lives}; // 0..3
+                    led_out     = bto7s_led_out;
+                end
+
+                // Upper-right digit: player 2 lives
+                8'b0001_0000: begin
+                    routed_vals = {2'b00, p2_lives};
+                    led_out     = bto7s_led_out;
+                end
+
+                default: begin
+                    led_out     = 7'b0000000;
+                    routed_vals = 4'h0;
+                end
+            endcase
+        end
     end
+
 
 endmodule
 

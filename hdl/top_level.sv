@@ -523,6 +523,7 @@ module top_level
         .state   (game_state),  // from game_fsm
         .p1_lives(p1_lives),
         .p2_lives(p2_lives),
+        .winner  (winner),      // NEW
         .cathode (ss_c),
         .anode   ({ss0_an, ss1_an})
     );
@@ -562,14 +563,14 @@ module top_level
     );
 
 
-    // Latch COM values once per frame
+    // Latch COM values once per frame, but freeze them in GAME_OVER
     always_ff @(posedge clk_pixel) begin
         if (sys_rst_pixel) begin
             x_com1 <= 0;
             y_com1 <= 0;
             x_com2 <= 0;
             y_com2 <= 0;
-        end else begin
+        end else if (game_state != 3'd4) begin  // 3'd4 = GAME_OVER
             if (new_com1) begin
                 x_com1 <= x_com1_calc;
                 y_com1 <= y_com1_calc;
@@ -579,6 +580,7 @@ module top_level
                 y_com2 <= y_com2_calc;
             end
         end
+        // else: GAME_OVER hold previous positions (freeze)
     end
 
     //image_sprite output:
@@ -705,34 +707,34 @@ module top_level
         .FPS(60),
         .INIT_FILE("data/autopath_init.mem")
     ) path_left (
-        .clk          (clk_pixel),
-        .rst          (sys_rst_pixel),
-        .new_frame    (new_frame_hdmi),
-        .cell_x       (cell_x_left),
-        .cell_y       (cell_y_left),
-        .shift_left_req (1'b0),  // hook to buttons later if desired
+        .clk            (clk_pixel),
+        .rst            (sys_rst_pixel),
+        .new_frame      (new_frame_paths),  // <-- changed
+        .cell_x         (cell_x_left),
+        .cell_y         (cell_y_left),
+        .shift_left_req (1'b0),
         .shift_right_req(1'b0),
-        .cell_on      (cell_on_left),
-        .path_grid_out(path_grid_left) 
+        .cell_on        (cell_on_left),
+        .path_grid_out  (path_grid_left)
     );
 
-    // Right player auto path (can use same or different init file)
     autopath_gen #(
         .GRID_W(GRID_W),
         .GRID_H(GRID_H),
         .FPS(60),
         .INIT_FILE("data/autopath_init.mem")
     ) path_right (
-        .clk          (clk_pixel),
-        .rst          (sys_rst_pixel),
-        .new_frame    (new_frame_hdmi),
-        .cell_x       (cell_x_right),
-        .cell_y       (cell_y_right),
+        .clk            (clk_pixel),
+        .rst            (sys_rst_pixel),
+        .new_frame      (new_frame_paths),  // <-- changed
+        .cell_x         (cell_x_right),
+        .cell_y         (cell_y_right),
         .shift_left_req (1'b0),
         .shift_right_req(1'b0),
-        .cell_on      (cell_on_right),
-        .path_grid_out(path_grid_right) 
+        .cell_on        (cell_on_right),
+        .path_grid_out  (path_grid_right)
     );
+
 
     logic [10:0] p1_x_local, p2_x_local;
     assign p1_x_local = x_com1;
@@ -1002,6 +1004,8 @@ module top_level
     logic [2:0] game_state;
     // assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
     // assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
+    localparam [2:0] GAME_OVER_STATE = 3'd4;
+    wire new_frame_paths = new_frame_hdmi && (game_state != GAME_OVER_STATE);
 
     assign p1_life_lost = p1_life_lost_raw;  // from path_checker
     assign p2_life_lost = p2_life_lost_raw;
