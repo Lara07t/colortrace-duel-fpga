@@ -292,7 +292,7 @@ module autopath_gen #(
                         step_count_before_shrink <= step_count_before_shrink + 1'b1;
                     end
                 end else begin
-                    if (cur_half_width > 1) begin
+                    if (cur_half_width > 3) begin
                         if (shrink_step_cnt == STEPS_PER_SHRINK-1) begin
                             shrink_step_cnt <= '0;
                             cur_half_width  <= cur_half_width - 1'b1;
