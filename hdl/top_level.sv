@@ -961,20 +961,6 @@ module top_level
         blue  = base_blue;
 
         if (active_draw_hdmi) begin
-                        // === DEBUG: show masks first ===
-            // Player 1 mask: draw solid RED
-            if (mask_p1) begin
-                red   = 8'hFF;
-                green = 8'h00;
-                blue  = 8'h00;
-            end
-            // Player 2 mask: draw solid CYAN
-            else if (mask_p2) begin
-                red   = 8'h00;
-                green = 8'hFF;
-                blue  = 8'hFF;
-            end
-            // === END DEBUG ===
             // PATH background
             if (path_pix_left) begin
                 red   = 8'hC0;
