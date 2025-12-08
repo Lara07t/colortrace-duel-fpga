@@ -1,9 +1,9 @@
 `default_nettype none
 module game_fsm #(
     parameter LIVES         = 3,
-    parameter PAUSE_FRAMES  = 120, // ~2 sec @ 60fps between life loss and resume
-    parameter BLINK_PERIOD  = 15,  // toggle every 15 frames
-    parameter WARMUP_FRAMES = 120  // ~2 sec after reset before life loss is enabled
+    parameter PAUSE_FRAMES  = 120,
+    parameter BLINK_PERIOD  = 15,
+    parameter WARMUP_FRAMES = 120
 )(
     input  wire clk,
     input  wire rst,
@@ -13,13 +13,18 @@ module game_fsm #(
     input  wire p1_life_lost,
     input  wire p2_life_lost,
 
+    // *** NEW: COM valid flags (player is actually detected) ***
+    input  wire p1_com_valid,
+    input  wire p2_com_valid,
+
     output logic [2:0] state,
     output logic [1:0] p1_lives,
     output logic [1:0] p2_lives,
     output logic       blink_p1,
     output logic       blink_p2,
-    output logic [1:0] winner    // 0=none,1=P1,2=P2
+    output logic [1:0] winner
 );
+
 
     typedef enum logic [2:0] {
         INIT      = 3'd0,
@@ -102,27 +107,26 @@ module game_fsm #(
     assign life_loss_enabled = (warmup_ctr >= WARMUP_FRAMES);
 
     // Combinational next-state logic
+    // Combinational next-state logic
     always_comb begin
         ns     = cs;
         winner = 2'd0;
 
         case (cs)
 
-            // once per reset
             INIT: begin
                 ns = READY;
             end
 
-            // Wait here until:
-            //  1) warm-up finished, AND
-            //  2) both players are on-path (no life_lost)
             READY: begin
                 if (!life_loss_enabled) begin
                     ns = READY; // still warming up
-                end else if (!p1_life_lost && !p2_life_lost) begin
-                    ns = PLAY;  // both safe → start game
+                end 
+                else if (p1_com_valid && p2_com_valid &&
+                         !p1_life_lost && !p2_life_lost) begin
+                    ns = PLAY;  // both players on their path → start game
                 end else begin
-                    ns = READY; // someone is off path, keep waiting
+                    ns = READY;
                 end
             end
 

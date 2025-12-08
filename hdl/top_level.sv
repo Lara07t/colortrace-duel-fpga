@@ -1039,17 +1039,23 @@ module top_level
     logic [1:0] winner;
 
     game_fsm fsm_inst (
-        .clk         (clk_pixel),
-        .rst         (sys_rst_pixel),
-        .new_frame   (new_frame_hdmi),
-        .p1_life_lost(p1_life_lost),
-        .p2_life_lost(p2_life_lost),
-        .state       (game_state),
-        .p1_lives    (p1_lives),
-        .p2_lives    (p2_lives),
-        .blink_p1    (blink_p1),
-        .blink_p2    (blink_p2),
-        .winner      (winner)
+        .clk          (clk_pixel),
+        .rst          (sys_rst_pixel),
+        .new_frame    (new_frame_hdmi),
+
+        .p1_life_lost (p1_life_lost),
+        .p2_life_lost (p2_life_lost),
+
+        // NEW: only start when both COMs have been computed on-path
+        .p1_com_valid (new_com1),
+        .p2_com_valid (new_com2),
+
+        .state        (game_state),
+        .p1_lives     (p1_lives),
+        .p2_lives     (p2_lives),
+        .blink_p1     (blink_p1),
+        .blink_p2     (blink_p2),
+        .winner       (winner)
     );
 
     //*********************************************************
