@@ -1,0 +1,183 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
+| Date         : Sun Dec  7 19:22:49 2025
+| Host         : eecs-digital-08 running 64-bit Ubuntu 24.04.3 LTS
+| Command      : report_timing -file obj/post_route_timing.rpt
+| Design       : top_level
+| Device       : 7s50-csga324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -17.523ns  (required time - arrival time)
+  Source:                 y_com1_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Destination:            checker_inst/p1_ok_reg/D
+                            (rising edge-triggered cell FDSE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Path Group:             clk_pixel_cw_hdmi
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
+  Data Path Delay:        30.701ns  (logic 16.513ns (53.786%)  route 14.188ns (46.214%))
+  Logic Levels:           36  (CARRY4=22 DSP48E1=2 LUT2=3 LUT3=2 LUT4=2 LUT6=5)
+  Clock Path Skew:        -0.111ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.109ns = ( 11.359 - 13.468 ) 
+    Source Clock Delay      (SCD):    -2.497ns
+    Clock Pessimism Removal (CPR):    -0.500ns
+  Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.414ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pixel_cw_hdmi rise edge)
+                                                      0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    wizard_migcam/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, routed)           1.253     2.693    wizard_migcam/clk_in1_cw_fast
+    PLLE2_ADV_X0Y0       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -8.486    -5.792 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.660    -4.132    wizard_migcam/clk_100_cw_fast
+    BUFGCTRL_X0Y6        BUFG (Prop_bufg_I_O)         0.096    -4.036 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, routed)           1.575    -2.461    wizard_hdmi/sysclk
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -3.333    -5.793 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -4.132    wizard_hdmi/clk_pixel_cw_hdmi
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -4.036 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=6128, routed)        1.539    -2.497    clk_pixel
+    SLICE_X39Y71         FDRE                                         r  y_com1_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X39Y71         FDRE (Prop_fdre_C_Q)         0.456    -2.041 r  y_com1_reg[1]/Q
+                         net (fo=5, routed)           0.614    -1.427    checker_inst/Q[1]
+    SLICE_X37Y72         LUT2 (Prop_lut2_I0_O)        0.124    -1.303 r  checker_inst/p1_ok3__0_i_134/O
+                         net (fo=1, routed)           0.000    -1.303    checker_inst/p1_ok3__0_i_134_n_0
+    SLICE_X37Y72         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    -0.771 r  checker_inst/p1_ok3__0_i_107/CO[3]
+                         net (fo=1, routed)           0.000    -0.771    checker_inst/p1_ok3__0_i_107_n_0
+    SLICE_X37Y73         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334    -0.437 r  checker_inst/p1_ok3__0_i_104/O[1]
+                         net (fo=44, routed)          0.890     0.453    checker_inst/p1_ok3__0_i_104_n_6
+    SLICE_X36Y73         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.835     1.288 r  checker_inst/p1_ok3__0_i_129/CO[3]
+                         net (fo=1, routed)           0.000     1.288    checker_inst/p1_ok3__0_i_129_n_0
+    SLICE_X36Y74         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     1.527 r  checker_inst/p1_ok3__0_i_106/O[2]
+                         net (fo=119, routed)         1.020     2.547    checker_inst/p1_ok3__0_i_106_n_5
+    SLICE_X36Y70         LUT4 (Prop_lut4_I3_O)        0.302     2.849 r  checker_inst/p1_ok3__0_i_125/O
+                         net (fo=1, routed)           0.000     2.849    checker_inst/p1_ok3__0_i_125_n_0
+    SLICE_X36Y70         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401     3.250 f  checker_inst/p1_ok3__0_i_105/CO[3]
+                         net (fo=118, routed)         0.782     4.032    checker_inst/p1_ok3__0_i_105_n_0
+    SLICE_X39Y71         LUT6 (Prop_lut6_I5_O)        0.124     4.156 r  checker_inst/p1_ok_i_28/O
+                         net (fo=36, routed)          0.586     4.742    checker_inst/p1_ok_i_28_n_0
+    SLICE_X39Y72         LUT4 (Prop_lut4_I2_O)        0.124     4.866 f  checker_inst/p1_ok_i_6_replica/O
+                         net (fo=12, routed)          1.021     5.886    checker_inst/p_0_in[5]_repN
+    SLICE_X42Y71         LUT6 (Prop_lut6_I0_O)        0.124     6.010 r  checker_inst/p1_ok3__16_i_89/O
+                         net (fo=1, routed)           0.190     6.200    checker_inst/p1_ok3__16_i_89_n_0
+    SLICE_X43Y71         CARRY4 (Prop_carry4_DI[2]_CO[3])
+                                                      0.398     6.598 r  checker_inst/p1_ok3__16_i_77/CO[3]
+                         net (fo=1, routed)           0.000     6.598    checker_inst/p1_ok3__16_i_77_n_0
+    SLICE_X43Y72         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     6.932 r  checker_inst/p1_ok3__16_i_72/O[1]
+                         net (fo=5, routed)           0.541     7.473    checker_inst/p1_ok3__16_i_72_n_6
+    SLICE_X45Y71         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.704     8.177 r  checker_inst/p1_ok3__16_i_76/CO[3]
+                         net (fo=1, routed)           0.000     8.177    checker_inst/p1_ok3__16_i_76_n_0
+    SLICE_X45Y72         CARRY4 (Prop_carry4_CI_CO[1])
+                                                      0.157     8.334 r  checker_inst/p1_ok3__16_i_75/CO[1]
+                         net (fo=44, routed)          0.713     9.047    checker_inst/p1_ok3__16_i_75_n_2
+    SLICE_X46Y70         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.705     9.752 r  checker_inst/p1_ok3__16_i_108/CO[3]
+                         net (fo=1, routed)           0.000     9.752    checker_inst/p1_ok3__16_i_108_n_0
+    SLICE_X46Y71         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     9.869 r  checker_inst/p1_ok3__16_i_87/CO[3]
+                         net (fo=1, routed)           0.000     9.869    checker_inst/p1_ok3__16_i_87_n_0
+    SLICE_X46Y72         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     9.986 f  checker_inst/p1_ok3__16_i_74/CO[3]
+                         net (fo=56, routed)          1.198    11.185    checker_inst/p1_ok3__16_i_74_n_0
+    SLICE_X47Y69         LUT3 (Prop_lut3_I1_O)        0.124    11.309 r  checker_inst/p1_ok3__16_i_40/O
+                         net (fo=1, routed)           0.000    11.309    checker_inst/p1_ok3__16_i_40_n_0
+    SLICE_X47Y69         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.841 r  checker_inst/p1_ok3__16_i_4/CO[3]
+                         net (fo=1, routed)           0.000    11.841    checker_inst/p1_ok3__16_i_4_n_0
+    SLICE_X47Y70         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.955 r  checker_inst/p1_ok3__16_i_3/CO[3]
+                         net (fo=1, routed)           0.000    11.955    checker_inst/p1_ok3__16_i_3_n_0
+    SLICE_X47Y71         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    12.069 r  checker_inst/p1_ok3__16_i_2/CO[3]
+                         net (fo=1, routed)           0.000    12.069    checker_inst/p1_ok3__16_i_2_n_0
+    SLICE_X47Y72         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.313    12.382 r  checker_inst/p1_ok3__16_i_1/O[3]
+                         net (fo=2, routed)           0.872    13.254    checker_inst/p1_ok422_out[15]
+    DSP48_X1Y28          DSP48E1 (Prop_dsp48e1_A[15]_PCOUT[47])
+                                                      4.218    17.472 r  checker_inst/p1_ok3__17/PCOUT[47]
+                         net (fo=1, routed)           0.002    17.474    checker_inst/p1_ok3__17_n_106
+    DSP48_X1Y29          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[0])
+                                                      1.518    18.992 r  checker_inst/p1_ok3__18/P[0]
+                         net (fo=2, routed)           0.931    19.922    checker_inst/p1_ok3__18_n_105
+    SLICE_X54Y72         LUT2 (Prop_lut2_I0_O)        0.124    20.046 r  checker_inst/p1_ok_i_5855/O
+                         net (fo=1, routed)           0.000    20.046    checker_inst/p1_ok_i_5855_n_0
+    SLICE_X54Y72         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    20.579 r  checker_inst/p1_ok_reg_i_3893/CO[3]
+                         net (fo=1, routed)           0.000    20.579    checker_inst/p1_ok_reg_i_3893_n_0
+    SLICE_X54Y73         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    20.696 r  checker_inst/p1_ok_reg_i_2049/CO[3]
+                         net (fo=1, routed)           0.000    20.696    checker_inst/p1_ok_reg_i_2049_n_0
+    SLICE_X54Y74         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.323    21.019 r  checker_inst/p1_ok_reg_i_949/O[1]
+                         net (fo=13, routed)          0.820    21.839    checker_inst/p1_ok_reg_i_949_n_6
+    SLICE_X50Y74         LUT3 (Prop_lut3_I1_O)        0.306    22.145 r  checker_inst/p1_ok_i_2132/O
+                         net (fo=1, routed)           0.521    22.665    checker_inst/p1_ok_i_2132_n_0
+    SLICE_X51Y74         CARRY4 (Prop_carry4_DI[2]_CO[3])
+                                                      0.398    23.063 r  checker_inst/p1_ok_reg_i_986/CO[3]
+                         net (fo=1, routed)           0.009    23.072    checker_inst/p1_ok_reg_i_986_n_0
+    SLICE_X51Y75         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.222    23.294 f  checker_inst/p1_ok_reg_i_398/O[0]
+                         net (fo=1, routed)           0.804    24.099    checker_inst/p1_ok_reg_i_398_n_7
+    SLICE_X55Y73         LUT2 (Prop_lut2_I0_O)        0.299    24.398 r  checker_inst/p1_ok_i_400/O
+                         net (fo=1, routed)           0.000    24.398    checker_inst/p1_ok_i_400_n_0
+    SLICE_X55Y73         CARRY4 (Prop_carry4_S[1]_CO[2])
+                                                      0.570    24.968 f  checker_inst/p1_ok_reg_i_146/CO[2]
+                         net (fo=1, routed)           1.165    26.132    path_left/p1_ok_i_13_1[0]
+    SLICE_X35Y72         LUT6 (Prop_lut6_I4_O)        0.313    26.445 f  path_left/p1_ok_i_48/O
+                         net (fo=1, routed)           0.850    27.295    checker_inst/p1_ok_i_3_1
+    SLICE_X34Y71         LUT6 (Prop_lut6_I4_O)        0.124    27.419 f  checker_inst/p1_ok_i_13_comp/O
+                         net (fo=1, routed)           0.661    28.080    checker_inst/p1_ok_i_13_n_0
+    SLICE_X32Y72         LUT6 (Prop_lut6_I4_O)        0.124    28.204 r  checker_inst/p1_ok_i_1_comp/O
+                         net (fo=1, routed)           0.000    28.204    checker_inst/p1_ok_i_1_n_0
+    SLICE_X32Y72         FDSE                                         r  checker_inst/p1_ok_reg/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pixel_cw_hdmi rise edge)
+                                                     13.468    13.468 r  
+    N15                                               0.000    13.468 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000    13.468    wizard_migcam/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.370    14.838 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, routed)           1.181    16.019    wizard_migcam/clk_in1_cw_fast
+    PLLE2_ADV_X0Y0       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -7.753     8.266 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.582     9.848    wizard_migcam/clk_100_cw_fast
+    BUFGCTRL_X0Y6        BUFG (Prop_bufg_I_O)         0.091     9.939 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, routed)           1.457    11.396    wizard_hdmi/sysclk
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -3.129     8.267 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581     9.848    wizard_hdmi/clk_pixel_cw_hdmi
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091     9.939 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=6128, routed)        1.421    11.359    checker_inst/clk_pixel
+    SLICE_X32Y72         FDSE                                         r  checker_inst/p1_ok_reg/C
+                         clock pessimism             -0.500    10.860    
+                         clock uncertainty           -0.210    10.650    
+    SLICE_X32Y72         FDSE (Setup_fdse_C_D)        0.031    10.681    checker_inst/p1_ok_reg
+  -------------------------------------------------------------------
+                         required time                         10.681    
+                         arrival time                         -28.204    
+  -------------------------------------------------------------------
+                         slack                                -17.523    
+
+
+
+

@@ -22,7 +22,7 @@ module autopath_gen #(
     logic [GRID_W-1:0] grid [0:GRID_H-1];
     logic [$clog2(GRID_W)-1:0] head_x;
 
-    localparam int TRACK_HALF_WIDTH = 3;
+    localparam int TRACK_HALF_WIDTH = 12; //////
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width;
 
     logic [7:0] lfsr;
@@ -104,7 +104,7 @@ module autopath_gen #(
                         step_count_before_shrink <= step_count_before_shrink + 1'b1;
                     end
                 end else begin
-                    if (cur_half_width > 1) begin
+                    if (cur_half_width > 4) begin //////
                         if (shrink_step_cnt == STEPS_PER_SHRINK-1) begin
                             shrink_step_cnt <= '0;
                             cur_half_width  <= cur_half_width - 1'b1;
