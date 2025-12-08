@@ -22,7 +22,7 @@ module autopath_gen #(
     logic [GRID_W-1:0] grid [0:GRID_H-1];
     logic [$clog2(GRID_W)-1:0] head_x;
 
-    localparam int TRACK_HALF_WIDTH = 3;
+    localparam int TRACK_HALF_WIDTH = 9;
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width;
 
     logic [7:0] lfsr;

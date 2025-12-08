@@ -25,25 +25,35 @@ module path_checker #(
     output logic                         p2_life_lost
 );
 
-    // R^2 for circle-rect intersection test
-    localparam integer R2 = RADIUS * RADIUS;
-
     // window radius in tiles (±WINDOW_TILES around the player’s tile)
-    localparam integer WINDOW_TILES = 2;      // 5×5 neighborhood
+    localparam int WINDOW_TILES = 2;      // 5×5 neighborhood
+
+    // Geometry bit-widths (so we don't accidentally do 32x32 math)
+    localparam int MAX_X      = GRID_W * CELL_W;
+    localparam int MAX_Y      = GRID_H * CELL_H;
+    localparam int XY_MAX     = (MAX_X > MAX_Y) ? MAX_X : MAX_Y;
+    localparam int XY_BITS    = $clog2(XY_MAX + 1);   // enough for pixel coords
+    localparam int D_BITS     = XY_BITS + 1;          // for signed dx/dy
+    localparam int DIST_BITS  = 2*D_BITS + 1;         // for dx^2 + dy^2
+
+    // R^2 for circle-rect intersection test (properly sized)
+    localparam logic [DIST_BITS-1:0] R2 = RADIUS * RADIUS;
 
     // internal "OK" flags for each player
     logic p1_ok, p2_ok;
 
-    // integer work vars (used in the always_ff block)
-    integer cx1, cy1;      // p1 tile coords
+    // coarse tile coordinates for each player
+    integer cx1, cy1;      // p1 tile coords (only used as small ints)
     integer cx2, cy2;      // p2 tile coords
 
     integer tx, ty;
     integer idx;
 
-    integer x_min, x_max, y_min, y_max;
-    integer closest_x, closest_y;
-    integer dx, dy;
+    // These are now *sized* instead of 'integer'
+    logic [XY_BITS-1:0] x_min, x_max, y_min, y_max;
+    logic [XY_BITS-1:0] closest_x, closest_y;
+    logic signed [D_BITS-1:0] dx, dy;
+    logic [DIST_BITS-1:0]     dist2;
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -64,9 +74,7 @@ module path_checker #(
             cx2 = p2_x / CELL_W;
             cy2 = p2_y / CELL_H;
 
-            // -------------------------
             // Player 1: local neighborhood
-            // -------------------------
             for (ty = -WINDOW_TILES; ty <= WINDOW_TILES; ty = ty + 1) begin
                 integer tile_y;
                 tile_y = cy1 + ty;
@@ -85,7 +93,7 @@ module path_checker #(
 
                     // only care about OFF-path tiles (0)
                     if (path_grid_p1[idx] == 1'b0) begin
-                        // tile bounds in pixels
+                        // tile bounds in pixels (narrowed to XY_BITS)
                         x_min = tile_x * CELL_W;
                         x_max = x_min + CELL_W - 1;
                         y_min = tile_y * CELL_H;
@@ -94,24 +102,26 @@ module path_checker #(
                         // clamp closest point on tile to circle center
                         if      (p1_x < x_min) closest_x = x_min;
                         else if (p1_x > x_max) closest_x = x_max;
-                        else                   closest_x = p1_x;
+                        else                   closest_x = p1_x[XY_BITS-1:0];
 
                         if      (p1_y < y_min) closest_y = y_min;
                         else if (p1_y > y_max) closest_y = y_max;
-                        else                   closest_y = p1_y;
+                        else                   closest_y = p1_y[XY_BITS-1:0];
 
-                        dx = closest_x - p1_x;
-                        dy = closest_y - p1_y;
+                        // signed deltas (limited width)
+                        dx = $signed(closest_x) - $signed(p1_x[XY_BITS-1:0]);
+                        dy = $signed(closest_y) - $signed(p1_y[XY_BITS-1:0]);
 
-                        if (dx*dx + dy*dy <= R2)
+                        // distance^2 with controlled width
+                        dist2 = dx*dx + dy*dy;
+
+                        if (dist2 <= R2)
                             p1_ok <= 1'b0;
                     end
                 end
             end
 
-            // -------------------------
             // Player 2: local neighborhood
-            // -------------------------
             for (ty = -WINDOW_TILES; ty <= WINDOW_TILES; ty = ty + 1) begin
                 integer tile_y;
                 tile_y = cy2 + ty;
@@ -136,22 +146,24 @@ module path_checker #(
 
                         if      (p2_x < x_min) closest_x = x_min;
                         else if (p2_x > x_max) closest_x = x_max;
-                        else                   closest_x = p2_x;
+                        else                   closest_x = p2_x[XY_BITS-1:0];
 
                         if      (p2_y < y_min) closest_y = y_min;
                         else if (p2_y > y_max) closest_y = y_max;
-                        else                   closest_y = p2_y;
+                        else                   closest_y = p2_y[XY_BITS-1:0];
 
-                        dx = closest_x - p2_x;
-                        dy = closest_y - p2_y;
+                        dx = $signed(closest_x) - $signed(p2_x[XY_BITS-1:0]);
+                        dy = $signed(closest_y) - $signed(p2_y[XY_BITS-1:0]);
 
-                        if (dx*dx + dy*dy <= R2)
+                        dist2 = dx*dx + dy*dy;
+
+                        if (dist2 <= R2)
                             p2_ok <= 1'b0;
                     end
                 end
             end
 
-            // latch results for this frame
+            // latch results for this frame (held until next new_frame)
             p1_life_lost <= ~p1_ok;
             p2_life_lost <= ~p2_ok;
         end
