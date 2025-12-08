@@ -178,27 +178,7 @@ module top_level
 
     assign cdc_valid = ~empty; //watch when empty. Ready immediately if something there
 
-    //----
-    //Filter 0: 1280x720 convolution of gaussian blur
-    logic [10:0] f0_h_count;  //h_count from filter0 module
-    logic [9:0] f0_v_count; //v_count from filter0 module
-    logic [15:0] f0_pixel; //pixel data from filter0 module
-    logic f0_valid; //valid signals for filter0 module
-    //full resolution filter
-    filter #(.K_SELECT(1),.HRES(1280),.VRES(720)) filtern(
-        .clk(clk_pixel),
-        .rst(sys_rst_pixel),
-        .data_in_valid(cdc_valid),
-        .pixel_data_in(cdc_pixel),
-        .h_count_in(cdc_h_count),
-        .v_count_in(cdc_v_count),
-        .data_out_valid(f0_valid),
-        .pixel_data_out(f0_pixel),
-        .h_count_out(f0_h_count),
-        .v_count_out(f0_v_count)
-    );
 
-    //----
     logic [10:0] lb_h_count;  //h_count to filter modules
     logic [9:0] lb_v_count; //v_count to filter modules
     logic [15:0] lb_pixel; //pixel data to filter modules
@@ -215,11 +195,11 @@ module top_level
             ds_v_count <= cdc_v_count;
             ds_pixel <= cdc_pixel;
             ds_valid <= cdc_valid;
-        end else begin
-            ds_h_count <= f0_h_count;
-            ds_v_count <= f0_v_count;
-            ds_pixel <= f0_pixel;
-            ds_valid <= f0_valid;
+        //end else begin
+        //    ds_h_count <= f0_h_count;
+        //    ds_v_count <= f0_v_count;
+        //    ds_pixel <= f0_pixel;
+        //    ds_valid <= f0_valid;
         end
     end
 
@@ -251,130 +231,13 @@ module top_level
 
     assign lb_pixel = lb_buffs[1]; //pass on only the middle one.
 
-    // //----
-    // //Create six different filters that all exist in parallel
-    // //The outputs of all six filters are fed into the unpacked arrays below:
-    // logic [10:0] f_h_count [5:0];  //h_count from filter modules
-    // logic [9:0] f_v_count [5:0]; //v_count from filter modules
-    // logic [15:0] f_pixel [5:0]; //pixel data from filter modules
-    // logic f_valid [5:0]; //valid signals for filter modules
-
-    // //using generate/genvar, create five *Different* instances of the
-    // //filter module (you'll write that).  Each filter will implement a different
-    // //kernel
-    // generate
-    //     genvar i;
-    //     for (i=0; i<6; i=i+1)begin
-    //         filter #(.K_SELECT(i),.HRES(320),.VRES(180))filterm(
-    //             .clk(clk_pixel),
-    //             .rst(sys_rst_pixel),
-    //             .data_in_valid(lb_valid),
-    //             .pixel_data_in(lb_pixel),
-    //             .h_count_in(lb_h_count),
-    //             .v_count_in(lb_v_count),
-    //             .data_out_valid(f_valid[i]),
-    //             .pixel_data_out(f_pixel[i]),
-    //             .h_count_out(f_h_count[i]),
-    //             .v_count_out(f_v_count[i])
-    //         );
-    //     end
-    // endgenerate
-
-    // //combine hor and vert signals from filters 4 and 5 for special signal:
-    // logic [7:0] fcomb_r, fcomb_g, fcomb_b;
-    // assign fcomb_r = (f_pixel[4][15:11]+f_pixel[5][15:11])>>1;
-    // assign fcomb_g = (f_pixel[4][10:5]+f_pixel[5][10:5])>>1;
-    // assign fcomb_b = (f_pixel[4][4:0]+f_pixel[5][4:0])>>1;
-
-    // //------
-    // //Choose which filter to use
-    // //based on values of sw[2:0] select which filter output gets handed on to the
-    // //next module. We must make sure to route h_count, v_count, pixels and valid signal
-    // // for each module.  Could have done this with a for loop as well!  Think
-    // // about it!
-    // logic [10:0] fmux_h_count; //h_count from filter mux
-    // logic [9:0]  fmux_v_count; //v_count from filter mux
-    // logic [15:0] fmux_pixel; //pixel data from filter mux
-    // logic fmux_valid; //data valid from filter mux
-
-    // //000 Identity Kernel
-    // //001 Gaussian Blur
-    // //010 Sharpen
-    // //011 Ridge Detection
-    // //100 Sobel Y-axis Edge Detection
-    // //101 Sobel X-axis Edge Detection
-    // //110 Total Sobel Edge Detection
-    // //111 Output of Line Buffer Directly (Helpful for debugging line buffer in first part)
-    // always_ff @(posedge clk_pixel)begin
-    //     case (sw[2:0])
-    //         3'b000: begin
-    //             fmux_h_count <= f_h_count[0];
-    //             fmux_v_count <= f_v_count[0];
-    //             fmux_pixel <= f_pixel[0];
-    //             fmux_valid <= f_valid[0];
-    //         end
-    //         3'b001: begin
-    //             fmux_h_count <= f_h_count[1];
-    //             fmux_v_count <= f_v_count[1];
-    //             fmux_pixel <= f_pixel[1];
-    //             fmux_valid <= f_valid[1];
-    //         end
-    //         3'b010: begin
-    //             fmux_h_count <= f_h_count[2];
-    //             fmux_v_count <= f_v_count[2];
-    //             fmux_pixel <= f_pixel[2];
-    //             fmux_valid <= f_valid[2];
-    //         end
-    //         3'b011: begin
-    //             fmux_h_count <= f_h_count[3];
-    //             fmux_v_count <= f_v_count[3];
-    //             fmux_pixel <= f_pixel[3];
-    //             fmux_valid <= f_valid[3];
-    //         end
-    //         3'b100: begin
-    //             fmux_h_count <= f_h_count[4];
-    //             fmux_v_count <= f_v_count[4];
-    //             fmux_pixel <= f_pixel[4];
-    //             fmux_valid <= f_valid[4];
-    //         end
-    //         3'b101: begin
-    //             fmux_h_count <= f_h_count[5];
-    //             fmux_v_count <= f_v_count[5];
-    //             fmux_pixel <= f_pixel[5];
-    //             fmux_valid <= f_valid[5];
-    //         end
-    //         3'b110: begin
-    //             fmux_h_count <= f_h_count[4];
-    //             fmux_v_count <= f_v_count[4];
-    //             fmux_pixel <= {fcomb_r[4:0],fcomb_g[5:0],fcomb_b[4:0]};
-    //             fmux_valid <= f_valid[4]&&f_valid[5];
-    //         end
-    //         default: begin
-    //             fmux_h_count <= lb_h_count;
-    //             fmux_v_count <= lb_v_count;
-    //             fmux_pixel <= lb_pixel;
-    //             fmux_valid <= lb_valid;
-    //         end
-    //     endcase
-    // end
+    
 
     localparam FB_DEPTH = 320*180;
     localparam FB_SIZE = $clog2(FB_DEPTH);
     logic [FB_SIZE-1:0] addra; //used to specify address to write to in frame buffer
     logic valid_camera_mem; //used to enable writing pixel data to frame buffer
     logic [15:0] camera_mem; //used to pass pixel data into frame buffer
-
-    //because the down sampling already happened upstream, there's no need to do here.
-    always_ff @(posedge clk_pixel) begin
-        if(fmux_valid) begin
-            addra <= fmux_h_count + fmux_v_count * 320;
-            camera_mem <= fmux_pixel;
-            valid_camera_mem <= 1;
-        end else begin
-            valid_camera_mem <= 0;
-        end
-    end
-    //end of new Lab 7 stuff.....
 
     //two-port BRAM used to hold image from camera.
     //The camera is producing video at 720p and 30fps, but we can't store all of that
@@ -684,20 +547,6 @@ module top_level
         .anode   ({ss0_an, ss1_an})
     );
 
-    ////////lab5 related code start 
-    //modified version of seven segment display for showing
-    // thresholds and selected channel
-    // special customized version
-    //lab05_ssc mssc(
-    //    .clk(clk_pixel),
-    //    .rst(sys_rst_pixel),
-    //    .lower_threshold(lower_threshold),
-    //    .upper_threshold(upper_threshold),
-    //    .channel_select(channel_sel),
-    //    .cathode(ss_c),
-    //    .anode({ss0_an, ss1_an})
-    //);
-    ////////lab5 related code end
 
     assign ss0_c = ss_c; //control upper four digit's cathodes!
     assign ss1_c = ss_c; //same as above but for lower four digits!
@@ -817,41 +666,6 @@ module top_level
         .frame_count(frame_count_hdmi)
     );
 
-
-    // Video Mux: select from the different display modes based on switch values
-    //used with switches for display selections
-    // logic [1:0] background_choice;
-    // logic [1:0] target_choice;
-
-    //assign background_choice = sw[5:4];
-    //assign target_choice =  sw[7:6];
-
-    // assign background_choice = sw[6:5]; //was [5:4]; not anymore
-    // assign target_choice =  {1'b0,sw[7]}; //was [7:6]; not anymore
-
-    //choose what background from the camera:
-    // * 'b00:  normal camera out
-    // * 'b01:  selected channel image in grayscale
-    // * 'b10:  masked pixel (all on if 1, all off if 0)
-    // * 'b11:  chroma channel with mask overtop as magenta
-    //
-    //then choose what to use with center of mass:
-    // * 'b00: nothing
-    // * 'b01: crosshair
-    // * 'b10: sprite on top
-    // * 'b11: nothing
-
-    // video_mux mvm(
-    //     .background_choice(background_choice), //choose background
-    //     .target_choice(target_choice), //choose target
-    //     .camera_pixel({fb_red, fb_green, fb_blue}), 
-    //     .camera_y_channel(y), //luminance 
-    //     .selected_channel(selected_channel), //current channel being drawn 
-    //     .thresholded_pixel(mask), //one bit mask signal 
-    //     .crosshair({ch_red, ch_green, ch_blue}), 
-    //     .com_sprite_pixel({img_red, img_green, img_blue}), 
-    //     .muxed_pixel({base_red, base_green, base_blue})
-    // );
 
     localparam int GRID_W = 40;
     localparam int GRID_H = 40;

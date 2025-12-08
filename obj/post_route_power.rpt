@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date             : Sun Dec  7 19:58:11 2025
-| Host             : eecs-digital-09 running 64-bit Ubuntu 24.04.3 LTS
+| Date             : Sun Dec  7 20:24:13 2025
+| Host             : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7s50csga324-1
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.462        |
+| Total On-Chip Power (W)  | 0.467        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.390        |
+| Dynamic (W)              | 0.395        |
 | Device Static (W)        | 0.073        |
 | Effective TJA (C/W)      | 4.9          |
 | Max Ambient (C)          | 82.7         |
@@ -52,22 +52,22 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.016 |       10 |       --- |             --- |
-| Slice Logic             |     0.004 |    23705 |       --- |             --- |
-|   LUT as Logic          |     0.003 |    13676 |     32600 |           41.95 |
-|   CARRY4                |    <0.001 |      502 |      8150 |            6.16 |
-|   Register              |    <0.001 |     4543 |     65200 |            6.97 |
+| Clocks                  |     0.013 |       10 |       --- |             --- |
+| Slice Logic             |     0.007 |    12897 |       --- |             --- |
+|   LUT as Logic          |     0.006 |     5227 |     32600 |           16.03 |
+|   F7/F8 Muxes           |    <0.001 |     1127 |     32600 |            3.46 |
+|   CARRY4                |    <0.001 |      248 |      8150 |            3.04 |
+|   Register              |    <0.001 |     4479 |     65200 |            6.87 |
 |   LUT as Shift Register |    <0.001 |       13 |      9600 |            0.14 |
-|   F7/F8 Muxes           |    <0.001 |     3279 |     32600 |           10.06 |
 |   Others                |     0.000 |       97 |       --- |             --- |
-| Signals                 |     0.005 |    14333 |       --- |             --- |
+| Signals                 |     0.010 |     6508 |       --- |             --- |
 | Block RAM               |     0.003 |      3.5 |        75 |            4.67 |
 | MMCM                    |     0.105 |        1 |         5 |           20.00 |
 | PLL                     |     0.101 |        1 |         5 |           20.00 |
-| DSPs                    |     0.004 |       68 |       120 |           56.67 |
-| I/O                     |     0.151 |       69 |       210 |           32.86 |
+| DSPs                    |     0.006 |       10 |       120 |            8.33 |
+| I/O                     |     0.150 |       69 |       210 |           32.86 |
 | Static Power            |     0.073 |          |           |                 |
-| Total                   |     0.462 |          |           |                 |
+| Total                   |     0.467 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -77,9 +77,9 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.050 |       0.040 |      0.010 |       NA    | Unspecified | NA         |
-| Vccaux    |       1.800 |     0.125 |       0.112 |      0.013 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.046 |       0.045 |      0.001 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.057 |       0.046 |      0.010 |       NA    | Unspecified | NA         |
+| Vccaux    |       1.800 |     0.124 |       0.112 |      0.013 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.045 |       0.044 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -151,17 +151,18 @@ Table of Contents
 +------------------------------------------+-----------+
 | Name                                     | Power (W) |
 +------------------------------------------+-----------+
-| top_level                                |     0.390 |
+| top_level                                |     0.395 |
 |   IOBUF_sda                              |     0.003 |
 |   cdc_fifo                               |     0.002 |
 |     gnuram_async_fifo.xpm_fifo_base_inst |     0.002 |
+|   checker_inst                           |     0.007 |
 |   crw                                    |     0.003 |
 |     sccb_c                               |     0.002 |
 |   frame_buffer                           |     0.003 |
-|   path_left                              |     0.004 |
-|   path_right                             |     0.004 |
+|   path_left                              |     0.005 |
+|   path_right                             |     0.005 |
 |   rgbtoycrcb_m                           |     0.003 |
-|   vsg                                    |     0.002 |
+|   vsg                                    |     0.001 |
 |   wizard_hdmi                            |     0.105 |
 |   wizard_migcam                          |     0.102 |
 +------------------------------------------+-----------+

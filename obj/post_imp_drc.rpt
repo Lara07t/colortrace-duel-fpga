@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 19:58:12 2025
-| Host         : eecs-digital-09 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Sun Dec  7 20:24:15 2025
+| Host         : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_drc -file obj/post_imp_drc.rpt
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -24,13 +24,12 @@ Table of Contents
       Design limits: <entire design considered>
            Ruledeck: default
              Max checks: <unlimited>
-             Checks found: 159
+             Checks found: 15
 +-----------+----------+--------------------------------------------------------------+--------+
 | Rule      | Severity | Description                                                  | Checks |
 +-----------+----------+--------------------------------------------------------------+--------+
-| DPIP-1    | Warning  | Input pipelining                                             | 153    |
+| DPIP-1    | Warning  | Input pipelining                                             | 12     |
 | PDCN-137  | Warning  | enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff | 2      |
-| REQP-1723 | Warning  | DSP_Abus_sign_bit_restriction                                | 3      |
 | RTSTAT-10 | Warning  | No routable loads                                            | 1      |
 +-----------+----------+--------------------------------------------------------------+--------+
 
@@ -38,792 +37,72 @@ Table of Contents
 -----------------
 DPIP-1#1 Warning
 Input pipelining  
-DSP checker_inst/p1_ok1 input checker_inst/p1_ok1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP checker_inst/hit_tile1 input checker_inst/hit_tile1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#2 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2 input checker_inst/p1_ok2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP checker_inst/hit_tile1 input checker_inst/hit_tile1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#3 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__0 input checker_inst/p1_ok2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP checker_inst/hit_tile2 input checker_inst/hit_tile2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#4 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__0 input checker_inst/p1_ok2__0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP checker_inst/hit_tile2 input checker_inst/hit_tile2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#5 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__1 input checker_inst/p1_ok2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4 input red4/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#6 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__1 input checker_inst/p1_ok2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4 input red4/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#7 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__10 input checker_inst/p1_ok2__10/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4__0 input red4__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#8 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__10 input checker_inst/p1_ok2__10/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4__0 input red4__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#9 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__10 input checker_inst/p1_ok2__10/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4__1 input red4__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#10 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__11 input checker_inst/p1_ok2__11/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP red4__1 input red4__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#11 Warning
 Input pipelining  
-DSP checker_inst/p1_ok2__11 input checker_inst/p1_ok2__11/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#12 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__11 input checker_inst/p1_ok2__11/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#13 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__12 input checker_inst/p1_ok2__12/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#14 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__12 input checker_inst/p1_ok2__12/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#15 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__12 input checker_inst/p1_ok2__12/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#16 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__13 input checker_inst/p1_ok2__13/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#17 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__13 input checker_inst/p1_ok2__13/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#18 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__13 input checker_inst/p1_ok2__13/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#19 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__14 input checker_inst/p1_ok2__14/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#20 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__14 input checker_inst/p1_ok2__14/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#21 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__15 input checker_inst/p1_ok2__15/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#22 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__15 input checker_inst/p1_ok2__15/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#23 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__15 input checker_inst/p1_ok2__15/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#24 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__16 input checker_inst/p1_ok2__16/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#25 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__16 input checker_inst/p1_ok2__16/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#26 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__16 input checker_inst/p1_ok2__16/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#27 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__17 input checker_inst/p1_ok2__17/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#28 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__17 input checker_inst/p1_ok2__17/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#29 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__17 input checker_inst/p1_ok2__17/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#30 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__18 input checker_inst/p1_ok2__18/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#31 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__18 input checker_inst/p1_ok2__18/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#32 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__18 input checker_inst/p1_ok2__18/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#33 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__19 input checker_inst/p1_ok2__19/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#34 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__19 input checker_inst/p1_ok2__19/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#35 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__19 input checker_inst/p1_ok2__19/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#36 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__2 input checker_inst/p1_ok2__2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#37 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__2 input checker_inst/p1_ok2__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#38 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__20 input checker_inst/p1_ok2__20/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#39 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__20 input checker_inst/p1_ok2__20/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#40 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__20 input checker_inst/p1_ok2__20/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#41 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__21 input checker_inst/p1_ok2__21/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#42 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__21 input checker_inst/p1_ok2__21/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#43 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__21 input checker_inst/p1_ok2__21/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#44 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__22 input checker_inst/p1_ok2__22/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#45 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__22 input checker_inst/p1_ok2__22/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#46 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__22 input checker_inst/p1_ok2__22/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#47 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__3 input checker_inst/p1_ok2__3/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#48 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__3 input checker_inst/p1_ok2__3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#49 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__4 input checker_inst/p1_ok2__4/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#50 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__4 input checker_inst/p1_ok2__4/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#51 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__4 input checker_inst/p1_ok2__4/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#52 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__5 input checker_inst/p1_ok2__5/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#53 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__5 input checker_inst/p1_ok2__5/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#54 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__5 input checker_inst/p1_ok2__5/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#55 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__6 input checker_inst/p1_ok2__6/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#56 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__6 input checker_inst/p1_ok2__6/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#57 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__6 input checker_inst/p1_ok2__6/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#58 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__7 input checker_inst/p1_ok2__7/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#59 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__7 input checker_inst/p1_ok2__7/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#60 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__7 input checker_inst/p1_ok2__7/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#61 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__8 input checker_inst/p1_ok2__8/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#62 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__8 input checker_inst/p1_ok2__8/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#63 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__8 input checker_inst/p1_ok2__8/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#64 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__9 input checker_inst/p1_ok2__9/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#65 Warning
-Input pipelining  
-DSP checker_inst/p1_ok2__9 input checker_inst/p1_ok2__9/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#66 Warning
-Input pipelining  
-DSP checker_inst/p1_ok3 input checker_inst/p1_ok3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#67 Warning
-Input pipelining  
-DSP checker_inst/p1_ok3__0 input checker_inst/p1_ok3__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#68 Warning
-Input pipelining  
-DSP checker_inst/p1_ok3__1 input checker_inst/p1_ok3__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#69 Warning
-Input pipelining  
-DSP checker_inst/p1_ok3__2 input checker_inst/p1_ok3__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#70 Warning
-Input pipelining  
-DSP checker_inst/p1_ok3__3 input checker_inst/p1_ok3__3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#71 Warning
-Input pipelining  
-DSP checker_inst/p2_ok1 input checker_inst/p2_ok1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#72 Warning
-Input pipelining  
-DSP checker_inst/p2_ok1 input checker_inst/p2_ok1/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#73 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2 input checker_inst/p2_ok2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#74 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2 input checker_inst/p2_ok2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#75 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__0 input checker_inst/p2_ok2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#76 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__0 input checker_inst/p2_ok2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#77 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__1 input checker_inst/p2_ok2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#78 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__1 input checker_inst/p2_ok2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#79 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__10 input checker_inst/p2_ok2__10/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#80 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__10 input checker_inst/p2_ok2__10/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#81 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__10 input checker_inst/p2_ok2__10/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#82 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__11 input checker_inst/p2_ok2__11/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#83 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__11 input checker_inst/p2_ok2__11/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#84 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__12 input checker_inst/p2_ok2__12/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#85 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__12 input checker_inst/p2_ok2__12/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#86 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__12 input checker_inst/p2_ok2__12/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#87 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__13 input checker_inst/p2_ok2__13/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#88 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__13 input checker_inst/p2_ok2__13/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#89 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__14 input checker_inst/p2_ok2__14/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#90 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__14 input checker_inst/p2_ok2__14/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#91 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__14 input checker_inst/p2_ok2__14/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#92 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__15 input checker_inst/p2_ok2__15/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#93 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__15 input checker_inst/p2_ok2__15/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#94 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__15 input checker_inst/p2_ok2__15/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#95 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__16 input checker_inst/p2_ok2__16/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#96 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__16 input checker_inst/p2_ok2__16/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#97 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__17 input checker_inst/p2_ok2__17/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#98 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__17 input checker_inst/p2_ok2__17/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#99 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__17 input checker_inst/p2_ok2__17/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#100 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__18 input checker_inst/p2_ok2__18/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#101 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__18 input checker_inst/p2_ok2__18/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#102 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__18 input checker_inst/p2_ok2__18/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#103 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__19 input checker_inst/p2_ok2__19/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#104 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__19 input checker_inst/p2_ok2__19/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#105 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__19 input checker_inst/p2_ok2__19/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#106 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__2 input checker_inst/p2_ok2__2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#107 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__2 input checker_inst/p2_ok2__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#108 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__20 input checker_inst/p2_ok2__20/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#109 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__20 input checker_inst/p2_ok2__20/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#110 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__20 input checker_inst/p2_ok2__20/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#111 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__21 input checker_inst/p2_ok2__21/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#112 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__21 input checker_inst/p2_ok2__21/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#113 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__21 input checker_inst/p2_ok2__21/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#114 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__22 input checker_inst/p2_ok2__22/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#115 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__22 input checker_inst/p2_ok2__22/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#116 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__22 input checker_inst/p2_ok2__22/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#117 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__3 input checker_inst/p2_ok2__3/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#118 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__3 input checker_inst/p2_ok2__3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#119 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__3 input checker_inst/p2_ok2__3/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#120 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__4 input checker_inst/p2_ok2__4/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#121 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__4 input checker_inst/p2_ok2__4/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#122 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__4 input checker_inst/p2_ok2__4/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#123 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__5 input checker_inst/p2_ok2__5/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#124 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__5 input checker_inst/p2_ok2__5/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#125 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__5 input checker_inst/p2_ok2__5/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#126 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__6 input checker_inst/p2_ok2__6/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#127 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__6 input checker_inst/p2_ok2__6/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#128 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__7 input checker_inst/p2_ok2__7/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#129 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__7 input checker_inst/p2_ok2__7/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#130 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__7 input checker_inst/p2_ok2__7/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#131 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__8 input checker_inst/p2_ok2__8/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#132 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__8 input checker_inst/p2_ok2__8/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#133 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__9 input checker_inst/p2_ok2__9/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#134 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__9 input checker_inst/p2_ok2__9/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#135 Warning
-Input pipelining  
-DSP checker_inst/p2_ok2__9 input checker_inst/p2_ok2__9/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#136 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3 input checker_inst/p2_ok3/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#137 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3 input checker_inst/p2_ok3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#138 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__0 input checker_inst/p2_ok3__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#139 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__0 input checker_inst/p2_ok3__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#140 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__1 input checker_inst/p2_ok3__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#141 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__1 input checker_inst/p2_ok3__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#142 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__2 input checker_inst/p2_ok3__2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#143 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__2 input checker_inst/p2_ok3__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#144 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__3 input checker_inst/p2_ok3__3/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#145 Warning
-Input pipelining  
-DSP checker_inst/p2_ok3__3 input checker_inst/p2_ok3__3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#146 Warning
-Input pipelining  
-DSP red4 input red4/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#147 Warning
-Input pipelining  
-DSP red4 input red4/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#148 Warning
-Input pipelining  
-DSP red4__0 input red4__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#149 Warning
-Input pipelining  
-DSP red4__0 input red4__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#150 Warning
-Input pipelining  
-DSP red4__1 input red4__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#151 Warning
-Input pipelining  
-DSP red4__1 input red4__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#152 Warning
-Input pipelining  
 DSP red4__2 input red4__2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
-DPIP-1#153 Warning
+DPIP-1#12 Warning
 Input pipelining  
 DSP red4__2 input red4__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 PDCN-137#1 Warning
 enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X2Y10 has BlockRam (frame_buffer/BRAM_reg_0_0) with RAM_EXTENSION_A attribute set to LOWER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
+RAMB36E1 site RAMB36_X0Y0 has BlockRam (frame_buffer/BRAM_reg_0_0) with RAM_EXTENSION_A attribute set to LOWER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
 Related violations: <none>
 
 PDCN-137#2 Warning
 enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X2Y11 has BlockRam (frame_buffer/BRAM_reg_1_0) with RAM_EXTENSION_A attribute set to UPPER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
-Related violations: <none>
-
-REQP-1723#1 Warning
-DSP_Abus_sign_bit_restriction  
-checker_inst/p1_ok1: When using the PreAdder and USE_DPORT is TRUE, the A operand should be restricted to 24 bit two's complement (and sign extended) to avoid over/underflow in the pre-add stage.
-Related violations: <none>
-
-REQP-1723#2 Warning
-DSP_Abus_sign_bit_restriction  
-checker_inst/p1_ok3: When using the PreAdder and USE_DPORT is TRUE, the A operand should be restricted to 24 bit two's complement (and sign extended) to avoid over/underflow in the pre-add stage.
-Related violations: <none>
-
-REQP-1723#3 Warning
-DSP_Abus_sign_bit_restriction  
-checker_inst/p2_ok2__8: When using the PreAdder and USE_DPORT is TRUE, the A operand should be restricted to 24 bit two's complement (and sign extended) to avoid over/underflow in the pre-add stage.
+RAMB36E1 site RAMB36_X0Y1 has BlockRam (frame_buffer/BRAM_reg_1_0) with RAM_EXTENSION_A attribute set to UPPER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
 Related violations: <none>
 
 RTSTAT-10#1 Warning
