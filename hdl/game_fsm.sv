@@ -1,14 +1,15 @@
 `default_nettype none
 module game_fsm #(
     parameter LIVES         = 3,
-    parameter PAUSE_FRAMES  = 120, // ~2 sec @ 60fps
-    parameter BLINK_PERIOD  = 15   // toggle every 15 frames
+    parameter PAUSE_FRAMES  = 120, // ~2 sec @ 60fps between life loss and resume
+    parameter BLINK_PERIOD  = 15,  // toggle every 15 frames
+    parameter WARMUP_FRAMES = 120  // ~2 sec after reset before life loss is enabled
 )(
     input  wire clk,
     input  wire rst,
     input  wire new_frame,
 
-    // From path checker 
+    // From path checker: 1 = player is off-path this frame
     input  wire p1_life_lost,
     input  wire p2_life_lost,
 
@@ -30,21 +31,37 @@ module game_fsm #(
 
     state_t cs, ns;
 
-    logic [7:0] pause_ctr;  // counts frames in LIFE_LOSS
-    logic [7:0] blink_ctr;  // counts frames between toggles
+    logic [7:0]  pause_ctr;   // counts frames in LIFE_LOSS
+    logic [7:0]  blink_ctr;   // counts frames between blink toggles
     logic        blink_flag;
-    logic        hit_p1, hit_p2; // who got hit
 
+    // Warm-up counter: how many frames since reset
+    logic [15:0] warmup_ctr;
+    logic        life_loss_enabled;
+
+    // Latched info: who was hit for this LIFE_LOSS phase
+    logic hit_p1_reg, hit_p2_reg;
+
+    // Sequential logic
     always_ff @(posedge clk) begin
         if (rst) begin
-            cs        <= INIT;
-            p1_lives  <= LIVES;
-            p2_lives  <= LIVES;
-            pause_ctr <= 0;
-            blink_ctr <= 0;
+            cs         <= INIT;
+            p1_lives   <= LIVES[1:0];
+            p2_lives   <= LIVES[1:0];
+            pause_ctr  <= 0;
+            blink_ctr  <= 0;
             blink_flag <= 0;
+            hit_p1_reg <= 1'b0;
+            hit_p2_reg <= 1'b0;
+            warmup_ctr <= 16'd0;
         end else begin
             cs <= ns;
+
+            // Warm-up frame counter: starts right after reset
+            if (new_frame && cs != GAME_OVER) begin
+                if (warmup_ctr < WARMUP_FRAMES)
+                    warmup_ctr <= warmup_ctr + 1;
+            end
 
             // Count pause frames in LIFE_LOSS
             if (cs == LIFE_LOSS && new_frame)
@@ -65,21 +82,29 @@ module game_fsm #(
                 blink_flag <= 0;
             end
 
-            // Decrement lives entry to LIFE_LOSS
+            // Handle lives + latch who was hit on transition PLAY -> LIFE_LOSS
             if (cs == PLAY && ns == LIFE_LOSS) begin
-                if (hit_p1 && p1_lives > 0)
+                hit_p1_reg <= p1_life_lost;
+                hit_p2_reg <= p2_life_lost;
+
+                if (p1_life_lost && p1_lives > 0)
                     p1_lives <= p1_lives - 1;
-                if (hit_p2 && p2_lives > 0)
+                if (p2_life_lost && p2_lives > 0)
                     p2_lives <= p2_lives - 1;
+            end else if (cs == LIFE_LOSS && ns != LIFE_LOSS) begin
+                // Leaving LIFE_LOSS: clear hit info
+                hit_p1_reg <= 1'b0;
+                hit_p2_reg <= 1'b0;
             end
         end
     end
 
+    assign life_loss_enabled = (warmup_ctr >= WARMUP_FRAMES);
+
+    // Combinational next-state logic
     always_comb begin
-        ns = cs;
-        winner = 0;
-        hit_p1 = 1'b0;
-        hit_p2 = 1'b0;
+        ns     = cs;
+        winner = 2'd0;
 
         case (cs)
 
@@ -88,19 +113,27 @@ module game_fsm #(
                 ns = READY;
             end
 
-            // One-frame state
+            // Wait here until:
+            //  1) warm-up finished, AND
+            //  2) both players are on-path (no life_lost)
             READY: begin
-                ns = PLAY;
+                if (!life_loss_enabled) begin
+                    ns = READY; // still warming up
+                end else if (!p1_life_lost && !p2_life_lost) begin
+                    ns = PLAY;  // both safe → start game
+                end else begin
+                    ns = READY; // someone is off path, keep waiting
+                end
             end
+
+            // Active play: now we react to hits
             PLAY: begin
-                if (p1_life_lost || p2_life_lost) begin
-                    hit_p1 = p1_life_lost;
-                    hit_p2 = p2_life_lost;
+                if (life_loss_enabled && (p1_life_lost || p2_life_lost)) begin
                     ns = LIFE_LOSS;
                 end
             end
 
-            // Blink pause
+            // Blink pause after a life loss
             LIFE_LOSS: begin
                 if (p1_lives == 0 || p2_lives == 0)
                     ns = GAME_OVER;
@@ -110,8 +143,8 @@ module game_fsm #(
 
             //freeze until reset
             GAME_OVER: begin
-                if (p1_lives == 0) winner = 2;
-                else               winner = 1;
+                if (p1_lives == 0) winner = 2; // P2 wins
+                else               winner = 1; // P1 wins
 
                 if (rst)
                     ns = INIT;
@@ -120,12 +153,12 @@ module game_fsm #(
         endcase
     end
 
-    //blink outputs 
-    assign blink_p1 = (cs == LIFE_LOSS && hit_p1) ? blink_flag : 1'b0;
-    assign blink_p2 = (cs == LIFE_LOSS && hit_p2) ? blink_flag : 1'b0;
+    // Outputs
+    // blink outputs – use latched hit info
+    assign blink_p1 = (cs == LIFE_LOSS && hit_p1_reg) ? blink_flag : 1'b0;
+    assign blink_p2 = (cs == LIFE_LOSS && hit_p2_reg) ? blink_flag : 1'b0;
 
     assign state = cs;
 
 endmodule
 `default_nettype wire
-

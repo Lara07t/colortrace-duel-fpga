@@ -1000,8 +1000,11 @@ module top_level
 
     // Only count hits while in PLAY state
     logic [2:0] game_state;
-    assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
-    assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
+    // assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
+    // assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
+
+    assign p1_life_lost = p1_life_lost_raw;  // from path_checker
+    assign p2_life_lost = p2_life_lost_raw;
 
     path_checker #(
         .GRID_W(GRID_W),
