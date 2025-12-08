@@ -251,112 +251,112 @@ module top_level
 
     assign lb_pixel = lb_buffs[1]; //pass on only the middle one.
 
-    //----
-    //Create six different filters that all exist in parallel
-    //The outputs of all six filters are fed into the unpacked arrays below:
-    logic [10:0] f_h_count [5:0];  //h_count from filter modules
-    logic [9:0] f_v_count [5:0]; //v_count from filter modules
-    logic [15:0] f_pixel [5:0]; //pixel data from filter modules
-    logic f_valid [5:0]; //valid signals for filter modules
+    // //----
+    // //Create six different filters that all exist in parallel
+    // //The outputs of all six filters are fed into the unpacked arrays below:
+    // logic [10:0] f_h_count [5:0];  //h_count from filter modules
+    // logic [9:0] f_v_count [5:0]; //v_count from filter modules
+    // logic [15:0] f_pixel [5:0]; //pixel data from filter modules
+    // logic f_valid [5:0]; //valid signals for filter modules
 
-    //using generate/genvar, create five *Different* instances of the
-    //filter module (you'll write that).  Each filter will implement a different
-    //kernel
-    generate
-        genvar i;
-        for (i=0; i<6; i=i+1)begin
-            filter #(.K_SELECT(i),.HRES(320),.VRES(180))filterm(
-                .clk(clk_pixel),
-                .rst(sys_rst_pixel),
-                .data_in_valid(lb_valid),
-                .pixel_data_in(lb_pixel),
-                .h_count_in(lb_h_count),
-                .v_count_in(lb_v_count),
-                .data_out_valid(f_valid[i]),
-                .pixel_data_out(f_pixel[i]),
-                .h_count_out(f_h_count[i]),
-                .v_count_out(f_v_count[i])
-            );
-        end
-    endgenerate
+    // //using generate/genvar, create five *Different* instances of the
+    // //filter module (you'll write that).  Each filter will implement a different
+    // //kernel
+    // generate
+    //     genvar i;
+    //     for (i=0; i<6; i=i+1)begin
+    //         filter #(.K_SELECT(i),.HRES(320),.VRES(180))filterm(
+    //             .clk(clk_pixel),
+    //             .rst(sys_rst_pixel),
+    //             .data_in_valid(lb_valid),
+    //             .pixel_data_in(lb_pixel),
+    //             .h_count_in(lb_h_count),
+    //             .v_count_in(lb_v_count),
+    //             .data_out_valid(f_valid[i]),
+    //             .pixel_data_out(f_pixel[i]),
+    //             .h_count_out(f_h_count[i]),
+    //             .v_count_out(f_v_count[i])
+    //         );
+    //     end
+    // endgenerate
 
-    //combine hor and vert signals from filters 4 and 5 for special signal:
-    logic [7:0] fcomb_r, fcomb_g, fcomb_b;
-    assign fcomb_r = (f_pixel[4][15:11]+f_pixel[5][15:11])>>1;
-    assign fcomb_g = (f_pixel[4][10:5]+f_pixel[5][10:5])>>1;
-    assign fcomb_b = (f_pixel[4][4:0]+f_pixel[5][4:0])>>1;
+    // //combine hor and vert signals from filters 4 and 5 for special signal:
+    // logic [7:0] fcomb_r, fcomb_g, fcomb_b;
+    // assign fcomb_r = (f_pixel[4][15:11]+f_pixel[5][15:11])>>1;
+    // assign fcomb_g = (f_pixel[4][10:5]+f_pixel[5][10:5])>>1;
+    // assign fcomb_b = (f_pixel[4][4:0]+f_pixel[5][4:0])>>1;
 
-    //------
-    //Choose which filter to use
-    //based on values of sw[2:0] select which filter output gets handed on to the
-    //next module. We must make sure to route h_count, v_count, pixels and valid signal
-    // for each module.  Could have done this with a for loop as well!  Think
-    // about it!
-    logic [10:0] fmux_h_count; //h_count from filter mux
-    logic [9:0]  fmux_v_count; //v_count from filter mux
-    logic [15:0] fmux_pixel; //pixel data from filter mux
-    logic fmux_valid; //data valid from filter mux
+    // //------
+    // //Choose which filter to use
+    // //based on values of sw[2:0] select which filter output gets handed on to the
+    // //next module. We must make sure to route h_count, v_count, pixels and valid signal
+    // // for each module.  Could have done this with a for loop as well!  Think
+    // // about it!
+    // logic [10:0] fmux_h_count; //h_count from filter mux
+    // logic [9:0]  fmux_v_count; //v_count from filter mux
+    // logic [15:0] fmux_pixel; //pixel data from filter mux
+    // logic fmux_valid; //data valid from filter mux
 
-    //000 Identity Kernel
-    //001 Gaussian Blur
-    //010 Sharpen
-    //011 Ridge Detection
-    //100 Sobel Y-axis Edge Detection
-    //101 Sobel X-axis Edge Detection
-    //110 Total Sobel Edge Detection
-    //111 Output of Line Buffer Directly (Helpful for debugging line buffer in first part)
-    always_ff @(posedge clk_pixel)begin
-        case (sw[2:0])
-            3'b000: begin
-                fmux_h_count <= f_h_count[0];
-                fmux_v_count <= f_v_count[0];
-                fmux_pixel <= f_pixel[0];
-                fmux_valid <= f_valid[0];
-            end
-            3'b001: begin
-                fmux_h_count <= f_h_count[1];
-                fmux_v_count <= f_v_count[1];
-                fmux_pixel <= f_pixel[1];
-                fmux_valid <= f_valid[1];
-            end
-            3'b010: begin
-                fmux_h_count <= f_h_count[2];
-                fmux_v_count <= f_v_count[2];
-                fmux_pixel <= f_pixel[2];
-                fmux_valid <= f_valid[2];
-            end
-            3'b011: begin
-                fmux_h_count <= f_h_count[3];
-                fmux_v_count <= f_v_count[3];
-                fmux_pixel <= f_pixel[3];
-                fmux_valid <= f_valid[3];
-            end
-            3'b100: begin
-                fmux_h_count <= f_h_count[4];
-                fmux_v_count <= f_v_count[4];
-                fmux_pixel <= f_pixel[4];
-                fmux_valid <= f_valid[4];
-            end
-            3'b101: begin
-                fmux_h_count <= f_h_count[5];
-                fmux_v_count <= f_v_count[5];
-                fmux_pixel <= f_pixel[5];
-                fmux_valid <= f_valid[5];
-            end
-            3'b110: begin
-                fmux_h_count <= f_h_count[4];
-                fmux_v_count <= f_v_count[4];
-                fmux_pixel <= {fcomb_r[4:0],fcomb_g[5:0],fcomb_b[4:0]};
-                fmux_valid <= f_valid[4]&&f_valid[5];
-            end
-            default: begin
-                fmux_h_count <= lb_h_count;
-                fmux_v_count <= lb_v_count;
-                fmux_pixel <= lb_pixel;
-                fmux_valid <= lb_valid;
-            end
-        endcase
-    end
+    // //000 Identity Kernel
+    // //001 Gaussian Blur
+    // //010 Sharpen
+    // //011 Ridge Detection
+    // //100 Sobel Y-axis Edge Detection
+    // //101 Sobel X-axis Edge Detection
+    // //110 Total Sobel Edge Detection
+    // //111 Output of Line Buffer Directly (Helpful for debugging line buffer in first part)
+    // always_ff @(posedge clk_pixel)begin
+    //     case (sw[2:0])
+    //         3'b000: begin
+    //             fmux_h_count <= f_h_count[0];
+    //             fmux_v_count <= f_v_count[0];
+    //             fmux_pixel <= f_pixel[0];
+    //             fmux_valid <= f_valid[0];
+    //         end
+    //         3'b001: begin
+    //             fmux_h_count <= f_h_count[1];
+    //             fmux_v_count <= f_v_count[1];
+    //             fmux_pixel <= f_pixel[1];
+    //             fmux_valid <= f_valid[1];
+    //         end
+    //         3'b010: begin
+    //             fmux_h_count <= f_h_count[2];
+    //             fmux_v_count <= f_v_count[2];
+    //             fmux_pixel <= f_pixel[2];
+    //             fmux_valid <= f_valid[2];
+    //         end
+    //         3'b011: begin
+    //             fmux_h_count <= f_h_count[3];
+    //             fmux_v_count <= f_v_count[3];
+    //             fmux_pixel <= f_pixel[3];
+    //             fmux_valid <= f_valid[3];
+    //         end
+    //         3'b100: begin
+    //             fmux_h_count <= f_h_count[4];
+    //             fmux_v_count <= f_v_count[4];
+    //             fmux_pixel <= f_pixel[4];
+    //             fmux_valid <= f_valid[4];
+    //         end
+    //         3'b101: begin
+    //             fmux_h_count <= f_h_count[5];
+    //             fmux_v_count <= f_v_count[5];
+    //             fmux_pixel <= f_pixel[5];
+    //             fmux_valid <= f_valid[5];
+    //         end
+    //         3'b110: begin
+    //             fmux_h_count <= f_h_count[4];
+    //             fmux_v_count <= f_v_count[4];
+    //             fmux_pixel <= {fcomb_r[4:0],fcomb_g[5:0],fcomb_b[4:0]};
+    //             fmux_valid <= f_valid[4]&&f_valid[5];
+    //         end
+    //         default: begin
+    //             fmux_h_count <= lb_h_count;
+    //             fmux_v_count <= lb_v_count;
+    //             fmux_pixel <= lb_pixel;
+    //             fmux_valid <= lb_valid;
+    //         end
+    //     endcase
+    // end
 
     localparam FB_DEPTH = 320*180;
     localparam FB_SIZE = $clog2(FB_DEPTH);
@@ -466,9 +466,9 @@ module top_level
     assign cb = {!cb_full[7],cb_full[6:0]};
 
 
-    logic [10:0] h_d1, h_d2, h_d3, h_d4;
-    logic [9:0]  v_d1, v_d2, v_d3, v_d4;
-    logic active_d1, active_d2, active_d3, active_d4;
+    logic [10:0] h_d1, h_d2, h_d3, h_d4, h_d5, h_d6;
+    logic [9:0]  v_d1, v_d2, v_d3, v_d4, v_d5, v_d6;
+    logic        active_d1, active_d2, active_d3, active_d4, active_d5, active_d6;
 
 
     // logic [10:0] h_d1;
@@ -488,32 +488,58 @@ module top_level
     // end
 
     // pipelined
+
     always_ff @(posedge clk_pixel) begin
-        if (sys_rst_pixel) begin
-            h_d1 <= 0; h_d2 <= 0; h_d3 <= 0; h_d4 <= 0;
-            v_d1 <= 0; v_d2 <= 0; v_d3 <= 0; v_d4 <= 0;
-            active_d1 <= 1'b0;
-            active_d2 <= 1'b0;
-            active_d3 <= 1'b0;
-            active_d4 <= 1'b0;
-        end else begin
-            h_d1      <= h_count_hdmi;
-            v_d1      <= v_count_hdmi;
-            active_d1 <= active_draw_hdmi;
+    if (sys_rst_pixel) begin
+        h_d1 <= 0; h_d2 <= 0; h_d3 <= 0; h_d4 <= 0; h_d5 <= 0; h_d6 <= 0;
+        v_d1 <= 0; v_d2 <= 0; v_d3 <= 0; v_d4 <= 0; v_d5 <= 0; v_d6 <= 0;
+        active_d1 <= 1'b0;
+        active_d2 <= 1'b0;
+        active_d3 <= 1'b0;
+        active_d4 <= 1'b0;
+        active_d5 <= 1'b0;
+        active_d6 <= 1'b0;
+    end else begin
+        // stage 1: raw HDMI counts
+        h_d1      <= h_count_hdmi;
+        v_d1      <= v_count_hdmi;
+        active_d1 <= active_draw_hdmi;
 
-            h_d2      <= h_d1;
-            v_d2      <= v_d1;
-            active_d2 <= active_d1;
-
-            h_d3      <= h_d2;
-            v_d3      <= v_d2;
-            active_d3 <= active_d2;
-
-            h_d4      <= h_d3;
-            v_d4      <= v_d3;
-            active_d4 <= active_d3;
+        // stages 2..6
+        h_d2      <= h_d1;  v_d2      <= v_d1;  active_d2 <= active_d1;
+        h_d3      <= h_d2;  v_d3      <= v_d2;  active_d3 <= active_d2;
+        h_d4      <= h_d3;  v_d4      <= v_d3;  active_d4 <= active_d3;
+        h_d5      <= h_d4;  v_d5      <= v_d4;  active_d5 <= active_d4;
+        h_d6      <= h_d5;  v_d6      <= v_d5;  active_d6 <= active_d5;
         end
     end
+
+    // always_ff @(posedge clk_pixel) begin
+    //     if (sys_rst_pixel) begin
+    //         h_d1 <= 0; h_d2 <= 0; h_d3 <= 0; h_d4 <= 0;
+    //         v_d1 <= 0; v_d2 <= 0; v_d3 <= 0; v_d4 <= 0;
+    //         active_d1 <= 1'b0;
+    //         active_d2 <= 1'b0;
+    //         active_d3 <= 1'b0;
+    //         active_d4 <= 1'b0;
+    //     end else begin
+    //         h_d1      <= h_count_hdmi;
+    //         v_d1      <= v_count_hdmi;
+    //         active_d1 <= active_draw_hdmi;
+
+    //         h_d2      <= h_d1;
+    //         v_d2      <= v_d1;
+    //         active_d2 <= active_d1;
+
+    //         h_d3      <= h_d2;
+    //         v_d3      <= v_d2;
+    //         active_d3 <= active_d2;
+
+    //         h_d4      <= h_d3;
+    //         v_d4      <= v_d3;
+    //         active_d4 <= active_d3;
+    //     end
+    // end
 
 
 
@@ -539,7 +565,7 @@ module top_level
 
 
     screen_half #(.H_RES(1280)) half_det (
-        .x (h_d4),
+        .x (h_d6),
         .half_sel (half_sel)
     );
 
@@ -639,12 +665,12 @@ module top_level
 
 
     assign mask_p1 = mask_red_raw 
-                    && active_d4 
-                    && (h_d4 < 11'd640);
+                    && active_d6
+                    && (h_d6 < 11'd640);
 
     assign mask_p2 = mask_yel_raw 
-                    && active_d4 
-                    && (h_d4 >= 11'd640);
+                    && active_d6 
+                    && (h_d6 >= 11'd640);
 
     logic [6:0] ss_c;
 
@@ -685,8 +711,8 @@ module top_level
     center_of_mass com_p1 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d4),
-        .pixel_y     (v_d4),
+        .pixel_x     (h_d6),
+        .pixel_y     (v_d6),
         .pixel_valid (mask_p1),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com1_calc),
@@ -697,8 +723,8 @@ module top_level
     center_of_mass com_p2 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d4),
-        .pixel_y     (v_d4),
+        .pixel_x     (h_d6),
+        .pixel_y     (v_d6),
         .pixel_valid (mask_p2),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com2_calc),
