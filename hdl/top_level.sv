@@ -468,14 +468,14 @@ module top_level
     // * 2'b01 → Cr (3'b101)
     // * 2'b10 → Cb (3'b110)
     // * 2'b11 → red fallback (3'b001)
-    always_comb begin
-        case (chan_sel_active)
-            2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
-            2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
-            2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
-            default: channel_sel_active_3b = 3'b001; // red (fallback)
-        endcase
-    end
+    // always_comb begin
+    //     case (chan_sel_active)
+    //         2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
+    //         2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
+    //         2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
+    //         default: channel_sel_active_3b = 3'b001; // red (fallback)
+    //     endcase
+    // end
 
     //assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
     assign channel_sel = channel_sel_active_3b;
@@ -490,16 +490,16 @@ module top_level
     // * 3'b111: not valid
     //Channel Select: Takes in the full RGB and YCrCb inew_frameormation and
     // chooses one of them to output as an 8 bit value
-    channel_select mcs(
-        .select(channel_sel_active_3b),
-        .r(fb_red),    
-        .g(fb_green), 
-        .b(fb_blue), 
-        .y(y),
-        .cr(cr),
-        .cb(cb),
-        .selected_channel(selected_channel)
-    );
+    //channel_select mcs(
+    //    .select(channel_sel_active_3b),
+    //    .r(fb_red),    
+    //    .g(fb_green), 
+    //    .b(fb_blue), 
+    //    .y(y),
+    //    .cr(cr),
+    //    .cb(cb),
+    //    .selected_channel(selected_channel)
+    //);
 
     //threshold values used to determine what value  passes:
     // assign lower_threshold = {sw[11:8],4'b0};

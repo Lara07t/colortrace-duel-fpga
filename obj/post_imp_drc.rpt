@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 20:24:15 2025
-| Host         : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Sun Dec  7 21:18:51 2025
+| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_drc -file obj/post_imp_drc.rpt
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -97,12 +97,12 @@ Related violations: <none>
 
 PDCN-137#1 Warning
 enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X0Y0 has BlockRam (frame_buffer/BRAM_reg_0_0) with RAM_EXTENSION_A attribute set to LOWER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
+RAMB36E1 site RAMB36_X0Y5 has BlockRam (frame_buffer/BRAM_reg_0_0) with RAM_EXTENSION_A attribute set to LOWER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
 Related violations: <none>
 
 PDCN-137#2 Warning
 enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X0Y1 has BlockRam (frame_buffer/BRAM_reg_1_0) with RAM_EXTENSION_A attribute set to UPPER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
+RAMB36E1 site RAMB36_X0Y6 has BlockRam (frame_buffer/BRAM_reg_1_0) with RAM_EXTENSION_A attribute set to UPPER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
 Related violations: <none>
 
 RTSTAT-10#1 Warning

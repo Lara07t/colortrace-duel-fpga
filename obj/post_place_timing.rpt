@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 20:23:37 2025
-| Host         : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Sun Dec  7 21:17:59 2025
+| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing -file obj/post_place_timing.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -12,19 +12,19 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanc
 
 Timing Report
 
-Slack (VIOLATED) :        -2.170ns  (required time - arrival time)
-  Source:                 x_com2_reg[1]/C
+Slack (VIOLATED) :        -2.254ns  (required time - arrival time)
+  Source:                 checker_inst/cur_player_reg/C
                             (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            tmds_blue/tally_reg[4]/D
-                            (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Destination:            checker_inst/p2_ok_reg_reg/D
+                            (rising edge-triggered cell FDSE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        15.514ns  (logic 7.831ns (50.477%)  route 7.683ns (49.523%))
-  Logic Levels:           18  (CARRY4=7 DSP48E1=1 LUT2=1 LUT3=1 LUT4=2 LUT5=1 LUT6=5)
-  Clock Path Skew:        -0.032ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -2.107ns = ( 11.361 - 13.468 ) 
-    Source Clock Delay      (SCD):    -2.512ns
+  Data Path Delay:        15.548ns  (logic 9.068ns (58.323%)  route 6.480ns (41.677%))
+  Logic Levels:           13  (CARRY4=4 DSP48E1=2 LUT4=1 LUT5=1 LUT6=5)
+  Clock Path Skew:        -0.041ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.110ns = ( 11.358 - 13.468 ) 
+    Source Clock Delay      (SCD):    -2.506ns
     Clock Pessimism Removal (CPR):    -0.436ns
   Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -48,56 +48,44 @@ Slack (VIOLATED) :        -2.170ns  (required time - arrival time)
                                                      -3.393    -5.835 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, estimated)        1.661    -4.174    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -4.078 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, estimated)     1.566    -2.512    clk_pixel
-    SLICE_X9Y13          FDRE                                         r  x_com2_reg[1]/C
+                         net (fo=4279, estimated)     1.572    -2.506    checker_inst/clk_pixel
+    SLICE_X11Y2          FDRE                                         r  checker_inst/cur_player_reg/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X9Y13          FDRE (Prop_fdre_C_Q)         0.456    -2.056 f  x_com2_reg[1]/Q
-                         net (fo=9, estimated)        0.860    -1.196    vsg/red4__0[1]
-    SLICE_X10Y13         LUT6 (Prop_lut6_I2_O)        0.124    -1.072 r  vsg/red4__0_i_30/O
-                         net (fo=6, estimated)        0.437    -0.635    vsg/red4__0_i_30_n_0
-    SLICE_X11Y13         LUT4 (Prop_lut4_I2_O)        0.124    -0.511 r  vsg/red4__0_i_22/O
-                         net (fo=1, routed)           0.000    -0.511    vsg/red4__0_i_22_n_0
-    SLICE_X11Y13         CARRY4 (Prop_carry4_S[3]_CO[3])
-                                                      0.401    -0.110 r  vsg/red4__0_i_5/CO[3]
-                         net (fo=1, estimated)        0.000    -0.110    vsg/red4__0_i_5_n_0
-    SLICE_X11Y14         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.313     0.203 r  vsg/red4__0_i_4/O[3]
-                         net (fo=19, estimated)       0.741     0.944    A[11]
-    DSP48_X0Y5           DSP48E1 (Prop_dsp48e1_A[23]_P[0])
-                                                      4.023     4.967 r  red4__0/P[0]
-                         net (fo=2, estimated)        1.018     5.985    tmds_green/tmds_reg[0]_i_45_0[0]
-    SLICE_X12Y9          LUT2 (Prop_lut2_I0_O)        0.124     6.109 r  tmds_green/tmds[0]_i_79/O
-                         net (fo=1, routed)           0.000     6.109    tmds_green/tmds[0]_i_79_n_0
-    SLICE_X12Y9          CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.513     6.622 r  tmds_green/tmds_reg[0]_i_47/CO[3]
-                         net (fo=1, estimated)        0.000     6.622    tmds_green/tmds_reg[0]_i_47_n_0
-    SLICE_X12Y10         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     6.739 r  tmds_green/tmds_reg[0]_i_18/CO[3]
-                         net (fo=1, estimated)        0.000     6.739    tmds_green/tmds_reg[0]_i_18_n_0
-    SLICE_X12Y11         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     6.856 r  tmds_green/tmds_reg[0]_i_14/CO[3]
-                         net (fo=1, estimated)        0.000     6.856    tmds_green/tmds_reg[0]_i_14_n_0
-    SLICE_X12Y12         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     6.973 r  tmds_green/tmds_reg[0]_i_15/CO[3]
-                         net (fo=1, estimated)        0.000     6.973    tmds_green/tmds_reg[0]_i_15_n_0
-    SLICE_X12Y13         CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.323     7.296 r  tmds_green/tmds_reg[0]_i_36/O[1]
-                         net (fo=1, estimated)        0.573     7.869    tmds_green/dist2_2[17]
-    SLICE_X15Y14         LUT4 (Prop_lut4_I1_O)        0.306     8.175 r  tmds_green/tmds[0]_i_17/O
-                         net (fo=1, estimated)        0.694     8.869    tmds_green/tmds[0]_i_17_n_0
-    SLICE_X15Y8          LUT6 (Prop_lut6_I3_O)        0.124     8.993 r  tmds_green/tmds[0]_i_4_comp/O
-                         net (fo=11, estimated)       0.313     9.306    vsg/tmds_reg[0]_0
-    SLICE_X15Y8          LUT3 (Prop_lut3_I1_O)        0.124     9.430 f  vsg/tmds[7]_i_4/O
-                         net (fo=18, estimated)       0.998    10.428    vsg/player2_pix
-    SLICE_X10Y1          LUT6 (Prop_lut6_I3_O)        0.124    10.552 r  vsg/tally[2]_i_8_comp/O
-                         net (fo=8, estimated)        0.591    11.143    vsg/tally[2]_i_8_n_0
-    SLICE_X9Y1           LUT6 (Prop_lut6_I4_O)        0.124    11.267 r  vsg/tally[2]_i_3__0/O
-                         net (fo=15, estimated)       0.641    11.908    vsg/tmds_blue/top_tmds_bit
-    SLICE_X10Y3          LUT6 (Prop_lut6_I3_O)        0.124    12.032 r  vsg/tally[5]_i_7__1/O
-                         net (fo=2, estimated)        0.817    12.849    vsg/tally[5]_i_7__1_n_0
-    SLICE_X10Y2          LUT5 (Prop_lut5_I4_O)        0.153    13.002 r  vsg/tally[4]_i_1__0/O
-                         net (fo=1, routed)           0.000    13.002    tmds_blue/D[3]
-    SLICE_X10Y2          FDRE                                         r  tmds_blue/tally_reg[4]/D
+    SLICE_X11Y2          FDRE (Prop_fdre_C_Q)         0.456    -2.050 r  checker_inst/cur_player_reg/Q
+                         net (fo=114, estimated)      0.942    -1.108    checker_inst/cur_player
+    SLICE_X11Y2          LUT4 (Prop_lut4_I1_O)        0.124    -0.984 r  checker_inst/hit_tile2_i_64/O
+                         net (fo=1, routed)           0.000    -0.984    checker_inst/hit_tile2_i_64_n_0
+    SLICE_X11Y2          CARRY4 (Prop_carry4_S[1]_O[2])
+                                                      0.580    -0.404 f  checker_inst/hit_tile2_i_42/O[2]
+                         net (fo=406, estimated)      0.838     0.434    checker_inst/O[2]
+    SLICE_X15Y4          LUT6 (Prop_lut6_I3_O)        0.302     0.736 r  checker_inst/hit_tile2_i_55/O
+                         net (fo=1, estimated)        0.191     0.927    checker_inst/hit_tile2_i_55_n_0
+    SLICE_X14Y4          CARRY4 (Prop_carry4_DI[1]_CO[2])
+                                                      0.533     1.460 r  checker_inst/hit_tile2_i_41/CO[2]
+                         net (fo=25, estimated)       0.661     2.121    checker_inst/closest_x1
+    SLICE_X12Y6          LUT6 (Prop_lut6_I2_O)        0.310     2.431 r  checker_inst/hit_tile2_i_6/O
+                         net (fo=2, estimated)        0.769     3.200    checker_inst/hit_tile2_i_6_n_0
+    SLICE_X7Y7           CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.385     3.585 r  checker_inst/hit_tile2_i_2/CO[3]
+                         net (fo=1, estimated)        0.000     3.585    checker_inst/hit_tile2_i_2_n_0
+    SLICE_X7Y8           CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334     3.919 r  checker_inst/hit_tile2_i_1/O[1]
+                         net (fo=1, estimated)        0.793     4.712    checker_inst/hit_tile2_i_1_n_6
+    DSP48_X0Y2           DSP48E1 (Prop_dsp48e1_B[9]_PCOUT[47])
+                                                      4.030     8.742 r  checker_inst/hit_tile2/PCOUT[47]
+                         net (fo=1, estimated)        0.000     8.742    checker_inst/hit_tile2_n_106
+    DSP48_X0Y3           DSP48E1 (Prop_dsp48e1_PCIN[47]_P[10])
+                                                      1.518    10.260 r  checker_inst/hit_tile1/P[10]
+                         net (fo=1, estimated)        1.004    11.264    checker_inst/hit_tile1_n_95
+    SLICE_X11Y8          LUT5 (Prop_lut5_I0_O)        0.124    11.388 r  checker_inst/p1_ok_reg_i_23/O
+                         net (fo=1, estimated)        0.408    11.796    checker_inst/p1_ok_reg_i_23_n_0
+    SLICE_X11Y8          LUT6 (Prop_lut6_I0_O)        0.124    11.920 r  checker_inst/p1_ok_reg_i_9/O
+                         net (fo=2, estimated)        0.575    12.495    checker_inst/p1_ok_reg_i_9_n_0
+    SLICE_X15Y8          LUT6 (Prop_lut6_I4_O)        0.124    12.619 r  checker_inst/p1_ok_reg_i_4/O
+                         net (fo=1, estimated)        0.299    12.918    checker_inst/p1_ok_reg_i_4_n_0
+    SLICE_X12Y8          LUT6 (Prop_lut6_I4_O)        0.124    13.042 r  checker_inst/p2_ok_reg_i_1_comp/O
+                         net (fo=1, routed)           0.000    13.042    checker_inst/p2_ok_reg_i_1_n_0
+    SLICE_X12Y8          FDSE                                         r  checker_inst/p2_ok_reg_reg/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_pixel_cw_hdmi rise edge)
@@ -115,16 +103,16 @@ Slack (VIOLATED) :        -2.170ns  (required time - arrival time)
                                                      -3.187     8.237 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, estimated)        1.578     9.815    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091     9.906 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, estimated)     1.455    11.361    tmds_blue/clk_pixel
-    SLICE_X10Y2          FDRE                                         r  tmds_blue/tally_reg[4]/C
-                         clock pessimism             -0.436    10.924    
-                         clock uncertainty           -0.210    10.715    
-    SLICE_X10Y2          FDRE (Setup_fdre_C_D)        0.118    10.833    tmds_blue/tally_reg[4]
+                         net (fo=4279, estimated)     1.452    11.358    checker_inst/clk_pixel
+    SLICE_X12Y8          FDSE                                         r  checker_inst/p2_ok_reg_reg/C
+                         clock pessimism             -0.436    10.921    
+                         clock uncertainty           -0.210    10.712    
+    SLICE_X12Y8          FDSE (Setup_fdse_C_D)        0.077    10.789    checker_inst/p2_ok_reg_reg
   -------------------------------------------------------------------
-                         required time                         10.833    
-                         arrival time                         -13.002    
+                         required time                         10.789    
+                         arrival time                         -13.042    
   -------------------------------------------------------------------
-                         slack                                 -2.170    
+                         slack                                 -2.254    
 
 
 

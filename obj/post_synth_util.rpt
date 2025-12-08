@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 20:23:03 2025
-| Host         : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Sun Dec  7 21:17:22 2025
+| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4 -hierarchical_min_primitive_count 0
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -22,7 +22,7 @@ Table of Contents
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
 |                   Instance                   |                       Module                      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level                                    |                                             (top) |       5235 |       5213 |       0 |   22 | 4474 |      3 |      1 |         10 |
+| top_level                                    |                                             (top) |       5669 |       5647 |       0 |   22 | 4540 |      3 |      1 |         10 |
 |   (top_level)                                |                                             (top) |         35 |         13 |       0 |   22 |  166 |      0 |      0 |          4 |
 |   blue_ser                                   |                                   tmds_serializer |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   cdc_fifo                                   |                                    xpm_fifo_async |        123 |        123 |       0 |    0 |  173 |      1 |      0 |          0 |
@@ -64,8 +64,8 @@ Table of Contents
 |   frame_buffer                               |      xilinx_true_dual_port_read_first_2_clock_ram |          0 |          0 |       0 |    0 |    0 |      2 |      0 |          0 |
 |   fsm_inst                                   |                                          game_fsm |         16 |         16 |       0 |    0 |   15 |      0 |      0 |          0 |
 |   green_ser                                  |                                 tmds_serializer_1 |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
-|   path_left                                  |                                      autopath_gen |       1857 |       1857 |       0 |    0 | 1590 |      0 |      0 |          0 |
-|   path_right                                 |                                    autopath_gen_2 |       1857 |       1857 |       0 |    0 | 1590 |      0 |      0 |          0 |
+|   path_left                                  |                                      autopath_gen |       2074 |       2074 |       0 |    0 | 1623 |      0 |      0 |          0 |
+|   path_right                                 |                                    autopath_gen_2 |       2074 |       2074 |       0 |    0 | 1623 |      0 |      0 |          0 |
 |   pixel_rec                                  |                                 pixel_reconstruct |         33 |         33 |       0 |    0 |   50 |      0 |      0 |          0 |
 |   red_ser                                    |                                 tmds_serializer_3 |          1 |          1 |       0 |    0 |    1 |      0 |      0 |          0 |
 |   red_thresh                                 |                                         threshold |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |

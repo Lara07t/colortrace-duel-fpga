@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 20:23:03 2025
-| Host         : eecs-digital-03 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Sun Dec  7 21:17:22 2025
+| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     -4.343     -200.242                    103                 9805       -0.489      -10.800                     28                 9805        0.538        0.000                       0                  4540  
+     -4.343     -228.719                    115                 9987       -0.489      -10.800                     28                 9987        0.538        0.000                       0                  4606  
 
 
 Timing constraints are not met.
@@ -171,7 +171,7 @@ Clock                      WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Tota
 -----                      -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 gclk                                                                                                                                                                     2.000        0.000                       0                     1  
   clk_100_cw_fast                                                                                                                                                        3.000        0.000                       0                     3  
-    clk_pixel_cw_hdmi       -4.343     -138.334                     47                 9042        0.003        0.000                      0                 9042        5.754        0.000                       0                  4212  
+    clk_pixel_cw_hdmi       -4.343     -166.811                     59                 9224        0.003        0.000                      0                 9224        5.754        0.000                       0                  4278  
     clk_tmds_cw_hdmi                                                                                                                                                     0.538        0.000                       0                     8  
     clkfbout_cw_hdmi                                                                                                                                                    47.845        0.000                       0                     3  
   clk_camera_cw_fast        -0.513      -14.355                     28                  735        0.045        0.000                      0                  735        2.000        0.000                       0                   306  
@@ -260,7 +260,7 @@ High Pulse Width  Slow    MMCME2_ADV/CLKIN1  n/a            2.000         5.000 
 From Clock:  clk_pixel_cw_hdmi
   To Clock:  clk_pixel_cw_hdmi
 
-Setup :           47  Failing Endpoints,  Worst Slack       -4.343ns,  Total Violation     -138.334ns
+Setup :           59  Failing Endpoints,  Worst Slack       -4.343ns,  Total Violation     -166.811ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.003ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ Slack (VIOLATED) :        -4.343ns  (required time - arrival time)
                                                      -1.480    -4.587 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800    -3.788    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.692 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.800    -2.892    clk_pixel
+                         net (fo=4277, unplaced)      0.800    -2.892    clk_pixel
                          FDRE                                         r  x_com1_reg[4]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.456    -2.436 f  x_com1_reg[4]/Q
@@ -369,7 +369,7 @@ Slack (VIOLATED) :        -4.343ns  (required time - arrival time)
                                                      -1.290     9.384 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760    10.144    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.235 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.655    10.890    tmds_blue/clk_pixel
+                         net (fo=4277, unplaced)      0.655    10.890    tmds_blue/clk_pixel
                          FDRE                                         r  tmds_blue/tally_reg[5]/C
                          clock pessimism             -0.459    10.431    
                          clock uncertainty           -0.210    10.221    
@@ -418,7 +418,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.477    -1.397 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.059    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -1.033 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.210    -0.824    red_ser/clk_pixel
+                         net (fo=4277, unplaced)      0.210    -0.824    red_ser/clk_pixel
                          FDRE                                         r  red_ser/pwup_rst_reg/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.141    -0.683 r  red_ser/pwup_rst_reg/Q
@@ -443,7 +443,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.643    -1.230 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.875    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.846 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.355    -0.491    blue_ser/clk_pixel
+                         net (fo=4277, unplaced)      0.355    -0.491    blue_ser/clk_pixel
     OLOGIC_X0Y20         OSERDESE2                                    r  blue_ser/primary/CLKDIV
                          clock pessimism             -0.187    -0.679    
     OLOGIC_X0Y20         OSERDESE2 (Hold_oserdese2_CLKDIV_RST)
@@ -815,7 +815,7 @@ Slack (VIOLATED) :        -1.497ns  (required time - arrival time)
                                                      -1.290   830.933 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760   831.693    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091   831.784 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.655   832.439    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/dest_clk
+                         net (fo=4277, unplaced)      0.655   832.439    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/dest_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/syncstages_ff_reg[0]/C
                          clock pessimism             -0.504   831.935    
                          clock uncertainty           -0.518   831.417    
@@ -886,7 +886,7 @@ Slack (VIOLATED) :        -0.489ns  (arrival time - required time)
                                                      -0.643    -1.230 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.875    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.846 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.355    -0.491    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_clk
+                         net (fo=4277, unplaced)      0.355    -0.491    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_graysync_ff_reg[0][0]/C
                          clock pessimism             -0.167    -0.658    
                          clock uncertainty            0.518    -0.140    
@@ -948,7 +948,7 @@ Slack (VIOLATED) :        -1.981ns  (required time - arrival time)
                                                      -1.480  3160.396 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800  3161.196    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096  3161.292 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.800  3162.091    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rd_clk
+                         net (fo=4277, unplaced)      0.800  3162.091    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rd_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.456  3162.547 r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/Q
@@ -1019,7 +1019,7 @@ Slack (VIOLATED) :        -0.285ns  (arrival time - required time)
                                                      -0.477    -1.397 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.059    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -1.033 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4211, unplaced)      0.210    -0.824    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_clk
+                         net (fo=4277, unplaced)      0.210    -0.824    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_gray_ff_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.141    -0.683 r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_gray_ff_reg[0]/Q
