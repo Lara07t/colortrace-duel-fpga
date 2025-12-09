@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Dec  9 17:46:19 2025
-| Host         : eecs-digital-11 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Tue Dec  9 18:11:15 2025
+| Host         : eecs-digital-33 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file obj/post_place_util_hierarchical.rpt -hierarchical -hierarchical_depth 4 -hierarchical_min_primitive_count 0
 | Design       : top_level
 | Device       : xc7s50csga324-1

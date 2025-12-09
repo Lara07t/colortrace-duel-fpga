@@ -754,7 +754,7 @@ module top_level
     assign p2_x_local = (x_com2 > HALF_W) ? (x_com2 - HALF_W) : 11'd0;
 
 
-    localparam int PLAYER_RADIUS    = 21;
+    localparam int PLAYER_RADIUS    = 18;
     localparam int PLAYER_RADIUS_SQ = PLAYER_RADIUS * PLAYER_RADIUS; // 576
 
     logic signed [11:0] dx1, dy1, dx2, dy2;
