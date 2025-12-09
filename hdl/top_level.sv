@@ -43,6 +43,35 @@ module top_level
 
     logic          clk_100_passthrough;
 
+    // video signal generator signals
+    logic           h_sync_hdmi;
+    logic           v_sync_hdmi;
+    logic [10:0]    h_count_hdmi;
+    logic [9:0]     v_count_hdmi;
+    logic           active_draw_hdmi;
+    logic           new_frame_hdmi;
+    logic [5:0]     frame_count_hdmi;
+
+    // rgb output values
+    logic [7:0]     red,green,blue;
+
+    // *********************************************************
+    // GAME + PATH SHARED SIGNALS (used by renderer, path, checker, FSM)
+
+    logic [2:0] game_state;
+
+    logic [1:0] p1_lives, p2_lives;
+    logic       blink_p1, blink_p2;
+    logic [1:0] winner;
+
+    logic p1_life_lost_raw, p2_life_lost_raw;
+    logic p1_life_lost,     p2_life_lost;
+
+    localparam [2:0] GAME_OVER_STATE = 3'd4;
+    logic            new_frame_paths;
+
+    // *********************************************************
+
     // clocking wizards to generate the clock speeds we need for our different domains
     // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
     cw_hdmi_clk_wiz wizard_hdmi(
@@ -67,18 +96,6 @@ module top_level
     //assign sys_rst_camera = btn[0]; //use for resetting camera side of logic
     //assign sys_rst_pixel = btn[0]; //use for resetting hdmi/draw side of logic
 
-
-    // video signal generator signals
-    logic           h_sync_hdmi;
-    logic           v_sync_hdmi;
-    logic [10:0]    h_count_hdmi;
-    logic [9:0]     v_count_hdmi;
-    logic           active_draw_hdmi;
-    logic           new_frame_hdmi;
-    logic [5:0]     frame_count_hdmi;
-
-    // rgb output values
-    logic [7:0]     red,green,blue;
 
     // ** Handling input from the camera **
 
@@ -708,6 +725,9 @@ module top_level
     assign game_initiated = (game_state == 3'd0) ? 1'b0 : 1'b1;
     //
 
+    // new_frame_paths: drive autopath only while not in GAME_OVER
+    assign new_frame_paths = new_frame_hdmi && (game_state != GAME_OVER_STATE);
+
     // Left player auto path (40x40 static pattern from BRAM, shrinks after 30s)
     autopath_gen #(
         .GRID_W(GRID_W),
@@ -717,7 +737,7 @@ module top_level
     ) path_left (
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
-        .new_frame      (new_frame_paths),  // <-- changed
+        .new_frame      (new_frame_paths),  // uses shared new_frame_paths
         .game_initiated (game_initiated), // new for shrink condition 
         .cell_x         (cell_x_left),
         .cell_y         (cell_y_left),
@@ -735,7 +755,7 @@ module top_level
     ) path_right (
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
-        .new_frame      (new_frame_paths),  // <-- changed
+        .new_frame      (new_frame_paths),  // uses shared new_frame_paths
         .game_initiated (game_initiated), // new for shrink condition 
         .cell_x         (cell_x_right),
         .cell_y         (cell_y_right),
@@ -780,73 +800,73 @@ module top_level
     end
 
 
-// THEME SELECTION
-logic theme_preview;   // live view from switches
-logic theme_latched;   // stored when btn[3] pressed
-logic [1:0] btn3_sync;
-logic btn3_rise;
+    // THEME SELECTION
+    logic theme_preview;   // live view from switches
+    logic theme_latched;   // stored when btn[3] pressed
+    logic [1:0] btn3_sync;
+    logic btn3_rise;
 
-// theme from switches (sw0 chooses theme)
-assign theme_preview = sw[0];
+    // theme from switches (sw0 chooses theme)
+    assign theme_preview = sw[0];
 
-// Sync btn3 into pixel clock domain
-always_ff @(posedge clk_pixel) begin
-    if (sys_rst_pixel)
-        btn3_sync <= 2'b00;
-    else
-        btn3_sync <= {btn3_sync[0], btn[3]};
-end
+    // Sync btn3 into pixel clock domain
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel)
+            btn3_sync <= 2'b00;
+        else
+            btn3_sync <= {btn3_sync[0], btn[3]};
+    end
 
-assign btn3_rise = (btn3_sync == 2'b01);
+    assign btn3_rise = (btn3_sync == 2'b01);
 
-// latch theme when btn3 pressed
-always_ff @(posedge clk_pixel) begin
-    if (sys_rst_pixel)
-        theme_latched <= 1'b0;
-    else if (btn3_rise)
-        theme_latched <= theme_preview;
-end
+    // latch theme when btn3 pressed
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel)
+            theme_latched <= 1'b0;
+        else if (btn3_rise)
+            theme_latched <= theme_preview;
+    end
 
-game_renderer #(
-    .GRID_W   (GRID_W),
-    .GRID_H   (GRID_H),
-    .PLAYER_R (PLAYER_RADIUS)
-) renderer_inst (
-    .clk         (clk_pixel),
-    .active      (active_draw_hdmi),
-    .game_state  (game_state),
-    .blink_p1    (blink_p1),
-    .blink_p2    (blink_p2),
+    game_renderer #(
+        .GRID_W   (GRID_W),
+        .GRID_H   (GRID_H),
+        .PLAYER_R (PLAYER_RADIUS)
+    ) renderer_inst (
+        .clk         (clk_pixel),
+        .active      (active_draw_hdmi),
+        .game_state  (game_state),
+        .blink_p1    (blink_p1),
+        .blink_p2    (blink_p2),
 
-    .theme       (theme_latched),
+        .theme       (theme_latched),
 
-    .path_p1     (path_grid_left),
-    .path_p2     (path_grid_right),
+        .path_p1     (path_grid_left),
+        .path_p2     (path_grid_right),
 
-    .x           (h_count_hdmi),
-    .y           (v_count_hdmi),
+        .x           (h_count_hdmi),
+        .y           (v_count_hdmi),
 
-    .region_left (region_left),
-    .region_right(region_right),
-    .cell_x_left (cell_x_left),
-    .cell_y_left (cell_y_left),
-    .cell_x_right(cell_x_right),
-    .cell_y_right(cell_y_right),
+        .region_left (region_left),
+        .region_right(region_right),
+        .cell_x_left (cell_x_left),
+        .cell_y_left (cell_y_left),
+        .cell_x_right(cell_x_right),
+        .cell_y_right(cell_y_right),
 
-    .p1_x        (x_com1),
-    .p1_y        (y_com1),
-    .p2_x        (x_com2),
-    .p2_y        (y_com2),
+        .p1_x        (x_com1),
+        .p1_y        (y_com1),
+        .p2_x        (x_com2),
+        .p2_y        (y_com2),
 
-    .p1_lives    (p1_lives),
-    .p2_lives    (p2_lives),
+        .p1_lives    (p1_lives),
+        .p2_lives    (p2_lives),
 
-    .winner      (winner),
+        .winner      (winner),
 
-    .R           (red),
-    .G           (green),
-    .B           (blue)
-);
+        .R           (red),
+        .G           (green),
+        .B           (blue)
+    );
 
        //*********************************************************end of rendering portion
 
@@ -1031,20 +1051,10 @@ game_renderer #(
     assign led[15:5] = 0;
 
        //*********************************************************
+    // PATH CHECKER + GAME FSM
 
-    // PATH CHECKER
-
-    logic p1_life_lost_raw, p2_life_lost_raw;
-    logic p1_life_lost, p2_life_lost;
-
-    // Only count hits while in PLAY state
-    logic [2:0] game_state;
-    // assign p1_life_lost = (game_state == 3'd2) ? p1_life_lost_raw : 1'b0;
-    // assign p2_life_lost = (game_state == 3'd2) ? p2_life_lost_raw : 1'b0;
-    localparam [2:0] GAME_OVER_STATE = 3'd4;
-    wire new_frame_paths = new_frame_hdmi && (game_state != GAME_OVER_STATE);
-
-    assign p1_life_lost = p1_life_lost_raw;  // from path_checker
+    // life-lost masking is handled in FSM; here we just use raw signals
+    assign p1_life_lost = p1_life_lost_raw;
     assign p2_life_lost = p2_life_lost_raw;
 
     path_checker #(
@@ -1072,13 +1082,6 @@ game_renderer #(
     );
 
 
-    //*********************************************************
-    //GAME FSM 
-
-    logic [1:0] p1_lives, p2_lives;
-    logic       blink_p1, blink_p2;
-    logic [1:0] winner;
-
     game_fsm fsm_inst (
         .clk          (clk_pixel),
         .rst          (sys_rst_pixel),
@@ -1090,7 +1093,7 @@ game_renderer #(
         // NEW: only start when both COMs have been computed on-path
         .p1_com_valid (new_com1),
         .p2_com_valid (new_com2),
-        .start_game(btn3_rise),
+        .start_game   (btn3_rise),
 
         .state        (game_state),
         .p1_lives     (p1_lives),
@@ -1101,6 +1104,5 @@ game_renderer #(
     );
 
 endmodule // top_level
-
 
 `default_nettype wire

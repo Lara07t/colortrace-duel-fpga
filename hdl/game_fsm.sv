@@ -63,7 +63,7 @@ module game_fsm #(
         end else begin
             cs <= ns;
 
-            // // Warm-up frame counter: starts right after reset
+            // Warm-up frame counter: starts right after reset
             // if (new_frame && cs != GAME_OVER) begin
             //     if (warmup_ctr < WARMUP_FRAMES)
             //         warmup_ctr <= warmup_ctr + 1;
@@ -125,7 +125,7 @@ module game_fsm #(
             READY: begin
                 // if (!life_loss_enabled) begin
                 //     ns = READY; // still warming up
-                // end else 
+                // end 
                 if (p1_com_valid && p2_com_valid &&
                          !p1_life_lost && !p2_life_lost) begin
                     ns = PLAY;  // both players on their path → start game
@@ -136,7 +136,7 @@ module game_fsm #(
 
             // Active play: now we react to hits
             PLAY: begin
-                if ( (p1_life_lost || p2_life_lost)) begin //life_loss_enabled &&
+                if ((p1_life_lost || p2_life_lost)) begin
                     ns = LIFE_LOSS;
                 end
             end
@@ -170,4 +170,3 @@ module game_fsm #(
 
 endmodule
 `default_nettype wire
-

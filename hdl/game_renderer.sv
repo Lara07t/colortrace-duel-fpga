@@ -49,9 +49,7 @@ module game_renderer #(
     output logic [7:0] B
 );
 
-    //----------------------------------
     //  Path decode: LEFT and RIGHT
-    //----------------------------------
     integer addr_left, addr_right;
     logic   on_p1_cell, on_p2_cell;
 
@@ -74,9 +72,7 @@ module game_renderer #(
     wire on_p1_pix = active && region_left  && on_p1_cell;
     wire on_p2_pix = active && region_right && on_p2_cell;
 
-    //----------------------------------
     //  Player circles
-    //----------------------------------
     function logic inside_circle(input int px, py, cx, cy, r);
         inside_circle = ((px-cx)*(px-cx) + (py-cy)*(py-cy)) <= (r*r);
     endfunction
@@ -89,9 +85,7 @@ module game_renderer #(
         draw_p2_circle = inside_circle(x, y, p2_x, p2_y, PLAYER_R);
     end
 
-    //----------------------------------
     //  Life indicators (simple circles)
-    //----------------------------------
     function logic inside_heart(
         input int px, py,
         input int cx, cy
@@ -106,46 +100,59 @@ module game_renderer #(
 
     always_comb begin
         heart_p1_0 = (p1_lives >= 1) ? inside_heart(x,y, 70, 650) : 1'b0;
-        heart_p1_1 = (p1_lives >= 2) ? inside_heart(x,y, 100, 650) : 1'b0;
+        heart_p1_1 = (p1_lives >= 2) ? inside_heart(x,y,100, 650) : 1'b0;
         heart_p1_2 = (p1_lives == 3) ? inside_heart(x,y,130, 650) : 1'b0;
 
-        heart_p2_0 = (p2_lives >= 1) ? inside_heart(x,y, 710,650) : 1'b0;
-        heart_p2_1 = (p2_lives >= 2) ? inside_heart(x,y, 740,650) : 1'b0;
-        heart_p2_2 = (p2_lives == 3) ? inside_heart(x,y,770,650) : 1'b0;
+        heart_p2_0 = (p2_lives >= 1) ? inside_heart(x,y,710, 650) : 1'b0;
+        heart_p2_1 = (p2_lives >= 2) ? inside_heart(x,y,740, 650) : 1'b0;
+        heart_p2_2 = (p2_lives == 3) ? inside_heart(x,y,770, 650) : 1'b0;
 
         draw_life =
             heart_p1_0 | heart_p1_1 | heart_p1_2 |
             heart_p2_0 | heart_p2_1 | heart_p2_2;   
-
     end
 
-    //----------------------------------
-    //  Text “blocks” (menu / winner)
-    //----------------------------------
-    function logic block_letter(
-        input int px, py,
-        input int x0, y0,
-        input int w, input int h
-    );
-        block_letter = (px>=x0 && px<x0+w && py>=y0 && py<y0+h);
-    endfunction
-
-    logic draw_menu_text;
-    logic draw_win_text;
-
-    always_comb begin
-        draw_menu_text =
-            (game_state==3'd0) && block_letter(x,y, 500, 200, 280, 40);
-
-        draw_win_text =
-            (game_state==3'd4) && block_letter(x,y, 520, 200, 240, 40);
-    end
-
-    //----------------------------------
     //  PATH COLORS per theme
-    //----------------------------------
     logic [7:0] p1_R, p1_G, p1_B;
     logic [7:0] p2_R, p2_G, p2_B;
+
+    //  MENU THEME IMAGES (grass & snow)
+    logic [7:0] grass_R, grass_G, grass_B;
+    logic [7:0] snow_R,  snow_G,  snow_B;
+
+    //  Menu theme sprites (INIT state)
+    //  NOTE: make sure grass/snow PNGs are 256x256 before running converter.
+    grass_menu_sprite #(
+        .WIDTH (256),   // <--- WAY bigger now
+        .HEIGHT(256)
+    ) grass_menu_inst (
+        .pixel_clk  (clk),
+        .rst        (1'b0),        // ROM only; can tie to real reset if you prefer
+        .pop        (1'b0),        // static image
+        .x          (11'd160),     // left-ish on screen
+        .h_count    (x),
+        .y          (9'd120),
+        .v_count    (y),
+        .pixel_red  (grass_R),
+        .pixel_green(grass_G),
+        .pixel_blue (grass_B)
+    );
+
+    snow_menu_sprite #(
+        .WIDTH (256), 
+        .HEIGHT(256)
+    ) snow_menu_inst (
+        .pixel_clk  (clk),
+        .rst        (1'b0),
+        .pop        (1'b0),
+        .x          (11'd864),     // right side
+        .h_count    (x),
+        .y          (9'd120),
+        .v_count    (y),
+        .pixel_red  (snow_R),
+        .pixel_green(snow_G),
+        .pixel_blue (snow_B)
+    );
 
     always_comb begin
         if (!theme) begin
@@ -159,9 +166,7 @@ module game_renderer #(
         end
     end
 
-    //----------------------------------
     //  FINAL RENDER
-    //----------------------------------
     always_comb begin
         // default background = black
         R = 8'd0;
@@ -169,19 +174,41 @@ module game_renderer #(
         B = 8'd0;
 
         if (!active) begin
-            R = 0; G = 0; B = 0;
+            // outside active draw → keep black, HDMI sends blanking/sync
+            R = 8'd0; G = 8'd0; B = 8'd0;
         end
 
-        // INIT / MENU
+      // INIT / MENU
         else if (game_state == 3'd0) begin
-            // show path preview with current theme
-            if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
-            else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
+            // Base background for menu: dark gray
+            R = 8'd20;
+            G = 8'd20;
+            B = 8'd20;
 
-            // big white block as "MENU"
-            if (draw_menu_text)
-                {R,G,B} = {8'hFF, 8'hFF, 8'hFF};
+            // Background: path preview with current theme, on top of gray
+            if (on_p1_pix) begin
+                R = p1_R; G = p1_G; B = p1_B;
+            end else if (on_p2_pix) begin
+                R = p2_R; G = p2_G; B = p2_B;
+            end
+
+            // LEFT HALF: only draw grass sprite
+            if (x < 11'd640 && |{grass_R, grass_G, grass_B}) begin
+                R = grass_R;
+                G = grass_G;
+                B = grass_B;
+            end
+
+            // RIGHT HALF: only draw snow sprite
+            if (x >= 11'd640 && |{snow_R, snow_G, snow_B}) begin
+                R = snow_R;
+                G = snow_G;
+                B = snow_B;
+            end
+
+            // (deleted draw_menu_text white rectangle)
         end
+
 
         // READY + PLAY + LIFE_LOSS
         else if (game_state == 3'd1 ||
@@ -204,14 +231,14 @@ module game_renderer #(
             if (draw_life)
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
 
+            // Center divider line
             if (x == 640) begin
-            // bright center line
-            {R,G,B} = {8'd255, 8'd255, 8'd255};
-        end else if (x >= 639 && x <= 641) begin
-            // softer glow around it
-            {R,G,B} = {8'd150, 8'd150, 8'd150};
-        end
-        
+                // bright center line
+                {R,G,B} = {8'd255, 8'd255, 8'd255};
+            end else if (x >= 639 && x <= 641) begin
+                // softer glow around it
+                {R,G,B} = {8'd150, 8'd150, 8'd150};
+            end
         end
 
         // GAME OVER
@@ -219,19 +246,18 @@ module game_renderer #(
             if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
             else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
 
-            // winner block
-            if (draw_win_text)
-                {R,G,B} = (winner==2'd1) ? {8'hFF, 8'd0, 8'd0}  // P1 wins = red
-                                         : {8'd0,  8'hFF,8'd0}; // P2 wins = green
+            // (no big white rect here either)
 
             if (draw_life)
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
-
-            
         end
 
-        
-        
+        // DEFAULT / unexpected state: show magenta so you *know* something is wrong
+        else begin
+            R = 8'd80;
+            G = 8'd0;
+            B = 8'd80;
+        end
     end
 
 endmodule
