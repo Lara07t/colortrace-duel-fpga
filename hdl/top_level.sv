@@ -601,7 +601,6 @@ module top_level
     end
 
     //image_sprite output:
-    logic [7:0] img_red, img_green, img_blue;
 
     //bring in an instance of your popcat image sprite! remember the correct mem files too!
 
@@ -617,22 +616,6 @@ module top_level
         end
     end
     //bring in an instance of your popcat image sprite! remember the correct mem files too!
-    image_sprite #(
-        .WIDTH(256),
-        .HEIGHT(256))
-    com_sprite_m (
-        .pixel_clk (clk_pixel),
-        .rst       (sys_rst_pixel),
-        .pop       (pop),
-        .h_count   (h_count_hdmi),   
-        .v_count   (v_count_hdmi),   
-        // .x(x_com>128 ? x_com-128 : 0),
-        // .y(y_com>128 ? y_com-128 : 0),
-        .x         (x_com1>128 ? x_com1-128 : 0),
-        .y         (y_com1>128 ? y_com1-128 : 0),
-        .pixel_red (img_red),
-        .pixel_green(img_green),
-        .pixel_blue(img_blue)); //output colors
 
     //crosshair output:
     logic [7:0] ch_red, ch_green, ch_blue;

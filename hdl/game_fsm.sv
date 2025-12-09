@@ -16,7 +16,7 @@ module game_fsm #(
     // *** NEW: COM valid flags (player is actually detected) ***
     input  wire p1_com_valid,
     input  wire p2_com_valid,
-    input wire start_game,
+    input  wire start_game,
 
     output logic [2:0] state,
     output logic [1:0] p1_lives,
@@ -25,7 +25,6 @@ module game_fsm #(
     output logic       blink_p2,
     output logic [1:0] winner
 );
-
 
     typedef enum logic [2:0] {
         INIT      = 3'd0,
@@ -48,17 +47,23 @@ module game_fsm #(
     // Latched info: who was hit for this LIFE_LOSS phase
     logic hit_p1_reg, hit_p2_reg;
 
+    // NEW: latched "ready" flags so we don't require a perfect single-cycle overlap
+    logic p1_ready_seen;  // saw P1 COM valid and on-path at least once in READY
+    logic p2_ready_seen;  // saw P2 COM valid and on-path at least once in READY
+
     // Sequential logic
     always_ff @(posedge clk) begin
         if (rst) begin
-            cs         <= INIT;
-            p1_lives   <= LIVES[1:0];
-            p2_lives   <= LIVES[1:0];
-            pause_ctr  <= 0;
-            blink_ctr  <= 0;
-            blink_flag <= 0;
-            hit_p1_reg <= 1'b0;
-            hit_p2_reg <= 1'b0;
+            cs           <= INIT;
+            p1_lives     <= LIVES[1:0];
+            p2_lives     <= LIVES[1:0];
+            pause_ctr    <= 0;
+            blink_ctr    <= 0;
+            blink_flag   <= 0;
+            hit_p1_reg   <= 1'b0;
+            hit_p2_reg   <= 1'b0;
+            p1_ready_seen <= 1'b0;
+            p2_ready_seen <= 1'b0;
             //warmup_ctr <= 16'd0;
         end else begin
             cs <= ns;
@@ -102,12 +107,26 @@ module game_fsm #(
                 hit_p1_reg <= 1'b0;
                 hit_p2_reg <= 1'b0;
             end
+
+            // READY-state latching:
+            //  * while in READY, if we ever see COM valid AND not off-path
+            //    for a player, remember that for the rest of READY.
+            //  * when we leave READY, clear the flags.
+            if (cs == READY) begin
+                if (p1_com_valid && !p1_life_lost)
+                    p1_ready_seen <= 1'b1;
+                if (p2_com_valid && !p2_life_lost)
+                    p2_ready_seen <= 1'b1;
+            end else begin
+                // whenever we are not in READY, clear the "seen" flags
+                p1_ready_seen <= 1'b0;
+                p2_ready_seen <= 1'b0;
+            end
         end
     end
 
     //assign life_loss_enabled = (warmup_ctr >= WARMUP_FRAMES);
 
-    // Combinational next-state logic
     // Combinational next-state logic
     always_comb begin
         ns     = cs;
@@ -119,15 +138,17 @@ module game_fsm #(
                 if (start_game)
                     ns = READY;
                 else
-                    ns = INIT;;
+                    ns = INIT;
             end
 
             READY: begin
                 // if (!life_loss_enabled) begin
                 //     ns = READY; // still warming up
                 // end 
-                if (p1_com_valid && p2_com_valid &&
-                         !p1_life_lost && !p2_life_lost) begin
+
+                // NEW: transition once we've seen BOTH players valid & on-path
+                // at least once while in READY (no need for perfect single-cycle overlap)
+                if (p1_ready_seen && p2_ready_seen) begin
                     ns = PLAY;  // both players on their path → start game
                 end else begin
                     ns = READY;
@@ -146,7 +167,7 @@ module game_fsm #(
                 if (p1_lives == 0 || p2_lives == 0)
                     ns = GAME_OVER;
                 else if (pause_ctr >= PAUSE_FRAMES)
-                    ns = PLAY; 
+                    ns = PLAY;
             end
 
             //freeze until reset

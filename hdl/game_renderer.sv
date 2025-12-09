@@ -123,15 +123,15 @@ module game_renderer #(
     //  Menu theme sprites (INIT state)
     //  NOTE: make sure grass/snow PNGs are 256x256 before running converter.
     grass_menu_sprite #(
-        .WIDTH (256),   // <--- WAY bigger now
-        .HEIGHT(256)
+        .WIDTH (128),  
+        .HEIGHT(128)
     ) grass_menu_inst (
         .pixel_clk  (clk),
         .rst        (1'b0),        // ROM only; can tie to real reset if you prefer
         .pop        (1'b0),        // static image
-        .x          (11'd160),     // left-ish on screen
+        .x          (11'd256),     // left-ish on screen
         .h_count    (x),
-        .y          (9'd120),
+        .y          (9'd296),
         .v_count    (y),
         .pixel_red  (grass_R),
         .pixel_green(grass_G),
@@ -139,15 +139,15 @@ module game_renderer #(
     );
 
     snow_menu_sprite #(
-        .WIDTH (256), 
-        .HEIGHT(256)
+        .WIDTH (128), 
+        .HEIGHT(128)
     ) snow_menu_inst (
         .pixel_clk  (clk),
         .rst        (1'b0),
         .pop        (1'b0),
-        .x          (11'd864),     // right side
+        .x          (11'd896),     // right side
         .h_count    (x),
-        .y          (9'd120),
+        .y          (9'd296),
         .v_count    (y),
         .pixel_red  (snow_R),
         .pixel_green(snow_G),
@@ -184,13 +184,6 @@ module game_renderer #(
             R = 8'd20;
             G = 8'd20;
             B = 8'd20;
-
-            // Background: path preview with current theme, on top of gray
-            if (on_p1_pix) begin
-                R = p1_R; G = p1_G; B = p1_B;
-            end else if (on_p2_pix) begin
-                R = p2_R; G = p2_G; B = p2_B;
-            end
 
             // LEFT HALF: only draw grass sprite
             if (x < 11'd640 && |{grass_R, grass_G, grass_B}) begin
