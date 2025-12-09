@@ -4,7 +4,10 @@
 module game_renderer #(
     parameter GRID_W   = 40,
     parameter GRID_H   = 40,
-    parameter PLAYER_R = 21
+    parameter PLAYER_R = 21,
+    parameter HALF_W    = 640,
+    parameter integer TILE_W = 64,
+    parameter integer TILE_H = 64
 )(
     input  wire        clk,        // not strictly needed, but fine to keep
     input  wire        active,     // active_draw_hdmi
@@ -122,8 +125,26 @@ module game_renderer #(
     logic [7:0] snow_R,  snow_G,  snow_B;
 
     // grass + mud tiled background (used in grass theme during game)
-    logic [7:0] grass_bg_R, grass_bg_G, grass_bg_B;
-    logic [7:0] mud_bg_R,   mud_bg_G,   mud_bg_B;
+    logic [7:0] mud_R,   mud_G,   mud_B;
+
+    //we can treat each half-screen independently for tiling 
+    wire [10:0] x_local = (x < HALF_W) ? x : (x - HALF_W);
+
+    //mud tiles 
+
+    mud_tile_sprite #(
+        .TILE_W       (TILE_W),
+        .TILE_H       (TILE_H),
+        .IMG_INIT_FILE("mud_image.mem"),
+        .PAL_INIT_FILE("mud_palette.mem")
+    ) mud_tex (
+        .clk (clk),
+        .x   (x_local),
+        .y   (y),
+        .R   (mud_R),
+        .G   (mud_G),
+        .B   (mud_B)
+    );
 
     //  Menu theme sprites (INIT state)
     //  NOTE: make sure grass/snow PNGs are 128*128 before running converter.
@@ -183,7 +204,7 @@ module game_renderer #(
 
     always_comb begin
         if (!theme) begin
-            // theme 0 = red / blue
+            // theme 0 = red / blue // // not used in theme 0 for paths, but keep defined
             p1_R = 8'hC0; p1_G = 8'h10; p1_B = 8'h10;
             p2_R = 8'h10; p2_G = 8'h10; p2_B = 8'hC0;
         end else begin
@@ -213,14 +234,14 @@ module game_renderer #(
             B = 8'd20;
 
             // LEFT HALF: only draw grass sprite
-            if (x < 11'd640 && |{grass_R, grass_G, grass_B}) begin
+            if (x < 11'd640 ) begin
                 R = grass_R;
                 G = grass_G;
                 B = grass_B;
             end
 
             // RIGHT HALF: only draw snow sprite
-            if (x >= 11'd640 && |{snow_R, snow_G, snow_B}) begin
+            if (x >= 11'd640) begin
                 R = snow_R;
                 G = snow_G;
                 B = snow_B;
@@ -237,15 +258,13 @@ module game_renderer #(
         begin
             // PATH + BACKGROUND
             if (!theme) begin
-                // grass theme: grass everywhere, mud only on path cells
+                // mud
                 if (on_any_path) begin
-                    R = mud_bg_R;
-                    G = mud_bg_G;
-                    B = mud_bg_B;
+                    R = mud_R;
+                    G = mud_G;
+                    B = mud_B;
                 end else begin
-                    R = grass_bg_R;
-                    G = grass_bg_G;
-                    B = grass_bg_B;
+                    R = 8'd10; G = 8'd70; B = 8'd10;
                 end
             end else begin
                 // snow / other theme: keep old solid colors
@@ -267,7 +286,7 @@ module game_renderer #(
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
 
             // Center divider line
-            if (x == 640) begin
+            if (x == HALF_W) begin
                 // bright center line
                 {R,G,B} = {8'd255, 8'd255, 8'd255};
             end else if (x >= 639 && x <= 641) begin
@@ -280,13 +299,11 @@ module game_renderer #(
         else if (game_state == 3'd4) begin
             if (!theme) begin
                 if (on_any_path) begin
-                    R = mud_bg_R;
-                    G = mud_bg_G;
-                    B = mud_bg_B;
+                    R = mud_R;
+                    G = mud_G;
+                    B = mud_B;
                 end else begin
-                    R = grass_bg_R;
-                    G = grass_bg_G;
-                    B = grass_bg_B;
+                    R = 8'd10; G = 8'd70; B = 8'd10;
                 end
             end else begin
                 if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end

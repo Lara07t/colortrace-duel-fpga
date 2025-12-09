@@ -26,7 +26,8 @@ module autopath_gen #(
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width;
 
     int head_v;
-    localparam int MAX_VEL = 4;
+    localparam int MAX_VEL = 3
+    ;
 
     logic [15:0] lfsr;
 
