@@ -469,14 +469,14 @@ module top_level
     // * 2'b01 → Cr (3'b101)
     // * 2'b10 → Cb (3'b110)
     // * 2'b11 → red fallback (3'b001)
-    always_comb begin
-        case (chan_sel_active)
-            2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
-            2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
-            2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
-            default: channel_sel_active_3b = 3'b001; // red (fallback)
-        endcase
-    end
+    // always_comb begin
+    //     case (chan_sel_active)
+    //         2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
+    //         2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
+    //         2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
+    //         default: channel_sel_active_3b = 3'b001; // red (fallback)
+    //     endcase
+    // end
 
     //assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
     assign channel_sel = channel_sel_active_3b;
@@ -770,43 +770,112 @@ module top_level
     end
 
 
+// THEME SELECTION
+logic theme_preview;   // live view from switches
+logic theme_latched;   // stored when btn[3] pressed
+logic [1:0] btn3_sync;
+logic btn3_rise;
+
+// theme from switches (sw0 chooses theme)
+assign theme_preview = sw[0];
+
+// Sync btn3 into pixel clock domain
+always_ff @(posedge clk_pixel) begin
+    if (sys_rst_pixel)
+        btn3_sync <= 2'b00;
+    else
+        btn3_sync <= {btn3_sync[0], btn[3]};
+end
+
+assign btn3_rise = (btn3_sync == 2'b01);
+
+// latch theme when btn3 pressed
+always_ff @(posedge clk_pixel) begin
+    if (sys_rst_pixel)
+        theme_latched <= 1'b0;
+    else if (btn3_rise)
+        theme_latched <= theme_preview;
+end
+
+
+
 
     // Final overlay: draw path cells on top of base video.
     // Left half path = red, right half path = blue (just for visualization).
-    wire path_pix_left  = cell_on_left  && region_left  && active_draw_hdmi;
-    wire path_pix_right = cell_on_right && region_right && active_draw_hdmi;
+    // wire path_pix_left  = cell_on_left  && region_left  && active_draw_hdmi;
+    // wire path_pix_right = cell_on_right && region_right && active_draw_hdmi;
 
-    always_comb begin
-        // Default: camera image
-        red   = base_red;
-        green = base_green;
-        blue  = base_blue;
+    // always_comb begin
+    //     // Default: camera image
+    //     red   = base_red;
+    //     green = base_green;
+    //     blue  = base_blue;
 
-        if (active_draw_hdmi) begin
-            // PATH background
-            if (path_pix_left) begin
-                red   = 8'hC0;
-                green = 8'h10;
-                blue  = 8'h10;
-            end else if (path_pix_right) begin
-                red   = 8'h10;
-                green = 8'h10;
-                blue  = 8'hC0;
-            end
+    //     if (active_draw_hdmi) begin
+    //         // PATH background
+    //         if (path_pix_left) begin
+    //             red   = 8'hC0;
+    //             green = 8'h10;
+    //             blue  = 8'h10;
+    //         end else if (path_pix_right) begin
+    //             red   = 8'h10;
+    //             green = 8'h10;
+    //             blue  = 8'hC0;
+    //         end
 
-            // CIRCLES on top
-            if (player1_pix) begin
-                red   = 8'hFF;
-                green = 8'hFF;
-                blue  = 8'hFF;
-            end else if (player2_pix) begin
-                red   = 8'hFF;
-                green = 8'hFF;
-                blue  = 8'h00;
-            end
-        end
-    end
+    //         // CIRCLES on top
+    //         if (player1_pix) begin
+    //             red   = 8'hFF;
+    //             green = 8'hFF;
+    //             blue  = 8'hFF;
+    //         end else if (player2_pix) begin
+    //             red   = 8'hFF;
+    //             green = 8'hFF;
+    //             blue  = 8'h00;
+    //         end
+    //     end
+    // end
 
+game_renderer #(
+    .GRID_W   (GRID_W),
+    .GRID_H   (GRID_H),
+    .PLAYER_R (PLAYER_RADIUS)
+) renderer_inst (
+    .clk         (clk_pixel),
+    .active      (active_draw_hdmi),
+    .game_state  (game_state),
+    .blink_p1    (blink_p1),
+    .blink_p2    (blink_p2),
+
+    .theme       (theme_latched),
+
+    .path_p1     (path_grid_left),
+    .path_p2     (path_grid_right),
+
+    .x           (h_count_hdmi),
+    .y           (v_count_hdmi),
+
+    .region_left (region_left),
+    .region_right(region_right),
+    .cell_x_left (cell_x_left),
+    .cell_y_left (cell_y_left),
+    .cell_x_right(cell_x_right),
+    .cell_y_right(cell_y_right),
+
+    .p1_x        (x_com1),
+    .p1_y        (y_com1),
+    .p2_x        (x_com2),
+    .p2_y        (y_com2),
+
+    .p1_lives    (p1_lives),
+    .p2_lives    (p2_lives),
+
+    .winner      (winner),
+
+    .R           (red),
+    .G           (green),
+    .B           (blue)
+);
 
 
 
@@ -990,11 +1059,7 @@ module top_level
     assign led[15:5] = 0;
 
        //*********************************************************
-    //PATH CHECKER
 
-    // TODO give path grid values 
-    // TODO also center of mass values XCOM YCOM 1 & 2
-    //*********************************************************
     // PATH CHECKER
 
     logic p1_life_lost_raw, p2_life_lost_raw;
@@ -1053,6 +1118,7 @@ module top_level
         // NEW: only start when both COMs have been computed on-path
         .p1_com_valid (new_com1),
         .p2_com_valid (new_com2),
+        .start_game(btn3_rise),
 
         .state        (game_state),
         .p1_lives     (p1_lives),

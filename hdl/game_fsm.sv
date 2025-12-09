@@ -16,6 +16,7 @@ module game_fsm #(
     // *** NEW: COM valid flags (player is actually detected) ***
     input  wire p1_com_valid,
     input  wire p2_com_valid,
+    input wire start_game,
 
     output logic [2:0] state,
     output logic [1:0] p1_lives,
@@ -115,7 +116,10 @@ module game_fsm #(
         case (cs)
 
             INIT: begin
-                ns = READY;
+                if (start_game)
+                    ns = READY;
+                else
+                    ns = INIT;;
             end
 
             READY: begin

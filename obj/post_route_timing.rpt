@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 21:18:49 2025
-| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Mon Dec  8 20:21:32 2025
+| Host         : eecs-digital-01 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing -file obj/post_route_timing.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -12,70 +12,112 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanc
 
 Timing Report
 
-Slack (VIOLATED) :        -3.305ns  (required time - arrival time)
-  Source:                 cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/C
+Slack (VIOLATED) :        -6.186ns  (required time - arrival time)
+  Source:                 vsg/h_count_reg[6]_replica/C
                             (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/syncstages_ff_reg[0]/D
-                            (rising edge-triggered cell FDRE clocked by clk_camera_cw_fast  {rise@0.000ns fall@2.500ns period=5.000ns})
-  Path Group:             clk_camera_cw_fast
+  Destination:            tmds_blue/tally_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            0.017ns  (clk_camera_cw_fast rise@3165.000ns - clk_pixel_cw_hdmi rise@3164.983ns)
-  Data Path Delay:        2.576ns  (logic 0.518ns (20.108%)  route 2.058ns (79.892%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.200ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -2.107ns = ( 3162.893 - 3165.000 ) 
-    Source Clock Delay      (SCD):    -2.497ns = ( 3162.486 - 3164.983 ) 
-    Clock Pessimism Removal (CPR):    -0.590ns
-  Clock Uncertainty:      0.506ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+  Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
+  Data Path Delay:        19.434ns  (logic 9.518ns (48.975%)  route 9.916ns (51.025%))
+  Logic Levels:           16  (CARRY4=3 DSP48E1=2 LUT2=1 LUT4=1 LUT5=1 LUT6=8)
+  Clock Path Skew:        -0.041ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.092ns = ( 11.376 - 13.468 ) 
+    Source Clock Delay      (SCD):    -2.478ns
+    Clock Pessimism Removal (CPR):    -0.427ns
+  Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
-    Discrete Jitter          (DJ):    0.329ns
-    Phase Error              (PE):    0.338ns
+    Discrete Jitter          (DJ):    0.414ns
+    Phase Error              (PE):    0.000ns
 
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
                          (clock clk_pixel_cw_hdmi rise edge)
-                                                   3164.983  3164.983 r  
-    N15                                               0.000  3164.983 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000  3164.983    wizard_migcam/clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.440  3166.424 r  wizard_migcam/clkin1_ibufg/O
-                         net (fo=1, routed)           1.253  3167.677    wizard_migcam/clk_in1_cw_fast
+                                                      0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    wizard_migcam/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, routed)           1.253     2.693    wizard_migcam/clk_in1_cw_fast
     PLLE2_ADV_X0Y0       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
-                                                     -8.486  3159.191 r  wizard_migcam/plle2_adv_inst/CLKOUT0
-                         net (fo=1, routed)           1.660  3160.851    wizard_migcam/clk_100_cw_fast
-    BUFGCTRL_X0Y6        BUFG (Prop_bufg_I_O)         0.096  3160.947 r  wizard_migcam/clkout1_buf/O
-                         net (fo=1, routed)           1.575  3162.523    wizard_hdmi/clk_100
+                                                     -8.486    -5.792 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.660    -4.132    wizard_migcam/clk_100_cw_fast
+    BUFGCTRL_X0Y6        BUFG (Prop_bufg_I_O)         0.096    -4.036 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, routed)           1.575    -2.461    wizard_hdmi/sysclk
     MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
-                                                     -3.333  3159.190 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
-                         net (fo=1, routed)           1.661  3160.851    wizard_hdmi/clk_pixel_cw_hdmi
-    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096  3160.947 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4279, routed)        1.539  3162.486    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rd_clk
-    SLICE_X10Y76         FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/C
+                                                     -3.333    -5.793 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.661    -4.132    wizard_hdmi/clk_pixel_cw_hdmi
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -4.036 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=4515, routed)        1.558    -2.478    vsg/clk_pixel
+    SLICE_X51Y20         FDRE                                         r  vsg/h_count_reg[6]_replica/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X10Y76         FDRE (Prop_fdre_C_Q)         0.518  3163.004 r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/Q
-                         net (fo=38, routed)          2.058  3165.062    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/src_rst
-    SLICE_X9Y75          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/syncstages_ff_reg[0]/D
+    SLICE_X51Y20         FDRE (Prop_fdre_C_Q)         0.456    -2.022 r  vsg/h_count_reg[6]_replica/Q
+                         net (fo=33, routed)          1.166    -0.856    renderer_inst/h_count[6]_repN_alias
+    DSP48_X1Y5           DSP48E1 (Prop_dsp48e1_D[6]_P[24])
+                                                      5.070     4.214 r  renderer_inst/inside_heart2_return1/P[24]
+                         net (fo=24, routed)          0.996     5.210    renderer_inst/inside_heart2_return1_n_81
+    DSP48_X1Y4           DSP48E1 (Prop_dsp48e1_C[44]_P[0])
+                                                      1.820     7.030 f  renderer_inst/inside_heart2_return0/P[0]
+                         net (fo=1, routed)           0.607     7.637    renderer_inst/inside_heart2_return0_n_105
+    SLICE_X55Y11         LUT2 (Prop_lut2_I0_O)        0.124     7.761 r  renderer_inst/tmds[2]_i_91/O
+                         net (fo=1, routed)           0.508     8.269    renderer_inst/tmds[2]_i_91_n_0
+    SLICE_X53Y11         CARRY4 (Prop_carry4_CYINIT_CO[3])
+                                                      0.580     8.849 r  renderer_inst/tmds_reg[2]_i_69/CO[3]
+                         net (fo=1, routed)           0.000     8.849    renderer_inst/tmds_reg[2]_i_69_n_0
+    SLICE_X53Y12         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     8.963 r  renderer_inst/tmds_reg[2]_i_38/CO[3]
+                         net (fo=1, routed)           0.000     8.963    renderer_inst/tmds_reg[2]_i_38_n_0
+    SLICE_X53Y13         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.077 r  renderer_inst/tmds_reg[2]_i_20/CO[3]
+                         net (fo=4, routed)           0.947    10.024    fsm_inst/CO[0]
+    SLICE_X51Y20         LUT4 (Prop_lut4_I1_O)        0.124    10.148 r  fsm_inst/tmds[2]_i_8__0/O
+                         net (fo=3, routed)           1.028    11.176    vsg/p2_lives_reg[0]_0_alias
+    SLICE_X45Y18         LUT6 (Prop_lut6_I2_O)        0.124    11.300 r  vsg/tmds[4]_i_9_comp_1/O
+                         net (fo=1, routed)           0.433    11.732    vsg/tmds[4]_i_9_n_0
+    SLICE_X45Y18         LUT6 (Prop_lut6_I3_O)        0.124    11.856 r  vsg/tmds[4]_i_4_comp/O
+                         net (fo=9, routed)           0.638    12.495    fsm_inst/tmds_reg[7][1]
+    SLICE_X43Y18         LUT6 (Prop_lut6_I2_O)        0.124    12.619 r  fsm_inst/tally[2]_i_8__1/O
+                         net (fo=2, routed)           0.602    13.221    fsm_inst/tally[2]_i_8__1_n_0
+    SLICE_X42Y17         LUT6 (Prop_lut6_I1_O)        0.124    13.345 r  fsm_inst/tally[2]_i_5__0/O
+                         net (fo=17, routed)          0.543    13.888    vsg/x_nor_0
+    SLICE_X44Y17         LUT6 (Prop_lut6_I4_O)        0.124    14.012 r  vsg/tally[4]_i_4/O
+                         net (fo=3, routed)           0.586    14.598    fsm_inst/tally_reg[2]_1
+    SLICE_X44Y18         LUT5 (Prop_lut5_I1_O)        0.124    14.722 r  fsm_inst/tally[5]_i_11__1/O
+                         net (fo=5, routed)           0.620    15.342    fsm_inst/tally[5]_i_11__1_n_0
+    SLICE_X45Y19         LUT6 (Prop_lut6_I3_O)        0.124    15.466 r  fsm_inst/tally[2]_i_3__1/O
+                         net (fo=18, routed)          0.419    15.885    fsm_inst/top_tmds_bit_0
+    SLICE_X43Y19         LUT6 (Prop_lut6_I0_O)        0.124    16.009 r  fsm_inst/tally[5]_i_2__1/O
+                         net (fo=2, routed)           0.824    16.833    fsm_inst/tally[5]_i_2__1_n_0
+    SLICE_X45Y19         LUT6 (Prop_lut6_I0_O)        0.124    16.957 r  fsm_inst/tally[5]_i_1__0/O
+                         net (fo=1, routed)           0.000    16.957    tmds_blue/D[4]
+    SLICE_X45Y19         FDRE                                         r  tmds_blue/tally_reg[5]/D
   -------------------------------------------------------------------    -------------------
 
-                         (clock clk_camera_cw_fast rise edge)
-                                                   3165.000  3165.000 r  
-    N15                                               0.000  3165.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000  3165.000    wizard_migcam/clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.370  3166.370 r  wizard_migcam/clkin1_ibufg/O
-                         net (fo=1, routed)           1.181  3167.551    wizard_migcam/clk_in1_cw_fast
-    PLLE2_ADV_X0Y0       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT2)
-                                                     -7.753  3159.798 r  wizard_migcam/plle2_adv_inst/CLKOUT2
-                         net (fo=1, routed)           1.582  3161.380    wizard_migcam/clk_camera_cw_fast
-    BUFGCTRL_X0Y3        BUFG (Prop_bufg_I_O)         0.091  3161.471 r  wizard_migcam/clkout3_buf/O
-                         net (fo=309, routed)         1.423  3162.893    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/dest_clk
-    SLICE_X9Y75          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/syncstages_ff_reg[0]/C
-                         clock pessimism             -0.590  3162.303    
-                         clock uncertainty           -0.506  3161.798    
-    SLICE_X9Y75          FDRE (Setup_fdre_C_D)       -0.040  3161.758    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.rrst_wr_inst/syncstages_ff_reg[0]
+                         (clock clk_pixel_cw_hdmi rise edge)
+                                                     13.468    13.468 r  
+    N15                                               0.000    13.468 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000    13.468    wizard_migcam/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.370    14.838 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, routed)           1.181    16.019    wizard_migcam/clk_in1_cw_fast
+    PLLE2_ADV_X0Y0       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -7.753     8.266 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.582     9.848    wizard_migcam/clk_100_cw_fast
+    BUFGCTRL_X0Y6        BUFG (Prop_bufg_I_O)         0.091     9.939 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, routed)           1.457    11.396    wizard_hdmi/sysclk
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -3.129     8.267 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, routed)           1.581     9.848    wizard_hdmi/clk_pixel_cw_hdmi
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091     9.939 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=4515, routed)        1.437    11.376    tmds_blue/clk_pixel
+    SLICE_X45Y19         FDRE                                         r  tmds_blue/tally_reg[5]/C
+                         clock pessimism             -0.427    10.949    
+                         clock uncertainty           -0.210    10.740    
+    SLICE_X45Y19         FDRE (Setup_fdre_C_D)        0.031    10.771    tmds_blue/tally_reg[5]
   -------------------------------------------------------------------
-                         required time                       3161.757    
-                         arrival time                       -3165.062    
+                         required time                         10.771    
+                         arrival time                         -16.957    
   -------------------------------------------------------------------
-                         slack                                 -3.305    
+                         slack                                 -6.186    
 
 
 

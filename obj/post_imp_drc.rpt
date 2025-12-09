@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Sun Dec  7 21:18:51 2025
-| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Mon Dec  8 20:21:34 2025
+| Host         : eecs-digital-01 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_drc -file obj/post_imp_drc.rpt
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -24,14 +24,13 @@ Table of Contents
       Design limits: <entire design considered>
            Ruledeck: default
              Max checks: <unlimited>
-             Checks found: 15
-+-----------+----------+--------------------------------------------------------------+--------+
-| Rule      | Severity | Description                                                  | Checks |
-+-----------+----------+--------------------------------------------------------------+--------+
-| DPIP-1    | Warning  | Input pipelining                                             | 12     |
-| PDCN-137  | Warning  | enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff | 2      |
-| RTSTAT-10 | Warning  | No routable loads                                            | 1      |
-+-----------+----------+--------------------------------------------------------------+--------+
+             Checks found: 29
++-----------+----------+-------------------+--------+
+| Rule      | Severity | Description       | Checks |
++-----------+----------+-------------------+--------+
+| DPIP-1    | Warning  | Input pipelining  | 28     |
+| RTSTAT-10 | Warning  | No routable loads | 1      |
++-----------+----------+-------------------+--------+
 
 2. REPORT DETAILS
 -----------------
@@ -57,58 +56,127 @@ Related violations: <none>
 
 DPIP-1#5 Warning
 Input pipelining  
-DSP red4 input red4/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_circle_return0 input renderer_inst/inside_circle_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#6 Warning
 Input pipelining  
-DSP red4 input red4/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_circle_return0__0 input renderer_inst/inside_circle_return0__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#7 Warning
 Input pipelining  
-DSP red4__0 input red4__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_circle_return1 input renderer_inst/inside_circle_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#8 Warning
 Input pipelining  
-DSP red4__0 input red4__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_circle_return1__0 input renderer_inst/inside_circle_return1__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#9 Warning
 Input pipelining  
-DSP red4__1 input red4__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return0 input renderer_inst/inside_heart0_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#10 Warning
 Input pipelining  
-DSP red4__1 input red4__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return0 input renderer_inst/inside_heart0_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#11 Warning
 Input pipelining  
-DSP red4__2 input red4__2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return1 input renderer_inst/inside_heart0_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#12 Warning
 Input pipelining  
-DSP red4__2 input red4__2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart1_return0 input renderer_inst/inside_heart1_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
-PDCN-137#1 Warning
-enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X0Y5 has BlockRam (frame_buffer/BRAM_reg_0_0) with RAM_EXTENSION_A attribute set to LOWER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
+DPIP-1#13 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart1_return1 input renderer_inst/inside_heart1_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
-PDCN-137#2 Warning
-enum_RAM_EXTENSION_A_not_NONE_connects_ADDRARDADDRL15_Tieoff  
-RAMB36E1 site RAMB36_X0Y6 has BlockRam (frame_buffer/BRAM_reg_1_0) with RAM_EXTENSION_A attribute set to UPPER and ADDRARADDRL15 pin tied to LOGIC 0 (GND). In this case only the Lower BRAM will be used.
+DPIP-1#14 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#15 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#16 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#17 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart2_return1 input renderer_inst/inside_heart2_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#18 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#19 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#20 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#21 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart3_return1 input renderer_inst/inside_heart3_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#22 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart4_return0 input renderer_inst/inside_heart4_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#23 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart4_return0 input renderer_inst/inside_heart4_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#24 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart4_return1 input renderer_inst/inside_heart4_return1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#25 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart4_return1 input renderer_inst/inside_heart4_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#26 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart_return0 input renderer_inst/inside_heart_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#27 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart_return0 input renderer_inst/inside_heart_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+Related violations: <none>
+
+DPIP-1#28 Warning
+Input pipelining  
+DSP renderer_inst/inside_heart_return1 input renderer_inst/inside_heart_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 RTSTAT-10#1 Warning
 No routable loads  
-42 net(s) have no routable loads. The problem bus(es) and/or net(s) are cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_sdpram.xpm_memory_base_inst/doutb[36:0],
-cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/overflow,
+5 net(s) have no routable loads. The problem bus(es) and/or net(s) are cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/overflow,
 cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/rd_data_count[0],
 cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/underflow,
 cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/wr_data_count[0]
