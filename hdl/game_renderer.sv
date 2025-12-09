@@ -283,7 +283,7 @@ module game_renderer #(
 
             // LIVES
             if (draw_life)
-                {R,G,B} = {8'hFF, 8'd20, 8'd20};
+                {R,G,B} = {8'hFF, 8'hFF, 8'hFF};
 
             // Center divider line
             if (x == HALF_W) begin
