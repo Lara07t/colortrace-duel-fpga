@@ -15,7 +15,7 @@ module game_renderer #(
     input  wire        blink_p1,
     input  wire        blink_p2,
 
-    // theme: 0 = red/blue, 1 = purple/green
+    // theme: 0 = mud/grass, 1 = ocean
     input  wire        theme,
 
     // full path grids (40x40 each)
@@ -60,7 +60,6 @@ module game_renderer #(
         addr_left  = cell_y_left  * GRID_W + cell_x_left;
         addr_right = cell_y_right * GRID_W + cell_x_right;
 
-        // default to off if out of range (defensive)
         on_p1_cell = 1'b0;
         on_p2_cell = 1'b0;
 
@@ -72,8 +71,8 @@ module game_renderer #(
     end
 
     // “is this pixel on P1/P2 path?” (per half)
-    wire on_p1_pix = active && region_left  && on_p1_cell;
-    wire on_p2_pix = active && region_right && on_p2_cell;
+    wire on_p1_pix   = active && region_left  && on_p1_cell;
+    wire on_p2_pix   = active && region_right && on_p2_cell;
     wire on_any_path = on_p1_pix | on_p2_pix;
 
     //  Player circles
@@ -113,10 +112,10 @@ module game_renderer #(
 
         draw_life =
             heart_p1_0 | heart_p1_1 | heart_p1_2 |
-            heart_p2_0 | heart_p2_1 | heart_p2_2;   
+            heart_p2_0 | heart_p2_1 | heart_p2_2;
     end
 
-    //  PATH COLORS per theme
+    // path colors per theme (only used in theme 1 old solid-mode; kept for flexibility)
     logic [7:0] p1_R, p1_G, p1_B;
     logic [7:0] p2_R, p2_G, p2_B;
 
@@ -124,19 +123,21 @@ module game_renderer #(
     logic [7:0] grass_R, grass_G, grass_B;
     logic [7:0] snow_R,  snow_G,  snow_B;
 
-    // grass + mud tiled background (used in grass theme during game)
+    // grass + mud tiled background (used in mud theme during game)
     logic [7:0] mud_R,   mud_G,   mud_B;
 
-    //we can treat each half-screen independently for tiling 
+    // ocean tiled path
+    logic [7:0] ocean_R, ocean_G, ocean_B;
+
+    // treat each half-screen independently for tiling
     wire [10:0] x_local = (x < HALF_W) ? x : (x - HALF_W);
 
-    //mud tiles 
-
+    // mud tiles (theme=0)
     mud_tile_sprite #(
         .TILE_W       (TILE_W),
         .TILE_H       (TILE_H),
-        .IMG_INIT_FILE("mud_image.mem"),
-        .PAL_INIT_FILE("mud_palette.mem")
+        .IMG_INIT_FILE("data/mud_image.mem"),
+        .PAL_INIT_FILE("data/mud_palette.mem")
     ) mud_tex (
         .clk (clk),
         .x   (x_local),
@@ -146,16 +147,30 @@ module game_renderer #(
         .B   (mud_B)
     );
 
+    // ocean tiles (theme=1)
+    ocean_tile_sprite #(
+        .TILE_W       (TILE_W),
+        .TILE_H       (TILE_H),
+        .IMG_INIT_FILE("data/ocean_image.mem"),
+        .PAL_INIT_FILE("data/ocean_palette.mem")
+    ) ocean_tex (
+        .clk (clk),
+        .x   (x_local),
+        .y   (y),
+        .R   (ocean_R),
+        .G   (ocean_G),
+        .B   (ocean_B)
+    );
+
     //  Menu theme sprites (INIT state)
-    //  NOTE: make sure grass/snow PNGs are 128*128 before running converter.
     grass_menu_sprite #(
-        .WIDTH (128),  
+        .WIDTH (128),
         .HEIGHT(128)
     ) grass_menu_inst (
         .pixel_clk  (clk),
-        .rst        (1'b0),        // ROM only; can tie to real reset if you prefer
-        .pop        (1'b0),        // static image
-        .x          (11'd256),     // left-ish on screen
+        .rst        (1'b0),
+        .pop        (1'b0),
+        .x          (11'd256),
         .h_count    (x),
         .y          (9'd296),
         .v_count    (y),
@@ -165,13 +180,13 @@ module game_renderer #(
     );
 
     snow_menu_sprite #(
-        .WIDTH (128), 
+        .WIDTH (128),
         .HEIGHT(128)
     ) snow_menu_inst (
         .pixel_clk  (clk),
         .rst        (1'b0),
         .pop        (1'b0),
-        .x          (11'd896),     // right side
+        .x          (11'd896),
         .h_count    (x),
         .y          (9'd296),
         .v_count    (y),
@@ -180,35 +195,13 @@ module game_renderer #(
         .pixel_blue (snow_B)
     );
 
-    // full-screen tiled grass (background)
-    // grass_tile_bg grass_bg_inst (
-    //     .pixel_clk (clk),
-    //     .rst       (1'b0),
-    //     .h_count   (x),
-    //     .v_count   (y),
-    //     .pixel_red (grass_bg_R),
-    //     .pixel_green(grass_bg_G),
-    //     .pixel_blue (grass_bg_B)
-    // );
-
-    // // full-screen tiled mud (used WHERE path bit = 1)
-    // mud_tile_bg mud_bg_inst (
-    //     .pixel_clk (clk),
-    //     .rst       (1'b0),
-    //     .h_count   (x),
-    //     .v_count   (y),
-    //     .pixel_red (mud_bg_R),
-    //     .pixel_green(mud_bg_G),
-    //     .pixel_blue (mud_bg_B)
-    // );
-
     always_comb begin
         if (!theme) begin
-            // theme 0 = red / blue // // not used in theme 0 for paths, but keep defined
+            // not really used for path now, but keep defined
             p1_R = 8'hC0; p1_G = 8'h10; p1_B = 8'h10;
             p2_R = 8'h10; p2_G = 8'h10; p2_B = 8'hC0;
         end else begin
-            // theme 1 = purple / green
+            // alt theme (ocean)
             p1_R = 8'hA0; p1_G = 8'h20; p1_B = 8'hA0;
             p2_R = 8'h20; p2_G = 8'hA0; p2_B = 8'h20;
         end
@@ -216,40 +209,32 @@ module game_renderer #(
 
     //  FINAL RENDER
     always_comb begin
-        // default background = black
         R = 8'd0;
         G = 8'd0;
         B = 8'd0;
 
         if (!active) begin
-            // outside active draw → keep black, HDMI sends blanking/sync
             R = 8'd0; G = 8'd0; B = 8'd0;
         end
 
-      // INIT / MENU
+        // INIT / MENU
         else if (game_state == 3'd0) begin
-            // Base background for menu: dark gray
             R = 8'd20;
             G = 8'd20;
             B = 8'd20;
 
-            // LEFT HALF: only draw grass sprite
-            if (x < 11'd640 ) begin
+            if (x < 11'd640) begin
                 R = grass_R;
                 G = grass_G;
                 B = grass_B;
             end
 
-            // RIGHT HALF: only draw snow sprite
             if (x >= 11'd640) begin
                 R = snow_R;
                 G = snow_G;
                 B = snow_B;
             end
-
-            // (deleted draw_menu_text white rectangle)
         end
-
 
         // READY + PLAY + LIFE_LOSS
         else if (game_state == 3'd1 ||
@@ -258,19 +243,23 @@ module game_renderer #(
         begin
             // PATH + BACKGROUND
             if (!theme) begin
-                // mud
+                // theme 0: grass + mud path
                 if (on_any_path) begin
                     R = mud_R;
                     G = mud_G;
                     B = mud_B;
                 end else begin
-                    R = 8'd10; G = 8'd70; B = 8'd10;
+                    R = 8'd10; G = 8'd70; B = 8'd10; // grass background
                 end
             end else begin
-                // snow / other theme: keep old solid colors
-                if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
-                else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
-                else begin R = 8'd0; G = 8'd0; B = 8'd0; end;
+                // theme 1: ocean path
+                if (on_any_path) begin
+                    R = ocean_R;
+                    G = ocean_G;
+                    B = ocean_B;
+                end else begin
+                    R = 8'd0; G = 8'd15; B = 8'd40;  // deep ocean background
+                end
             end
 
             // PLAYER CIRCLES (hide on blink in LIFE_LOSS)
@@ -287,10 +276,8 @@ module game_renderer #(
 
             // Center divider line
             if (x == HALF_W) begin
-                // bright center line
                 {R,G,B} = {8'd255, 8'd255, 8'd255};
             end else if (x >= 639 && x <= 641) begin
-                // softer glow around it
                 {R,G,B} = {8'd150, 8'd150, 8'd150};
             end
         end
@@ -306,18 +293,19 @@ module game_renderer #(
                     R = 8'd10; G = 8'd70; B = 8'd10;
                 end
             end else begin
-                if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
-                else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
-                else begin R = 8'd0; G = 8'd0; B = 8'd0; end;
+                if (on_any_path) begin
+                    R = ocean_R;
+                    G = ocean_G;
+                    B = ocean_B;
+                end else begin
+                    R = 8'd0; G = 8'd15; B = 8'd40;
+                end
             end
-
-            // (no big white rect here either)
 
             if (draw_life)
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
         end
 
-        // DEFAULT / unexpected state: show magenta so you *know* something is wrong
         else begin
             R = 8'd80;
             G = 8'd0;

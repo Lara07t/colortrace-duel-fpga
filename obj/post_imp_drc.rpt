@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Dec  9 14:34:47 2025
-| Host         : eecs-digital-33 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Tue Dec  9 15:54:14 2025
+| Host         : eecs-digital-10 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_drc -file obj/post_imp_drc.rpt
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -24,11 +24,11 @@ Table of Contents
       Design limits: <entire design considered>
            Ruledeck: default
              Max checks: <unlimited>
-             Checks found: 51
+             Checks found: 29
 +-----------+----------+-------------------+--------+
 | Rule      | Severity | Description       | Checks |
 +-----------+----------+-------------------+--------+
-| DPIP-1    | Warning  | Input pipelining  | 50     |
+| DPIP-1    | Warning  | Input pipelining  | 28     |
 | RTSTAT-10 | Warning  | No routable loads | 1      |
 +-----------+----------+-------------------+--------+
 
@@ -76,212 +76,102 @@ Related violations: <none>
 
 DPIP-1#9 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2 input renderer_inst/inside_heart0_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return0 input renderer_inst/inside_heart0_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#10 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2 input renderer_inst/inside_heart0_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return0 input renderer_inst/inside_heart0_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#11 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2__0 input renderer_inst/inside_heart0_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart0_return1 input renderer_inst/inside_heart0_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#12 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2__0 input renderer_inst/inside_heart0_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart1_return0 input renderer_inst/inside_heart1_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#13 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2__1 input renderer_inst/inside_heart0_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart1_return0 input renderer_inst/inside_heart1_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#14 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart0_return2__1 input renderer_inst/inside_heart0_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart1_return1 input renderer_inst/inside_heart1_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#15 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2 input renderer_inst/inside_heart1_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#16 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2 input renderer_inst/inside_heart1_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#17 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2__0 input renderer_inst/inside_heart1_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart2_return0 input renderer_inst/inside_heart2_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#18 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2__0 input renderer_inst/inside_heart1_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart2_return1 input renderer_inst/inside_heart2_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#19 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2__1 input renderer_inst/inside_heart1_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#20 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart1_return2__1 input renderer_inst/inside_heart1_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#21 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2 input renderer_inst/inside_heart2_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart3_return0 input renderer_inst/inside_heart3_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#22 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2 input renderer_inst/inside_heart2_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart3_return1 input renderer_inst/inside_heart3_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#23 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2__0 input renderer_inst/inside_heart2_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart4_return0 input renderer_inst/inside_heart4_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#24 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2__0 input renderer_inst/inside_heart2_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart4_return0 input renderer_inst/inside_heart4_return0/C[47:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#25 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2__1 input renderer_inst/inside_heart2_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart4_return1 input renderer_inst/inside_heart4_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#26 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart2_return2__1 input renderer_inst/inside_heart2_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart_return0 input renderer_inst/inside_heart_return0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#27 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart3_return2 input renderer_inst/inside_heart3_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart_return0 input renderer_inst/inside_heart_return0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 DPIP-1#28 Warning
 Input pipelining  
-DSP renderer_inst/inside_heart3_return2 input renderer_inst/inside_heart3_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#29 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart3_return2__0 input renderer_inst/inside_heart3_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#30 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart3_return2__0 input renderer_inst/inside_heart3_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#31 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart3_return2__1 input renderer_inst/inside_heart3_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#32 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart3_return2__1 input renderer_inst/inside_heart3_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#33 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2 input renderer_inst/inside_heart4_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#34 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2 input renderer_inst/inside_heart4_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#35 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2__0 input renderer_inst/inside_heart4_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#36 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2__0 input renderer_inst/inside_heart4_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#37 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2__1 input renderer_inst/inside_heart4_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#38 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart4_return2__1 input renderer_inst/inside_heart4_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#39 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2 input renderer_inst/inside_heart_return2/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#40 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2 input renderer_inst/inside_heart_return2/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#41 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2__0 input renderer_inst/inside_heart_return2__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#42 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2__0 input renderer_inst/inside_heart_return2__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#43 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2__1 input renderer_inst/inside_heart_return2__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#44 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return2__1 input renderer_inst/inside_heart_return2__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#45 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3 input renderer_inst/inside_heart_return3/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#46 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3 input renderer_inst/inside_heart_return3/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#47 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3__0 input renderer_inst/inside_heart_return3__0/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#48 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3__0 input renderer_inst/inside_heart_return3__0/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#49 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3__1 input renderer_inst/inside_heart_return3__1/A[29:0] is not pipelined. Pipelining DSP48 input will improve performance.
-Related violations: <none>
-
-DPIP-1#50 Warning
-Input pipelining  
-DSP renderer_inst/inside_heart_return3__1 input renderer_inst/inside_heart_return3__1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
+DSP renderer_inst/inside_heart_return1 input renderer_inst/inside_heart_return1/B[17:0] is not pipelined. Pipelining DSP48 input will improve performance.
 Related violations: <none>
 
 RTSTAT-10#1 Warning
