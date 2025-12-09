@@ -669,6 +669,9 @@ module top_level
     logic [10:0]               x_rel;
 
 
+       //********************************************************* 
+       //left/right divisions, path gen, drawings and rendering:
+
     always_comb begin
         cell_x_left  = '0;
         cell_y_left  = '0;
@@ -700,6 +703,11 @@ module top_level
     logic [GRID_W*GRID_H-1:0] path_grid_left;
     logic [GRID_W*GRID_H-1:0] path_grid_right;
 
+    //new: shrink when state not in init (or in game) 
+    logic game_initiated;
+    assign game_initiated = (game_state == 3'd0) ? 1'b0 : 1'b1;
+    //
+
     // Left player auto path (40x40 static pattern from BRAM, shrinks after 30s)
     autopath_gen #(
         .GRID_W(GRID_W),
@@ -710,6 +718,7 @@ module top_level
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
         .new_frame      (new_frame_paths),  // <-- changed
+        .game_initiated (game_initiated), // new for shrink condition 
         .cell_x         (cell_x_left),
         .cell_y         (cell_y_left),
         .shift_left_req (1'b0),
@@ -727,6 +736,7 @@ module top_level
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
         .new_frame      (new_frame_paths),  // <-- changed
+        .game_initiated (game_initiated), // new for shrink condition 
         .cell_x         (cell_x_right),
         .cell_y         (cell_y_right),
         .shift_left_req (1'b0),
@@ -797,45 +807,6 @@ always_ff @(posedge clk_pixel) begin
         theme_latched <= theme_preview;
 end
 
-
-
-
-    // Final overlay: draw path cells on top of base video.
-    // Left half path = red, right half path = blue (just for visualization).
-    // wire path_pix_left  = cell_on_left  && region_left  && active_draw_hdmi;
-    // wire path_pix_right = cell_on_right && region_right && active_draw_hdmi;
-
-    // always_comb begin
-    //     // Default: camera image
-    //     red   = base_red;
-    //     green = base_green;
-    //     blue  = base_blue;
-
-    //     if (active_draw_hdmi) begin
-    //         // PATH background
-    //         if (path_pix_left) begin
-    //             red   = 8'hC0;
-    //             green = 8'h10;
-    //             blue  = 8'h10;
-    //         end else if (path_pix_right) begin
-    //             red   = 8'h10;
-    //             green = 8'h10;
-    //             blue  = 8'hC0;
-    //         end
-
-    //         // CIRCLES on top
-    //         if (player1_pix) begin
-    //             red   = 8'hFF;
-    //             green = 8'hFF;
-    //             blue  = 8'hFF;
-    //         end else if (player2_pix) begin
-    //             red   = 8'hFF;
-    //             green = 8'hFF;
-    //             blue  = 8'h00;
-    //         end
-    //     end
-    // end
-
 game_renderer #(
     .GRID_W   (GRID_W),
     .GRID_H   (GRID_H),
@@ -877,6 +848,7 @@ game_renderer #(
     .B           (blue)
 );
 
+       //*********************************************************end of rendering portion
 
 
 ////////////////////////////////////////
@@ -1127,11 +1099,6 @@ game_renderer #(
         .blink_p2     (blink_p2),
         .winner       (winner)
     );
-
-    //*********************************************************
-    //GAME RENDERER 
-
-    // TODO 
 
 endmodule // top_level
 

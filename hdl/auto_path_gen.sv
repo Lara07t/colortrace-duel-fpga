@@ -10,6 +10,7 @@ module autopath_gen #(
     input  wire clk,
     input  wire rst,
     input  wire new_frame,
+    input wire game_initiated,
     input  wire [$clog2(GRID_W)-1:0]  cell_x,
     input  wire [$clog2(GRID_H)-1:0]  cell_y,
     input  wire shift_left_req,
@@ -92,10 +93,11 @@ module autopath_gen #(
             end
 
         end else if (new_frame) begin
+            if (game_initiated) begin // new path condition , game_initiated
             lfsr <= {lfsr[6:0], lfsr[7] ^ lfsr[5]};
 
             if (!shrink_mode) begin
-                if (step_count_before_shrink == STEPS_BEFORE_SHRINK-1) begin
+                if (step_count_before_shrink == STEPS_BEFORE_SHRINK-1) begin 
                     shrink_mode <= 1'b1;
                 end else begin
                     step_count_before_shrink <= step_count_before_shrink + 1'b1;
@@ -145,6 +147,7 @@ module autopath_gen #(
                 grid[y] <= grid[y-1];
             end
             grid[0] <= build_track_row(head_x, cur_half_width);
+            end 
         end
     end
 
