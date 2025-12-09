@@ -151,7 +151,7 @@ module game_renderer #(
     );
 
     // ocean tiles (theme=1 path)
-    ocean_tile_sprite #(
+    mud_tile_sprite #(
         .TILE_W       (TILE_W),
         .TILE_H       (TILE_H),
         .IMG_INIT_FILE("data/ocean_image.mem"),
@@ -166,7 +166,7 @@ module game_renderer #(
     );
 
     // ice tiles (theme=1 background)
-    ice_tile_sprite #(
+    mud_tile_sprite #(
         .TILE_W       (TILE_W),
         .TILE_H       (TILE_H),
         .IMG_INIT_FILE("data/ice_image.mem"),

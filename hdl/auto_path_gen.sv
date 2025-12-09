@@ -209,6 +209,15 @@ endcase
     // 5) update position
     new_x = head_x + new_v;
 
+    // Limit how far the center can move in *one row* when track is narrow
+    if (cur_half_width <= 5) begin
+        int dx;
+        dx = new_x - head_x;
+        if (dx > 1)      new_x = head_x + 1;
+        else if (dx < -1) new_x = head_x - 1;
+    end
+    //
+
     if (new_x < MIN_CENTER)
         new_x = MIN_CENTER;
     else if (new_x > MAX_CENTER)
