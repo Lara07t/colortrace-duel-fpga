@@ -42,8 +42,8 @@ module game_fsm #(
     logic        blink_flag;
 
     // Warm-up counter: how many frames since reset
-    logic [15:0] warmup_ctr;
-    logic        life_loss_enabled;
+    //logic [15:0] warmup_ctr;
+    //logic        life_loss_enabled;
 
     // Latched info: who was hit for this LIFE_LOSS phase
     logic hit_p1_reg, hit_p2_reg;
@@ -59,15 +59,15 @@ module game_fsm #(
             blink_flag <= 0;
             hit_p1_reg <= 1'b0;
             hit_p2_reg <= 1'b0;
-            warmup_ctr <= 16'd0;
+            //warmup_ctr <= 16'd0;
         end else begin
             cs <= ns;
 
-            // Warm-up frame counter: starts right after reset
-            if (new_frame && cs != GAME_OVER) begin
-                if (warmup_ctr < WARMUP_FRAMES)
-                    warmup_ctr <= warmup_ctr + 1;
-            end
+            // // Warm-up frame counter: starts right after reset
+            // if (new_frame && cs != GAME_OVER) begin
+            //     if (warmup_ctr < WARMUP_FRAMES)
+            //         warmup_ctr <= warmup_ctr + 1;
+            // end
 
             // Count pause frames in LIFE_LOSS
             if (cs == LIFE_LOSS && new_frame)
@@ -105,7 +105,7 @@ module game_fsm #(
         end
     end
 
-    assign life_loss_enabled = (warmup_ctr >= WARMUP_FRAMES);
+    //assign life_loss_enabled = (warmup_ctr >= WARMUP_FRAMES);
 
     // Combinational next-state logic
     // Combinational next-state logic
@@ -123,10 +123,10 @@ module game_fsm #(
             end
 
             READY: begin
-                if (!life_loss_enabled) begin
-                    ns = READY; // still warming up
-                end 
-                else if (p1_com_valid && p2_com_valid &&
+                // if (!life_loss_enabled) begin
+                //     ns = READY; // still warming up
+                // end else 
+                if (p1_com_valid && p2_com_valid &&
                          !p1_life_lost && !p2_life_lost) begin
                     ns = PLAY;  // both players on their path → start game
                 end else begin
@@ -136,7 +136,7 @@ module game_fsm #(
 
             // Active play: now we react to hits
             PLAY: begin
-                if (life_loss_enabled && (p1_life_lost || p2_life_lost)) begin
+                if ( (p1_life_lost || p2_life_lost)) begin //life_loss_enabled &&
                     ns = LIFE_LOSS;
                 end
             end
@@ -170,3 +170,4 @@ module game_fsm #(
 
 endmodule
 `default_nettype wire
+

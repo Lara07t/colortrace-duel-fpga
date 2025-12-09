@@ -26,9 +26,9 @@ module autopath_gen #(
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width;
 
     int head_v;
-    localparam int MAX_VEL = 3;
+    localparam int MAX_VEL = 4;
 
-    logic [7:0] lfsr;
+    logic [15:0] lfsr;
 
     localparam int STEPS_BEFORE_SHRINK = 60;
     localparam int STEPS_PER_SHRINK    = 50;
@@ -45,6 +45,10 @@ module autopath_gen #(
 
     localparam int MIN_CENTER = TRACK_HALF_WIDTH;
     localparam int MAX_CENTER = GRID_W - 1 - TRACK_HALF_WIDTH;
+
+    //new-slow
+    localparam int SCROLL_RATE = 4;   // scroll every 4 frames (1 = every frame)
+    logic [$clog2(SCROLL_RATE):0] scroll_cnt;
 
     function automatic logic [GRID_W-1:0] build_track_row(
         input logic [$clog2(GRID_W)-1:0] center,
@@ -82,6 +86,7 @@ module autopath_gen #(
             cur_half_width           <= TRACK_HALF_WIDTH;
 
             head_v <= 0;
+            scroll_cnt <= '0; //new-slow
 
             if (MIN_CENTER <= (GRID_W/2) && (GRID_W/2) <= MAX_CENTER)
                 head_x <= (GRID_W/2);
@@ -92,9 +97,13 @@ module autopath_gen #(
                 grid[y] <= build_track_row(head_x, cur_half_width);
             end
 
-        end else if (new_frame) begin
-            if (game_initiated) begin // new path condition , game_initiated
-            lfsr <= {lfsr[6:0], lfsr[7] ^ lfsr[5]};
+        end else if (new_frame) begin 
+            if (game_initiated) begin // path condition , game_initiated
+            // advance a frame counter while game is running
+                if (scroll_cnt == SCROLL_RATE-1) begin //new-slow
+                    scroll_cnt <= '0;
+            //lfsr <= {lfsr[6:0], lfsr[7] ^ lfsr[5]};
+            lfsr <= {lfsr[14:0], lfsr[15] ^ lfsr[13]};
 
             if (!shrink_mode) begin
                 if (step_count_before_shrink == STEPS_BEFORE_SHRINK-1) begin 
@@ -113,40 +122,111 @@ module autopath_gen #(
                 end
             end
 
+            // begin
+            //     int dv;
+            //     int new_v;
+            //     int new_x;
+
+            //     // case (lfsr[1:0])
+            //     //     2'b00: dv = -1;
+            //     //     2'b11: dv =  1;
+            //     //     default: dv = 0;
+            //     // endcase
+            //     case (lfsr[2:0])
+            //         3'b000, 3'b001: dv = -1;
+            //         3'b010, 3'b011: dv =  1;
+            //         3'b100:         dv = -2;
+            //         3'b101:         dv =  2;
+            //         default:        dv =  0;
+            //     endcase
+
+
+            //     new_v = head_v + dv;
+            //     if (new_v >  MAX_VEL) new_v =  MAX_VEL;
+            //     if (new_v < -MAX_VEL) new_v = -MAX_VEL;
+
+            //     if ((head_x <= MIN_CENTER+1) && (new_v < 0)) new_v = 0;
+            //     if ((head_x >= MAX_CENTER-1) && (new_v > 0)) new_v = 0;
+
+            //     new_x = head_x + new_v;
+
+            //     if (new_x < MIN_CENTER)
+            //         head_x <= MIN_CENTER[$clog2(GRID_W)-1:0];
+            //     else if (new_x > MAX_CENTER)
+            //         head_x <= MAX_CENTER[$clog2(GRID_W)-1:0];
+            //     else
+            //         head_x <= new_x[$clog2(GRID_W)-1:0];
+
+            //     head_v <= new_v;
+            // end
+
             begin
-                int dv;
-                int new_v;
-                int new_x;
+    int dv;
+    int new_v;
+    int new_x;
+    int center_mid;
 
-                case (lfsr[1:0])
-                    2'b00: dv = -1;
-                    2'b11: dv =  1;
-                    default: dv = 0;
-                endcase
+    case (lfsr[4:0])
+    5'h00, 5'h01, 5'h02, 5'h03, 5'h0E,:  dv = -2;
+    5'h04, 5'h05, 5'h06, 5'h07, 5'h08, 5'h09: dv = -1;
+    5'h0A, 5'h0B, 5'h0C, 5'h0D, 5'h0F, 5'h10, 5'h11,: dv = 0;
+    5'h13, 5'h14, 5'h15, 5'h16, 5'h17:  dv = 1;
+    5'h18, 5'h19, 5'h1A, 5'h1B, 5'h12: dv = 2;
+    default:  dv = 2;
+endcase
 
-                new_v = head_v + dv;
-                if (new_v >  MAX_VEL) new_v =  MAX_VEL;
-                if (new_v < -MAX_VEL) new_v = -MAX_VEL;
 
-                if ((head_x <= MIN_CENTER+1) && (new_v < 0)) new_v = 0;
-                if ((head_x >= MAX_CENTER-1) && (new_v > 0)) new_v = 0;
 
-                new_x = head_x + new_v;
 
-                if (new_x < MIN_CENTER)
-                    head_x <= MIN_CENTER[$clog2(GRID_W)-1:0];
-                else if (new_x > MAX_CENTER)
-                    head_x <= MAX_CENTER[$clog2(GRID_W)-1:0];
-                else
-                    head_x <= new_x[$clog2(GRID_W)-1:0];
+    // 2) bias back toward middle of allowed band
+    center_mid = (MIN_CENTER + MAX_CENTER) / 2;
 
-                head_v <= new_v;
-            end
+    // // if we're noticeably left of center, push more to the right
+    // if (head_x < center_mid - 4 && dv < 0)
+    //     dv = -dv;    // flip left turns into right turns
+
+    // // if we're noticeably right of center, push more to the left
+    // if (head_x > center_mid + 4 && dv > 0)
+    //     dv = -dv;    // flip right turns into left turns
+
+    // 3) start from current velocity, but damp it toward 0
+    new_v = head_v;
+    if (new_v > 0)      new_v = new_v - 1;
+    else if (new_v < 0) new_v = new_v + 1;
+
+    // then apply steering
+    new_v = new_v + dv;
+
+    // 4) clamp velocity
+    if (new_v >  MAX_VEL) new_v =  MAX_VEL;
+    if (new_v < -MAX_VEL) new_v = -MAX_VEL;
+
+    // still prevent pushing into walls
+    if ((head_x <= MIN_CENTER+1) && (new_v < 0)) new_v = -new_v >>> 1;;
+    if ((head_x >= MAX_CENTER-1) && (new_v > 0)) new_v = -new_v >>> 1;;
+
+    // 5) update position
+    new_x = head_x + new_v;
+
+    if (new_x < MIN_CENTER)
+        new_x = MIN_CENTER;
+    else if (new_x > MAX_CENTER)
+        new_x = MAX_CENTER;
+
+    head_x <= new_x[$clog2(GRID_W)-1:0];
+    head_v <= new_v;
+end
+
+
 
             for (y = GRID_H-1; y > 0; y = y - 1) begin
                 grid[y] <= grid[y-1];
             end
             grid[0] <= build_track_row(head_x, cur_half_width);
+            end else begin
+                    // not time to update yet
+                    scroll_cnt <= scroll_cnt + 1'b1;
+                end
             end 
         end
     end
@@ -172,3 +252,4 @@ module autopath_gen #(
 endmodule
 
 `default_nettype wire
+
