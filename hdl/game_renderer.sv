@@ -15,7 +15,7 @@ module game_renderer #(
     input  wire        blink_p1,
     input  wire        blink_p2,
 
-    // theme: 0 = mud/grass, 1 = ocean
+    // theme: 0 = mud/grass, 1 = ocean/ice
     input  wire        theme,
 
     // full path grids (40x40 each)
@@ -115,7 +115,7 @@ module game_renderer #(
             heart_p2_0 | heart_p2_1 | heart_p2_2;
     end
 
-    // path colors per theme (only used in theme 1 old solid-mode; kept for flexibility)
+    // path colors per theme (only used if you ever want solid colors)
     logic [7:0] p1_R, p1_G, p1_B;
     logic [7:0] p2_R, p2_G, p2_B;
 
@@ -128,6 +128,9 @@ module game_renderer #(
 
     // ocean tiled path
     logic [7:0] ocean_R, ocean_G, ocean_B;
+
+    // ice tiled background (theme=1 off-path)
+    logic [7:0] ice_R,   ice_G,   ice_B;
 
     // treat each half-screen independently for tiling
     wire [10:0] x_local = (x < HALF_W) ? x : (x - HALF_W);
@@ -147,7 +150,7 @@ module game_renderer #(
         .B   (mud_B)
     );
 
-    // ocean tiles (theme=1)
+    // ocean tiles (theme=1 path)
     ocean_tile_sprite #(
         .TILE_W       (TILE_W),
         .TILE_H       (TILE_H),
@@ -160,6 +163,21 @@ module game_renderer #(
         .R   (ocean_R),
         .G   (ocean_G),
         .B   (ocean_B)
+    );
+
+    // ice tiles (theme=1 background)
+    ice_tile_sprite #(
+        .TILE_W       (TILE_W),
+        .TILE_H       (TILE_H),
+        .IMG_INIT_FILE("data/ice_image.mem"),
+        .PAL_INIT_FILE("data/ice_palette.mem")
+    ) ice_tex (
+        .clk (clk),
+        .x   (x_local),
+        .y   (y),
+        .R   (ice_R),
+        .G   (ice_G),
+        .B   (ice_B)
     );
 
     //  Menu theme sprites (INIT state)
@@ -197,11 +215,9 @@ module game_renderer #(
 
     always_comb begin
         if (!theme) begin
-            // not really used for path now, but keep defined
             p1_R = 8'hC0; p1_G = 8'h10; p1_B = 8'h10;
             p2_R = 8'h10; p2_G = 8'h10; p2_B = 8'hC0;
         end else begin
-            // alt theme (ocean)
             p1_R = 8'hA0; p1_G = 8'h20; p1_B = 8'hA0;
             p2_R = 8'h20; p2_G = 8'hA0; p2_B = 8'h20;
         end
@@ -252,13 +268,15 @@ module game_renderer #(
                     R = 8'd10; G = 8'd70; B = 8'd10; // grass background
                 end
             end else begin
-                // theme 1: ocean path
+                // theme 1: ocean path, ice background
                 if (on_any_path) begin
                     R = ocean_R;
                     G = ocean_G;
                     B = ocean_B;
                 end else begin
-                    R = 8'd0; G = 8'd15; B = 8'd40;  // deep ocean background
+                    R = ice_R;
+                    G = ice_G;
+                    B = ice_B;
                 end
             end
 
@@ -290,7 +308,9 @@ module game_renderer #(
                     G = mud_G;
                     B = mud_B;
                 end else begin
-                    R = 8'd10; G = 8'd70; B = 8'd10;
+                    R = 8'd10;
+                    G = 8'd70;
+                    B = 8'd10;
                 end
             end else begin
                 if (on_any_path) begin
@@ -298,7 +318,9 @@ module game_renderer #(
                     G = ocean_G;
                     B = ocean_B;
                 end else begin
-                    R = 8'd0; G = 8'd15; B = 8'd40;
+                    R = ice_R;
+                    G = ice_G;
+                    B = ice_B;
                 end
             end
 

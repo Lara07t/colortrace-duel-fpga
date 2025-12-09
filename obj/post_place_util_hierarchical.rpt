@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Dec  9 15:53:18 2025
-| Host         : eecs-digital-10 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Tue Dec  9 16:29:15 2025
+| Host         : eecs-digital-13 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file obj/post_place_util_hierarchical.rpt -hierarchical -hierarchical_depth 4 -hierarchical_min_primitive_count 0
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -22,7 +22,7 @@ Table of Contents
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
 |                   Instance                   |                       Module                      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level                                    |                                             (top) |       6372 |       6357 |       0 |   15 | 4726 |     47 |      9 |         23 |
+| top_level                                    |                                             (top) |       6429 |       6414 |       0 |   15 | 4729 |     48 |     10 |         23 |
 |   (top_level)                                |                                             (top) |         37 |         24 |       0 |   13 |  248 |      0 |      0 |          1 |
 |   blue_ser                                   |                                   tmds_serializer |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   cdc_fifo                                   |                                    xpm_fifo_async |        120 |        120 |       0 |    0 |  173 |      1 |      0 |          0 |
@@ -48,7 +48,7 @@ Table of Contents
 |         (xpm_fifo_rst_inst)                  |                                      xpm_fifo_rst |         17 |         17 |       0 |    0 |   13 |      0 |      0 |          0 |
 |         gen_rst_ic.rrst_wr_inst              |                                  xpm_cdc_sync_rst |          0 |          0 |       0 |    0 |    2 |      0 |      0 |          0 |
 |         gen_rst_ic.wrst_rd_inst              |                               xpm_cdc_sync_rst__1 |          0 |          0 |       0 |    0 |    2 |      0 |      0 |          0 |
-|   checker_inst                               |                                      path_checker |        207 |        207 |       0 |    0 |   65 |      0 |      0 |          2 |
+|   checker_inst                               |                                      path_checker |        208 |        208 |       0 |    0 |   65 |      0 |      0 |          2 |
 |   com_p1                                     |                                    center_of_mass |        280 |        280 |       0 |    0 |  297 |      0 |      0 |          0 |
 |     (com_p1)                                 |                                    center_of_mass |        102 |        102 |       0 |    0 |  121 |      0 |      0 |          0 |
 |     divider_x                                |                                        divider_11 |         88 |         88 |       0 |    0 |   89 |      0 |      0 |          0 |
@@ -67,37 +67,40 @@ Table of Contents
 |     genblk1[1].line_buffer_ram               |    xilinx_true_dual_port_read_first_1_clock_ram_7 |         18 |         18 |       0 |    0 |    0 |      0 |      1 |          0 |
 |     genblk1[2].line_buffer_ram               |    xilinx_true_dual_port_read_first_1_clock_ram_8 |          2 |          2 |       0 |    0 |    0 |      0 |      1 |          0 |
 |     genblk1[3].line_buffer_ram               |    xilinx_true_dual_port_read_first_1_clock_ram_9 |          1 |          1 |       0 |    0 |    0 |      0 |      1 |          0 |
-|   frame_buffer                               |      xilinx_true_dual_port_read_first_2_clock_ram |         29 |         29 |       0 |    0 |    0 |     32 |      0 |          0 |
-|   fsm_inst                                   |                                          game_fsm |        221 |        221 |       0 |    0 |   28 |      0 |      0 |          0 |
+|   frame_buffer                               |      xilinx_true_dual_port_read_first_2_clock_ram |         27 |         27 |       0 |    0 |    0 |     32 |      0 |          0 |
+|   fsm_inst                                   |                                          game_fsm |        285 |        285 |       0 |    0 |   28 |      0 |      0 |          0 |
 |   green_ser                                  |                                 tmds_serializer_1 |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
-|   path_left                                  |                                      autopath_gen |       2186 |       2186 |       0 |    0 | 1593 |      0 |      0 |          0 |
-|   path_right                                 |                                    autopath_gen_2 |       2185 |       2185 |       0 |    0 | 1593 |      0 |      0 |          0 |
+|   path_left                                  |                                      autopath_gen |       2202 |       2202 |       0 |    0 | 1593 |      0 |      0 |          0 |
+|   path_right                                 |                                    autopath_gen_2 |       2202 |       2202 |       0 |    0 | 1593 |      0 |      0 |          0 |
 |   pixel_rec                                  |                                 pixel_reconstruct |         32 |         32 |       0 |    0 |   50 |      0 |      0 |          0 |
 |   red_ser                                    |                                 tmds_serializer_3 |          1 |          1 |       0 |    0 |    1 |      0 |      0 |          0 |
 |   red_thresh                                 |                                         threshold |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |
-|   registers                                  | xilinx_single_port_ram_read_first__parameterized7 |          7 |          7 |       0 |    0 |    2 |      0 |      1 |          0 |
-|   renderer_inst                              |                                     game_renderer |        185 |        183 |       0 |    2 |    2 |     14 |      4 |         16 |
-|     (renderer_inst)                          |                                     game_renderer |        115 |        115 |       0 |    0 |    0 |      0 |      0 |         16 |
-|     grass_menu_inst                          |                                 grass_menu_sprite |         16 |         15 |       0 |    1 |    1 |      6 |      1 |          0 |
+|   registers                                  | xilinx_single_port_ram_read_first__parameterized9 |          7 |          7 |       0 |    0 |    2 |      0 |      1 |          0 |
+|   renderer_inst                              |                                     game_renderer |        155 |        153 |       0 |    2 |    2 |     15 |      5 |         16 |
+|     (renderer_inst)                          |                                     game_renderer |        105 |        105 |       0 |    0 |    0 |      0 |      0 |         16 |
+|     grass_menu_inst                          |                                 grass_menu_sprite |         25 |         24 |       0 |    1 |    1 |      6 |      1 |          0 |
 |       (grass_menu_inst)                      |                                 grass_menu_sprite |          1 |          0 |       0 |    1 |    1 |      0 |      0 |          0 |
-|       u_img_rom                              | xilinx_single_port_ram_read_first__parameterized3 |          0 |          0 |       0 |    0 |    0 |      6 |      0 |          0 |
-|       u_pal_rom                              | xilinx_single_port_ram_read_first__parameterized4 |         15 |         15 |       0 |    0 |    0 |      0 |      1 |          0 |
-|     mud_tex                                  |                                   mud_tile_sprite |         10 |         10 |       0 |    0 |    0 |      1 |      1 |          0 |
-|       mud_img_rom                            |                 xilinx_single_port_ram_read_first |          0 |          0 |       0 |    0 |    0 |      1 |      0 |          0 |
-|       mud_pal_rom                            | xilinx_single_port_ram_read_first__parameterized0 |         10 |         10 |       0 |    0 |    0 |      0 |      1 |          0 |
-|     ocean_tex                                |                                 ocean_tile_sprite |         10 |         10 |       0 |    0 |    0 |      1 |      1 |          0 |
-|       u_img                                  | xilinx_single_port_ram_read_first__parameterized1 |          0 |          0 |       0 |    0 |    0 |      1 |      0 |          0 |
-|       u_pal                                  | xilinx_single_port_ram_read_first__parameterized2 |         10 |         10 |       0 |    0 |    0 |      0 |      1 |          0 |
-|     snow_menu_inst                           |                                  snow_menu_sprite |         34 |         33 |       0 |    1 |    1 |      6 |      1 |          0 |
-|       (snow_menu_inst)                       |                                  snow_menu_sprite |          1 |          0 |       0 |    1 |    1 |      0 |      0 |          0 |
 |       u_img_rom                              | xilinx_single_port_ram_read_first__parameterized5 |          0 |          0 |       0 |    0 |    0 |      6 |      0 |          0 |
-|       u_pal_rom                              | xilinx_single_port_ram_read_first__parameterized6 |         33 |         33 |       0 |    0 |    0 |      0 |      1 |          0 |
+|       u_pal_rom                              | xilinx_single_port_ram_read_first__parameterized6 |         24 |         24 |       0 |    0 |    0 |      0 |      1 |          0 |
+|     ice_tex                                  |                                   ice_tile_sprite |          0 |          0 |       0 |    0 |    0 |      1 |      1 |          0 |
+|       ice_img_rom                            | xilinx_single_port_ram_read_first__parameterized3 |          0 |          0 |       0 |    0 |    0 |      1 |      0 |          0 |
+|       ice_pal_rom                            | xilinx_single_port_ram_read_first__parameterized4 |          0 |          0 |       0 |    0 |    0 |      0 |      1 |          0 |
+|     mud_tex                                  |                                   mud_tile_sprite |          0 |          0 |       0 |    0 |    0 |      1 |      1 |          0 |
+|       mud_img_rom                            |                 xilinx_single_port_ram_read_first |          0 |          0 |       0 |    0 |    0 |      1 |      0 |          0 |
+|       mud_pal_rom                            | xilinx_single_port_ram_read_first__parameterized0 |          0 |          0 |       0 |    0 |    0 |      0 |      1 |          0 |
+|     ocean_tex                                |                                 ocean_tile_sprite |         24 |         24 |       0 |    0 |    0 |      1 |      1 |          0 |
+|       u_img                                  | xilinx_single_port_ram_read_first__parameterized1 |          0 |          0 |       0 |    0 |    0 |      1 |      0 |          0 |
+|       u_pal                                  | xilinx_single_port_ram_read_first__parameterized2 |         24 |         24 |       0 |    0 |    0 |      0 |      1 |          0 |
+|     snow_menu_inst                           |                                  snow_menu_sprite |          1 |          0 |       0 |    1 |    1 |      6 |      1 |          0 |
+|       (snow_menu_inst)                       |                                  snow_menu_sprite |          1 |          0 |       0 |    1 |    1 |      0 |      0 |          0 |
+|       u_img_rom                              | xilinx_single_port_ram_read_first__parameterized7 |          0 |          0 |       0 |    0 |    0 |      6 |      0 |          0 |
+|       u_pal_rom                              | xilinx_single_port_ram_read_first__parameterized8 |          0 |          0 |       0 |    0 |    0 |      0 |      1 |          0 |
 |   rgbtoycrcb_m                               |                                      rgb_to_ycrcb |         56 |         56 |       0 |    0 |   42 |      0 |      0 |          4 |
 |   score_disp                                 |                                         score_ssc |         16 |         16 |       0 |    0 |   25 |      0 |      0 |          0 |
-|   tmds_blue                                  |                                      tmds_encoder |          6 |          6 |       0 |    0 |   15 |      0 |      0 |          0 |
+|   tmds_blue                                  |                                      tmds_encoder |          2 |          2 |       0 |    0 |   15 |      0 |      0 |          0 |
 |   tmds_green                                 |                                    tmds_encoder_4 |          3 |          3 |       0 |    0 |   15 |      0 |      0 |          0 |
 |   tmds_red                                   |                                    tmds_encoder_5 |          3 |          3 |       0 |    0 |   15 |      0 |      0 |          0 |
-|   vsg                                        |                                     video_sig_gen |        378 |        378 |       0 |    0 |  155 |      0 |      0 |          0 |
+|   vsg                                        |                                     video_sig_gen |        373 |        373 |       0 |    0 |  158 |      0 |      0 |          0 |
 |   wizard_hdmi                                |                                   cw_hdmi_clk_wiz |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   wizard_migcam                              |                                   cw_fast_clk_wiz |          3 |          3 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   yel_thresh                                 |                                       threshold_6 |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |
