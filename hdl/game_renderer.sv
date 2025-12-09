@@ -71,6 +71,7 @@ module game_renderer #(
     // “is this pixel on P1/P2 path?” (per half)
     wire on_p1_pix = active && region_left  && on_p1_cell;
     wire on_p2_pix = active && region_right && on_p2_cell;
+    wire on_any_path = on_p1_pix | on_p2_pix;
 
     //  Player circles
     function logic inside_circle(input int px, py, cx, cy, r);
@@ -120,8 +121,12 @@ module game_renderer #(
     logic [7:0] grass_R, grass_G, grass_B;
     logic [7:0] snow_R,  snow_G,  snow_B;
 
+    // grass + mud tiled background (used in grass theme during game)
+    logic [7:0] grass_bg_R, grass_bg_G, grass_bg_B;
+    logic [7:0] mud_bg_R,   mud_bg_G,   mud_bg_B;
+
     //  Menu theme sprites (INIT state)
-    //  NOTE: make sure grass/snow PNGs are 256x256 before running converter.
+    //  NOTE: make sure grass/snow PNGs are 128*128 before running converter.
     grass_menu_sprite #(
         .WIDTH (128),  
         .HEIGHT(128)
@@ -153,6 +158,28 @@ module game_renderer #(
         .pixel_green(snow_G),
         .pixel_blue (snow_B)
     );
+
+    // full-screen tiled grass (background)
+    // grass_tile_bg grass_bg_inst (
+    //     .pixel_clk (clk),
+    //     .rst       (1'b0),
+    //     .h_count   (x),
+    //     .v_count   (y),
+    //     .pixel_red (grass_bg_R),
+    //     .pixel_green(grass_bg_G),
+    //     .pixel_blue (grass_bg_B)
+    // );
+
+    // // full-screen tiled mud (used WHERE path bit = 1)
+    // mud_tile_bg mud_bg_inst (
+    //     .pixel_clk (clk),
+    //     .rst       (1'b0),
+    //     .h_count   (x),
+    //     .v_count   (y),
+    //     .pixel_red (mud_bg_R),
+    //     .pixel_green(mud_bg_G),
+    //     .pixel_blue (mud_bg_B)
+    // );
 
     always_comb begin
         if (!theme) begin
@@ -208,9 +235,24 @@ module game_renderer #(
                  game_state == 3'd2 ||
                  game_state == 3'd3)
         begin
-            // PATHS
-            if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
-            else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
+            // PATH + BACKGROUND
+            if (!theme) begin
+                // grass theme: grass everywhere, mud only on path cells
+                if (on_any_path) begin
+                    R = mud_bg_R;
+                    G = mud_bg_G;
+                    B = mud_bg_B;
+                end else begin
+                    R = grass_bg_R;
+                    G = grass_bg_G;
+                    B = grass_bg_B;
+                end
+            end else begin
+                // snow / other theme: keep old solid colors
+                if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
+                else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
+                else begin R = 8'd0; G = 8'd0; B = 8'd0; end;
+            end
 
             // PLAYER CIRCLES (hide on blink in LIFE_LOSS)
             if (draw_p1_circle && !(game_state==3'd3 && blink_p1)) begin
@@ -236,8 +278,21 @@ module game_renderer #(
 
         // GAME OVER
         else if (game_state == 3'd4) begin
-            if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
-            else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
+            if (!theme) begin
+                if (on_any_path) begin
+                    R = mud_bg_R;
+                    G = mud_bg_G;
+                    B = mud_bg_B;
+                end else begin
+                    R = grass_bg_R;
+                    G = grass_bg_G;
+                    B = grass_bg_B;
+                end
+            end else begin
+                if (on_p1_pix) begin R = p1_R; G = p1_G; B = p1_B; end
+                else if (on_p2_pix) begin R = p2_R; G = p2_G; B = p2_B; end
+                else begin R = 8'd0; G = 8'd0; B = 8'd0; end;
+            end
 
             // (no big white rect here either)
 
