@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date             : Mon Dec  8 20:21:33 2025
-| Host             : eecs-digital-01 running 64-bit Ubuntu 24.04.3 LTS
+| Date             : Mon Dec  8 21:21:20 2025
+| Host             : eecs-digital-15 running 64-bit Ubuntu 24.04.3 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7s50csga324-1
@@ -52,15 +52,15 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.016 |       10 |       --- |             --- |
-| Slice Logic             |     0.011 |    13988 |       --- |             --- |
-|   LUT as Logic          |     0.010 |     6057 |     32600 |           18.58 |
-|   F7/F8 Muxes           |    <0.001 |      910 |     32600 |            2.79 |
-|   CARRY4                |    <0.001 |      321 |      8150 |            3.94 |
-|   Register              |    <0.001 |     4695 |     65200 |            7.20 |
-|   LUT as Shift Register |    <0.001 |       13 |      9600 |            0.14 |
+| Clocks                  |     0.015 |       10 |       --- |             --- |
+| Slice Logic             |     0.011 |    14141 |       --- |             --- |
+|   LUT as Logic          |     0.010 |     5882 |     32600 |           18.04 |
+|   F7/F8 Muxes           |    <0.001 |     1263 |     32600 |            3.87 |
+|   CARRY4                |    <0.001 |      320 |      8150 |            3.93 |
+|   Register              |    <0.001 |     4680 |     65200 |            7.18 |
+|   LUT as Shift Register |    <0.001 |       14 |      9600 |            0.15 |
 |   Others                |     0.000 |      107 |       --- |             --- |
-| Signals                 |     0.016 |     8161 |       --- |             --- |
+| Signals                 |     0.017 |     7602 |       --- |             --- |
 | Block RAM               |     0.053 |     35.5 |        75 |           47.33 |
 | MMCM                    |     0.105 |        1 |         5 |           20.00 |
 | PLL                     |     0.101 |        1 |         5 |           20.00 |
@@ -77,7 +77,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.126 |       0.115 |      0.011 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.127 |       0.115 |      0.011 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.125 |       0.112 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.046 |       0.045 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -162,13 +162,13 @@ Table of Contents
 |   ds_lbuff                               |     0.003 |
 |     genblk1[1].line_buffer_ram           |     0.001 |
 |   frame_buffer                           |     0.049 |
-|   fsm_inst                               |     0.001 |
+|   fsm_inst                               |     0.002 |
 |   path_left                              |     0.008 |
 |   path_right                             |     0.008 |
 |   pixel_rec                              |     0.001 |
-|   renderer_inst                          |     0.013 |
+|   renderer_inst                          |     0.014 |
 |   rgbtoycrcb_m                           |     0.003 |
-|   vsg                                    |     0.002 |
+|   vsg                                    |     0.001 |
 |   wizard_hdmi                            |     0.105 |
 |   wizard_migcam                          |     0.102 |
 +------------------------------------------+-----------+

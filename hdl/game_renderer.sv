@@ -203,6 +203,15 @@ module game_renderer #(
             // LIVES
             if (draw_life)
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
+
+            if (x == 640) begin
+            // bright center line
+            {R,G,B} = {8'd255, 8'd255, 8'd255};
+        end else if (x >= 639 && x <= 641) begin
+            // softer glow around it
+            {R,G,B} = {8'd150, 8'd150, 8'd150};
+        end
+        
         end
 
         // GAME OVER
@@ -218,11 +227,11 @@ module game_renderer #(
             if (draw_life)
                 {R,G,B} = {8'hFF, 8'd20, 8'd20};
 
-            if (x == 11'd640)
-            {R,G,B} = {8'd200, 8'd200, 8'd200};
-            else if (x == 11'd639 || x == 11'd641)
-            {R,G,B} = {8'd120, 8'd120, 8'd120};
+            
         end
+
+        
+        
     end
 
 endmodule
