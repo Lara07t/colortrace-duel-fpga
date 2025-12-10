@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Tue Dec  9 18:10:39 2025
-| Host         : eecs-digital-33 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Wed Dec 10 00:46:10 2025
+| Host         : eecs-digital-15 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -53,7 +53,7 @@ Table of Contents
 2. checking constant_clock (0)
 3. checking pulse_width_clock (0)
 4. checking unconstrained_internal_endpoints (0)
-5. checking no_input_delay (18)
+5. checking no_input_delay (17)
 6. checking no_output_delay (33)
 7. checking multiple_clock (0)
 8. checking generated_clocks (0)
@@ -84,9 +84,9 @@ Table of Contents
  There are 0 pins that are not constrained for maximum delay due to constant clock.
 
 
-5. checking no_input_delay (18)
+5. checking no_input_delay (17)
 -------------------------------
- There are 18 input ports with no input delay specified. (HIGH)
+ There are 17 input ports with no input delay specified. (HIGH)
 
  There are 0 input ports with no input delay but user has a false path constraint.
 
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-    -11.831     -691.827                    179                11715       -0.489      -10.800                     28                11715        0.538        0.000                       0                  4750  
+     -1.981      -92.917                     80                11798       -0.489      -10.800                     28                11798        0.538        0.000                       0                  4738  
 
 
 Timing constraints are not met.
@@ -171,10 +171,10 @@ Clock                      WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Tota
 -----                      -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 gclk                                                                                                                                                                     2.000        0.000                       0                     1  
   clk_100_cw_fast                                                                                                                                                        3.000        0.000                       0                     3  
-    clk_pixel_cw_hdmi      -11.831     -629.918                    123                10971        0.003        0.000                      0                10971        5.754        0.000                       0                  4434  
+    clk_pixel_cw_hdmi       -1.306      -31.008                     24                11047        0.003        0.000                      0                11047        5.754        0.000                       0                  4422  
     clk_tmds_cw_hdmi                                                                                                                                                     0.538        0.000                       0                     8  
     clkfbout_cw_hdmi                                                                                                                                                    47.845        0.000                       0                     3  
-  clk_camera_cw_fast        -0.513      -14.355                     28                  716        0.045        0.000                      0                  716        2.000        0.000                       0                   294  
+  clk_camera_cw_fast        -0.513      -14.355                     28                  723        0.045        0.000                      0                  723        2.000        0.000                       0                   294  
   clk_mig_cw_fast                                                                                                                                                        2.845        0.000                       0                     2  
   clk_xc_cw_fast                                                                                                                                                        37.845        0.000                       0                     2  
   clkfbout_cw_fast                                                                                                                                                       7.845        0.000                       0                     3  
@@ -260,7 +260,7 @@ High Pulse Width  Slow    MMCME2_ADV/CLKIN1  n/a            2.000         5.000 
 From Clock:  clk_pixel_cw_hdmi
   To Clock:  clk_pixel_cw_hdmi
 
-Setup :          123  Failing Endpoints,  Worst Slack      -11.831ns,  Total Violation     -629.918ns
+Setup :           24  Failing Endpoints,  Worst Slack       -1.306ns,  Total Violation      -31.008ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.003ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -268,16 +268,16 @@ PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (VIOLATED) :        -11.831ns  (required time - arrival time)
-  Source:                 path_left/head_v_reg[1]/C
+Slack (VIOLATED) :        -1.306ns  (required time - arrival time)
+  Source:                 vsg/v_count_reg[0]/C
                             (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            path_left/head_x_reg[0]/D
+  Destination:            vid_blue_reg[2]/D
                             (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        24.973ns  (logic 12.722ns (50.943%)  route 12.251ns (49.057%))
-  Logic Levels:           53  (CARRY4=38 LUT1=1 LUT2=3 LUT3=2 LUT4=2 LUT5=3 LUT6=4)
+  Data Path Delay:        14.448ns  (logic 6.875ns (47.584%)  route 7.573ns (52.416%))
+  Logic Levels:           18  (CARRY4=10 LUT1=1 LUT3=1 LUT4=1 LUT6=5)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    -2.578ns = ( 10.890 - 13.468 ) 
     Source Clock Delay      (SCD):    -2.892ns
@@ -304,156 +304,58 @@ Slack (VIOLATED) :        -11.831ns  (required time - arrival time)
                                                      -1.480    -4.587 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800    -3.788    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.692 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.800    -2.892    path_left/clk_pixel
-                         FDRE                                         r  path_left/head_v_reg[1]/C
+                         net (fo=4426, unplaced)      0.800    -2.892    vsg/clk_pixel
+                         FDRE                                         r  vsg/v_count_reg[0]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.456    -2.436 r  path_left/head_v_reg[1]/Q
-                         net (fo=5, unplaced)         0.498    -1.938    path_left/head_v_reg_n_0_[1]
-                         LUT2 (Prop_lut2_I0_O)        0.321    -1.617 r  path_left/head_v[31]_i_165/O
-                         net (fo=1, unplaced)         0.000    -1.617    path_left/head_v[31]_i_165_n_0
-                         CARRY4 (Prop_carry4_DI[0]_CO[3])
-                                                      0.576    -1.041 r  path_left/head_v_reg[31]_i_153/CO[3]
-                         net (fo=1, unplaced)         0.009    -1.032    path_left/head_v_reg[31]_i_153_n_0
+                         FDRE (Prop_fdre_C_Q)         0.456    -2.436 r  vsg/v_count_reg[0]/Q
+                         net (fo=46, unplaced)        0.746    -1.690    vsg/v_count[0]
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.808    -0.882 r  vsg/vid_blue_reg[7]_i_404/CO[3]
+                         net (fo=1, unplaced)         0.009    -0.873    vsg/vid_blue_reg[7]_i_404_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    -0.915 r  path_left/head_v_reg[31]_i_136/CO[3]
-                         net (fo=1, unplaced)         0.000    -0.915    path_left/head_v_reg[31]_i_136_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    -0.798 r  path_left/head_v_reg[31]_i_102/CO[3]
-                         net (fo=1, unplaced)         0.000    -0.798    path_left/head_v_reg[31]_i_102_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    -0.681 r  path_left/head_v_reg[31]_i_73/CO[3]
-                         net (fo=62, unplaced)        1.006     0.325    path_left/head_v_reg[31]_i_73_n_0
-                         LUT4 (Prop_lut4_I2_O)        0.124     0.449 r  path_left/head_v[3]_i_6/O
-                         net (fo=1, unplaced)         0.639     1.088    path_left/head_v[3]_i_6_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520     1.608 r  path_left/head_v_reg[3]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.009     1.617    path_left/head_v_reg[3]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     1.734 r  path_left/head_v_reg[7]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     1.734    path_left/head_v_reg[7]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     1.851 r  path_left/head_v_reg[11]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     1.851    path_left/head_v_reg[11]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     1.968 r  path_left/head_v_reg[15]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     1.968    path_left/head_v_reg[15]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     2.085 r  path_left/head_v_reg[19]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     2.085    path_left/head_v_reg[19]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     2.202 r  path_left/head_v_reg[23]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     2.202    path_left/head_v_reg[23]_i_3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     2.319 r  path_left/head_v_reg[27]_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000     2.319    path_left/head_v_reg[27]_i_3_n_0
+                                                      0.117    -0.756 r  vsg/vid_blue_reg[7]_i_264/CO[3]
+                         net (fo=1, unplaced)         0.000    -0.756    vsg/vid_blue_reg[7]_i_264_n_0
                          CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     2.656 r  path_left/head_v_reg[31]_i_10/O[1]
-                         net (fo=9, unplaced)         0.652     3.308    path_left/head_v_reg[31]_i_10_n_6
-                         LUT2 (Prop_lut2_I0_O)        0.332     3.640 r  path_left/head_v[31]_i_33/O
-                         net (fo=1, unplaced)         0.000     3.640    path_left/head_v[31]_i_33_n_0
+                                                      0.337    -0.419 r  vsg/vid_blue_reg[7]_i_267/O[1]
+                         net (fo=10, unplaced)        0.760     0.341    vsg/vid_blue_reg[7]_i_267_n_6
+                         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.819     1.160 r  vsg/vid_blue_reg[7]_i_403/CO[3]
+                         net (fo=1, unplaced)         0.009     1.169    vsg/vid_blue_reg[7]_i_403_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.337     1.506 r  vsg/vid_blue_reg[7]_i_263/O[1]
+                         net (fo=3, unplaced)         0.629     2.135    vsg/vid_blue_reg[7]_i_263_n_6
+                         LUT4 (Prop_lut4_I1_O)        0.306     2.441 r  vsg/vid_blue[7]_i_399/O
+                         net (fo=1, unplaced)         0.000     2.441    vsg/vid_blue[7]_i_399_n_0
+                         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.376     2.817 f  vsg/vid_blue_reg[7]_i_262/CO[3]
+                         net (fo=8, unplaced)         0.956     3.773    vsg/vid_blue_reg[7]_i_262_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.124     3.897 r  vsg/vid_blue[7]_i_266/O
+                         net (fo=14, unplaced)        0.500     4.397    vsg/vid_blue[7]_i_266_n_0
+                         LUT3 (Prop_lut3_I0_O)        0.124     4.521 r  vsg/vid_blue[7]_i_184/O
+                         net (fo=1, unplaced)         0.474     4.995    vsg/vid_blue[7]_i_184_n_0
+                         CARRY4 (Prop_carry4_DI[2]_CO[3])
+                                                      0.404     5.399 r  vsg/vid_blue_reg[7]_i_91/CO[3]
+                         net (fo=1, unplaced)         0.009     5.408    vsg/vid_blue_reg[7]_i_91_n_0
+                         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.232     5.640 r  vsg/vid_blue_reg[7]_i_90/O[0]
+                         net (fo=1, unplaced)         0.664     6.304    vsg/renderer_inst/on_p1_cell4[8]
+                         CARRY4 (Prop_carry4_S[1]_O[2])
+                                                      0.873     7.177 f  vsg/vid_blue_reg[7]_i_34/O[2]
+                         net (fo=4, unplaced)         0.476     7.653    vsg/vid_blue_reg[7]_i_91_0[2]
+                         LUT1 (Prop_lut1_I0_O)        0.294     7.947 r  vsg/vid_blue[7]_i_81/O
+                         net (fo=1, unplaced)         0.000     7.947    vsg/vid_blue[7]_i_81_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[2])
-                                                      0.586     4.226 f  path_left/head_v_reg[31]_i_9/CO[2]
-                         net (fo=161, unplaced)       0.564     4.790    path_left/head_v_reg[31]_i_9_n_1
-                         LUT3 (Prop_lut3_I1_O)        0.302     5.092 r  path_left/head_v[31]_i_123/O
-                         net (fo=1, unplaced)         0.000     5.092    path_left/head_v[31]_i_123_n_0
-                         CARRY4 (Prop_carry4_DI[0]_CO[3])
-                                                      0.576     5.668 r  path_left/head_v_reg[31]_i_84/CO[3]
-                         net (fo=1, unplaced)         0.009     5.677    path_left/head_v_reg[31]_i_84_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     5.794 r  path_left/head_v_reg[31]_i_54/CO[3]
-                         net (fo=1, unplaced)         0.000     5.794    path_left/head_v_reg[31]_i_54_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     5.911 r  path_left/head_v_reg[31]_i_22/CO[3]
-                         net (fo=1, unplaced)         0.000     5.911    path_left/head_v_reg[31]_i_22_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     6.028 r  path_left/head_v_reg[31]_i_8/CO[3]
-                         net (fo=129, unplaced)       1.024     7.052    path_left/head_v_reg[31]_i_8_n_0
-                         LUT3 (Prop_lut3_I2_O)        0.124     7.176 r  path_left/head_v[2]_i_11/O
-                         net (fo=1, unplaced)         0.000     7.176    path_left/head_v[2]_i_11_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.533     7.709 r  path_left/head_v_reg[2]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.009     7.718    path_left/head_v_reg[2]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     7.835 r  path_left/head_v_reg[6]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     7.835    path_left/head_v_reg[6]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     7.952 r  path_left/head_v_reg[10]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     7.952    path_left/head_v_reg[10]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     8.069 r  path_left/head_v_reg[14]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     8.069    path_left/head_v_reg[14]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     8.186 r  path_left/head_v_reg[18]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     8.186    path_left/head_v_reg[18]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     8.303 r  path_left/head_v_reg[22]_i_8/CO[3]
-                         net (fo=1, unplaced)         0.000     8.303    path_left/head_v_reg[22]_i_8_n_0
-                         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.331     8.634 r  path_left/head_v_reg[26]_i_8/O[3]
-                         net (fo=2, unplaced)         0.629     9.263    path_left/head_v_reg[26]_i_8_n_4
-                         LUT5 (Prop_lut5_I0_O)        0.307     9.570 f  path_left/head_v[26]_i_3/O
-                         net (fo=4, unplaced)         0.443    10.013    path_left/head_v[26]_i_3_n_0
-                         LUT6 (Prop_lut6_I0_O)        0.124    10.137 r  path_left/head_v[31]_i_48/O
-                         net (fo=1, unplaced)         0.639    10.776    path_left/head_v[31]_i_48_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.520    11.296 r  path_left/head_v_reg[31]_i_11/CO[3]
-                         net (fo=1, unplaced)         0.918    12.214    path_left/new_v2122_in
-                         LUT6 (Prop_lut6_I0_O)        0.124    12.338 r  path_left/head_v[31]_i_4/O
-                         net (fo=64, unplaced)        0.537    12.875    path_left/head_v[31]_i_4_n_0
-                         LUT4 (Prop_lut4_I2_O)        0.124    12.999 r  path_left/head_x[0]_i_6/O
-                         net (fo=1, unplaced)         0.000    12.999    path_left/head_x[0]_i_6_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.533    13.532 r  path_left/head_x_reg[0]_i_2/CO[3]
-                         net (fo=1, unplaced)         0.009    13.541    path_left/head_x_reg[0]_i_2_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    13.658 r  path_left/head_x_reg[5]_i_22/CO[3]
-                         net (fo=1, unplaced)         0.000    13.658    path_left/head_x_reg[5]_i_22_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    13.775 r  path_left/head_x_reg[5]_i_79/CO[3]
-                         net (fo=1, unplaced)         0.000    13.775    path_left/head_x_reg[5]_i_79_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    13.892 r  path_left/head_x_reg[5]_i_78/CO[3]
-                         net (fo=1, unplaced)         0.000    13.892    path_left/head_x_reg[5]_i_78_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    14.009 r  path_left/head_x_reg[5]_i_57/CO[3]
-                         net (fo=1, unplaced)         0.000    14.009    path_left/head_x_reg[5]_i_57_n_0
-                         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.331    14.340 f  path_left/head_x_reg[5]_i_56/O[3]
-                         net (fo=5, unplaced)         0.646    14.986    path_left/new_x3[23]
-                         LUT1 (Prop_lut1_I0_O)        0.307    15.293 r  path_left/head_x[3]_i_56/O
-                         net (fo=1, unplaced)         0.000    15.293    path_left/head_x[3]_i_56_n_0
-                         CARRY4 (Prop_carry4_S[3]_CO[3])
-                                                      0.376    15.669 r  path_left/head_x_reg[3]_i_36/CO[3]
-                         net (fo=1, unplaced)         0.000    15.669    path_left/head_x_reg[3]_i_36_n_0
-                         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.331    16.000 f  path_left/head_x_reg[3]_i_26/O[3]
-                         net (fo=4, unplaced)         0.642    16.642    path_left/new_x2[27]
-                         LUT2 (Prop_lut2_I1_O)        0.300    16.942 r  path_left/head_x[0]_i_12/O
-                         net (fo=1, unplaced)         0.000    16.942    path_left/head_x[0]_i_12_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.547    17.489 r  path_left/head_x_reg[0]_i_8/CO[3]
-                         net (fo=9, unplaced)         0.959    18.448    path_left/new_x1
-                         LUT5 (Prop_lut5_I4_O)        0.124    18.572 r  path_left/head_x[0]_i_3/O
-                         net (fo=50, unplaced)        0.984    19.556    path_left/head_x[0]_i_3_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.124    19.680 f  path_left/head_x[5]_i_95/O
-                         net (fo=3, unplaced)         0.467    20.147    path_left/head_x[5]_i_95_n_0
-                         LUT5 (Prop_lut5_I4_O)        0.124    20.271 r  path_left/head_x[5]_i_90/O
-                         net (fo=1, unplaced)         0.000    20.271    path_left/head_x[5]_i_90_n_0
-                         CARRY4 (Prop_carry4_S[3]_CO[3])
-                                                      0.376    20.647 r  path_left/head_x_reg[5]_i_66/CO[3]
-                         net (fo=1, unplaced)         0.009    20.656    path_left/head_x_reg[5]_i_66_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    20.773 r  path_left/head_x_reg[5]_i_35/CO[3]
-                         net (fo=1, unplaced)         0.000    20.773    path_left/head_x_reg[5]_i_35_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    20.890 r  path_left/head_x_reg[5]_i_15/CO[3]
-                         net (fo=1, unplaced)         0.000    20.890    path_left/head_x_reg[5]_i_15_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    21.007 r  path_left/head_x_reg[5]_i_4/CO[3]
-                         net (fo=6, unplaced)         0.950    21.957    path_left/new_x10_in
-                         LUT6 (Prop_lut6_I5_O)        0.124    22.081 r  path_left/head_x[0]_i_1/O
-                         net (fo=1, unplaced)         0.000    22.081    path_left/head_x[0]_i_1_n_0
-                         FDRE                                         r  path_left/head_x_reg[0]/D
+                                                      0.586     8.533 r  vsg/vid_blue_reg[7]_i_32/CO[2]
+                         net (fo=1, unplaced)         0.905     9.438    vsg/renderer_inst/on_p1_cell2
+                         LUT6 (Prop_lut6_I2_O)        0.310     9.748 r  vsg/vid_blue[7]_i_15/O
+                         net (fo=20, unplaced)        0.509    10.257    renderer_inst/ocean_tex/mud_pal_rom/on_p1_pix
+                         LUT6 (Prop_lut6_I4_O)        0.124    10.381 r  renderer_inst/ocean_tex/mud_pal_rom/vid_blue[7]_i_7/O
+                         net (fo=3, unplaced)         0.467    10.848    fsm_inst/vid_blue_reg[2]_0
+                         LUT6 (Prop_lut6_I3_O)        0.124    10.972 r  fsm_inst/vid_blue[7]_i_4/O
+                         net (fo=2, unplaced)         0.460    11.432    fsm_inst/vid_blue[7]_i_4_n_0
+                         LUT6 (Prop_lut6_I3_O)        0.124    11.556 r  fsm_inst/vid_blue[2]_i_1/O
+                         net (fo=1, unplaced)         0.000    11.556    blue[2]
+                         FDRE                                         r  vid_blue_reg[2]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_pixel_cw_hdmi rise edge)
@@ -471,16 +373,16 @@ Slack (VIOLATED) :        -11.831ns  (required time - arrival time)
                                                      -1.290     9.384 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760    10.144    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.235 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.655    10.890    path_left/clk_pixel
-                         FDRE                                         r  path_left/head_x_reg[0]/C
+                         net (fo=4426, unplaced)      0.655    10.890    clk_pixel
+                         FDRE                                         r  vid_blue_reg[2]/C
                          clock pessimism             -0.459    10.431    
                          clock uncertainty           -0.210    10.221    
-                         FDRE (Setup_fdre_C_D)        0.029    10.250    path_left/head_x_reg[0]
+                         FDRE (Setup_fdre_C_D)        0.029    10.250    vid_blue_reg[2]
   -------------------------------------------------------------------
                          required time                         10.250    
-                         arrival time                         -22.081    
+                         arrival time                         -11.556    
   -------------------------------------------------------------------
-                         slack                                -11.831    
+                         slack                                 -1.306    
 
 
 
@@ -520,7 +422,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.477    -1.397 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.059    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -1.033 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.210    -0.824    red_ser/clk_pixel
+                         net (fo=4426, unplaced)      0.210    -0.824    red_ser/clk_pixel
                          FDRE                                         r  red_ser/pwup_rst_reg/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.141    -0.683 r  red_ser/pwup_rst_reg/Q
@@ -545,7 +447,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.643    -1.230 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.875    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.846 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.355    -0.491    blue_ser/clk_pixel
+                         net (fo=4426, unplaced)      0.355    -0.491    blue_ser/clk_pixel
     OLOGIC_X0Y20         OSERDESE2                                    r  blue_ser/primary/CLKDIV
                          clock pessimism             -0.187    -0.679    
     OLOGIC_X0Y20         OSERDESE2 (Hold_oserdese2_CLKDIV_RST)
@@ -570,8 +472,8 @@ Sources:            { wizard_hdmi/mmcm_adv_inst/CLKOUT0 }
 Check Type        Corner  Lib Pin             Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
 Min Period        n/a     DSP48E1/CLK         n/a            3.884         13.468      9.584                addra_reg/CLK
 Max Period        n/a     MMCME2_ADV/CLKOUT0  n/a            213.360       13.468      199.892              wizard_hdmi/mmcm_adv_inst/CLKOUT0
-Low Pulse Width   Slow    SRL16E/CLK          n/a            0.980         6.734       5.754                active_d2_reg_srl2___h_d2_reg_r/CLK
-High Pulse Width  Slow    SRL16E/CLK          n/a            0.980         6.734       5.754                active_d2_reg_srl2___h_d2_reg_r/CLK
+Low Pulse Width   Slow    SRL16E/CLK          n/a            0.980         6.734       5.754                h_d2_reg[10]_srl2___h_d2_reg_r/CLK
+High Pulse Width  Slow    SRL16E/CLK          n/a            0.980         6.734       5.754                h_d2_reg[10]_srl2___h_d2_reg_r/CLK
 
 
 
@@ -676,9 +578,9 @@ Slack (VIOLATED) :        -0.513ns  (required time - arrival time)
                          LUT5 (Prop_lut5_I1_O)        0.124    -0.372 r  crw/request_config_i_2/O
                          net (fo=3, unplaced)         0.467     0.095    crw/count_delay_reg[19]
                          LUT5 (Prop_lut5_I0_O)        0.124     0.219 r  crw/count_delay[0]_i_3/O
-                         net (fo=1, unplaced)         0.449     0.668    wizard_migcam/p_1_in
+                         net (fo=1, unplaced)         0.449     0.668    wizard_migcam/count_delay_reg[0]_0
                          LUT4 (Prop_lut4_I3_O)        0.124     0.792 r  wizard_migcam/count_delay[0]_i_1/O
-                         net (fo=28, unplaced)        0.844     1.636    clear
+                         net (fo=28, unplaced)        0.844     1.636    wizard_migcam_n_0
                          FDRE                                         r  count_delay_reg[0]/R
   -------------------------------------------------------------------    -------------------
 
@@ -917,7 +819,7 @@ Slack (VIOLATED) :        -1.497ns  (required time - arrival time)
                                                      -1.290   830.933 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760   831.693    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091   831.784 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.655   832.439    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/dest_clk
+                         net (fo=4426, unplaced)      0.655   832.439    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/dest_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.wrst_rd_inst/syncstages_ff_reg[0]/C
                          clock pessimism             -0.504   831.935    
                          clock uncertainty           -0.518   831.417    
@@ -988,7 +890,7 @@ Slack (VIOLATED) :        -0.489ns  (arrival time - required time)
                                                      -0.643    -1.230 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.875    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.846 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.355    -0.491    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_clk
+                         net (fo=4426, unplaced)      0.355    -0.491    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.wr_pntr_cdc_dc_inst/dest_graysync_ff_reg[0][0]/C
                          clock pessimism             -0.167    -0.658    
                          clock uncertainty            0.518    -0.140    
@@ -1050,7 +952,7 @@ Slack (VIOLATED) :        -1.981ns  (required time - arrival time)
                                                      -1.480  3160.396 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800  3161.196    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096  3161.292 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.800  3162.091    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rd_clk
+                         net (fo=4426, unplaced)      0.800  3162.091    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/rd_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.456  3162.547 r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/xpm_fifo_rst_inst/gen_rst_ic.fifo_rd_rst_ic_reg/Q
@@ -1121,7 +1023,7 @@ Slack (VIOLATED) :        -0.285ns  (arrival time - required time)
                                                      -0.477    -1.397 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.059    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -1.033 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=4437, unplaced)      0.210    -0.824    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_clk
+                         net (fo=4426, unplaced)      0.210    -0.824    cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_clk
                          FDRE                                         r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_gray_ff_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.141    -0.683 r  cdc_fifo/gnuram_async_fifo.xpm_fifo_base_inst/gen_cdc_pntr.rd_pntr_cdc_dc_inst/src_gray_ff_reg[0]/Q

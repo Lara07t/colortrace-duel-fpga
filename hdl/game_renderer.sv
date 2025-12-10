@@ -85,13 +85,13 @@ module game_renderer #(
         draw_p2_circle = inside_circle(x, y, p2_x, p2_y, PLAYER_R);
     end
 
-    //  Life indicators (simple circles)
+     //Life indicators (simple circles)
     function logic inside_heart(
         input int px, py,
         input int cx, cy
     );
         inside_heart =
-            ((px-cx)*(px-cx) + (py-cy)*(py-cy)) <= 12*12;
+            ((px-cx)*(px-cx) + (py-cy)*(py-cy)) <= 144;
     endfunction
 
     logic heart_p1_0, heart_p1_1, heart_p1_2;

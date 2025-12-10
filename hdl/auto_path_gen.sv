@@ -25,7 +25,13 @@ module autopath_gen #(
     localparam int TRACK_HALF_WIDTH = 9;  // initial half-width of path
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width; // shrinking width
 
-    int head_v;  // horizontal velocity
+    // Velocity range: we only need about -3..+3, be generous and give -7..+7 // TIME REQ CHANGE
+    typedef logic signed [3:0] vel_t;  // -8..+7
+    typedef logic        [5:0] x_t;    // 0..63 (enough for GRID_W <= 40)
+
+    vel_t head_v;
+
+    //int head_v;  // horizontal velocity
     localparam int MAX_VEL = 3;  // clamp speed at this point 
 
     logic [15:0] lfsr;    
@@ -89,8 +95,8 @@ module autopath_gen #(
             scroll_cnt <= '0;          // reset scroll counter
 
             // initialize head_x near center if legal
-            if (MIN_CENTER <= (GRID_W/2) && (GRID_W/2) <= MAX_CENTER)
-                head_x <= (GRID_W/2);
+            if (MIN_CENTER <= (GRID_W>>1) && (GRID_W>>1) <= MAX_CENTER)
+                head_x <= (GRID_W>>1);
             else
                 head_x <= MIN_CENTER[$clog2(GRID_W)-1:0];
 
@@ -127,10 +133,17 @@ module autopath_gen #(
                     end
 
                     begin
-                        int dv;  // delta-velocity from LFSR
-                        int new_v;  // updated velocity
-                        int new_x;  // updated center position
-                        int center_mid;
+                        // int dv;  // delta-velocity from LFSR
+                        // int new_v;  // updated velocity
+                        // int new_x;  // updated center position
+                        // int center_mid;
+                        // TIME REQ CHANGE
+                        vel_t dv;
+                        vel_t new_v;
+                        x_t   new_x;
+                        x_t   center_mid;
+
+
 
                         // map random code to steering choices 
                         case (lfsr[4:0])
@@ -142,7 +155,7 @@ module autopath_gen #(
                             default:  dv = 2;
                         endcase
 
-                        center_mid = (MIN_CENTER + MAX_CENTER) / 2;
+                        center_mid = (MIN_CENTER + MAX_CENTER) >> 1;
 
                         // damp velocity 
                         new_v = head_v;
