@@ -1,1 +1,34 @@
-6.205
+6.205 Final Project 
+
+# ColorTrace Duel
+
+ColorTrace Duel is a real-time, FPGA-based two-player game controlled by colored object in front of a camera. The FPGA performs object tracking, path checking, and tile-based rendering in hardware.
+
+* Two-player red/yellow object tracking
+* Color thresholding and COM extraction 
+* 40×40 autopath stored in BRAM
+* Game FSM with start, play, life-loss, and game-over states
+* Themeable renderer
+* HDMI output 
+* Scoreboard for lives and winner 
+
+# Repo Structure
+
+/hdl      Modules  
+/data     PNG images and their corresponding .mem files  
+/obj      Post route and synthesis reports
+/sim      Test benches using Python cocotb 
+
+# Build
+
+1. Clone repo
+3. Build and synthesize
+4. Flash FPGA
+5. Connect camera and HDMI to FPGA and enjoy! 
+
+To start the game, choose a theme using switch 0 on FPGA. Confirm choice using button 3. Restart using Button 0. 
+
+# Authors
+
+Lama Alahdal, Lara Monagel
+

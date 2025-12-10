@@ -74,7 +74,7 @@ module mud_tile_sprite #(
     wire [5:0] G6 = c565[10:5];
     wire [4:0] B5 = c565[4:0];
 
-    // Expand to 8-bit 
+    // Expand to 8-bit
     always_comb begin
         R = {R5, R5[4:2]};  
         G = {G6, G6[5:4]};  

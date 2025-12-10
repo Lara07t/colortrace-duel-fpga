@@ -183,7 +183,7 @@ module game_fsm #(
     end
 
     // Outputs
-    // blink outputs – use latched hit info
+    // blink outputs 
     assign blink_p1 = (cs == LIFE_LOSS && hit_p1_reg) ? blink_flag : 1'b0;
     assign blink_p2 = (cs == LIFE_LOSS && hit_p2_reg) ? blink_flag : 1'b0;
 

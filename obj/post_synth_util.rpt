@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Dec 10 00:46:10 2025
-| Host         : eecs-digital-15 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Wed Dec 10 00:59:32 2025
+| Host         : eecs-digital-05 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4 -hierarchical_min_primitive_count 0
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -22,7 +22,7 @@ Table of Contents
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
 |                   Instance                   |                       Module                      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
 +----------------------------------------------+---------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level                                    |                                             (top) |       5645 |       5622 |       0 |   23 | 4579 |     48 |     10 |         23 |
+| top_level                                    |                                             (top) |       5521 |       5498 |       0 |   23 | 4579 |     48 |     10 |         11 |
 |   (top_level)                                |                                             (top) |         36 |         15 |       0 |   21 |  280 |      0 |      0 |          1 |
 |   blue_ser                                   |                                   tmds_serializer |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   cdc_fifo                                   |                                    xpm_fifo_async |        123 |        123 |       0 |    0 |  173 |      1 |      0 |          0 |
@@ -68,7 +68,7 @@ Table of Contents
 |     line_buffer_bram_gen[2].line_buffer_ram  |    xilinx_true_dual_port_read_first_1_clock_ram_8 |          1 |          1 |       0 |    0 |    0 |      0 |      1 |          0 |
 |     line_buffer_bram_gen[3].line_buffer_ram  |    xilinx_true_dual_port_read_first_1_clock_ram_9 |          1 |          1 |       0 |    0 |    0 |      0 |      1 |          0 |
 |   frame_buffer                               |      xilinx_true_dual_port_read_first_2_clock_ram |          0 |          0 |       0 |    0 |    0 |     32 |      0 |          0 |
-|   fsm_inst                                   |                                          game_fsm |        125 |        125 |       0 |    0 |   28 |      0 |      0 |          0 |
+|   fsm_inst                                   |                                          game_fsm |        101 |        101 |       0 |    0 |   28 |      0 |      0 |          0 |
 |   green_ser                                  |                                 tmds_serializer_1 |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   path_left                                  |                                      autopath_gen |       1858 |       1858 |       0 |    0 | 1563 |      0 |      0 |          0 |
 |   path_right                                 |                                    autopath_gen_2 |       1858 |       1858 |       0 |    0 | 1563 |      0 |      0 |          0 |
@@ -76,8 +76,8 @@ Table of Contents
 |   red_ser                                    |                                 tmds_serializer_3 |          1 |          1 |       0 |    0 |    1 |      0 |      0 |          0 |
 |   red_thresh                                 |                                         threshold |          1 |          1 |       0 |    0 |    1 |      0 |      0 |          0 |
 |   registers                                  | xilinx_single_port_ram_read_first__parameterized9 |          6 |          6 |       0 |    0 |    0 |      0 |      1 |          0 |
-|   renderer_inst                              |                                     game_renderer |        151 |        149 |       0 |    2 |    2 |     15 |      5 |         16 |
-|     (renderer_inst)                          |                                     game_renderer |        105 |        105 |       0 |    0 |    0 |      0 |      0 |         16 |
+|   renderer_inst                              |                                     game_renderer |         72 |         70 |       0 |    2 |    2 |     15 |      5 |          4 |
+|     (renderer_inst)                          |                                     game_renderer |         26 |         26 |       0 |    0 |    0 |      0 |      0 |          4 |
 |     grass_menu_inst                          |                                 grass_menu_sprite |         25 |         24 |       0 |    1 |    1 |      6 |      1 |          0 |
 |       (grass_menu_inst)                      |                                 grass_menu_sprite |          1 |          0 |       0 |    1 |    1 |      0 |      0 |          0 |
 |       u_img_rom                              | xilinx_single_port_ram_read_first__parameterized5 |          0 |          0 |       0 |    0 |    0 |      6 |      0 |          0 |
@@ -100,7 +100,7 @@ Table of Contents
 |   tmds_blue                                  |                                      tmds_encoder |         42 |         42 |       0 |    0 |   15 |      0 |      0 |          0 |
 |   tmds_green                                 |                                    tmds_encoder_4 |         36 |         36 |       0 |    0 |   15 |      0 |      0 |          0 |
 |   tmds_red                                   |                                    tmds_encoder_5 |         35 |         35 |       0 |    0 |   15 |      0 |      0 |          0 |
-|   vsg                                        |                                     video_sig_gen |        356 |        356 |       0 |    0 |   22 |      0 |      0 |          0 |
+|   vsg                                        |                                     video_sig_gen |        335 |        335 |       0 |    0 |   22 |      0 |      0 |          0 |
 |   wizard_hdmi                                |                                   cw_hdmi_clk_wiz |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   wizard_migcam                              |                                   cw_fast_clk_wiz |          2 |          2 |       0 |    0 |    0 |      0 |      0 |          0 |
 |   yel_thresh                                 |                                       threshold_6 |          1 |          1 |       0 |    0 |    1 |      0 |      0 |          0 |

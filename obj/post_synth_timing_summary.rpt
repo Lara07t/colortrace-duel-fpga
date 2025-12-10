@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date         : Wed Dec 10 00:46:10 2025
-| Host         : eecs-digital-15 running 64-bit Ubuntu 24.04.3 LTS
+| Date         : Wed Dec 10 00:59:32 2025
+| Host         : eecs-digital-05 running 64-bit Ubuntu 24.04.3 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     -1.981      -92.917                     80                11798       -0.489      -10.800                     28                11798        0.538        0.000                       0                  4738  
+     -1.981      -92.749                     80                11798       -0.489      -10.800                     28                11798        0.538        0.000                       0                  4738  
 
 
 Timing constraints are not met.
@@ -171,7 +171,7 @@ Clock                      WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Tota
 -----                      -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 gclk                                                                                                                                                                     2.000        0.000                       0                     1  
   clk_100_cw_fast                                                                                                                                                        3.000        0.000                       0                     3  
-    clk_pixel_cw_hdmi       -1.306      -31.008                     24                11047        0.003        0.000                      0                11047        5.754        0.000                       0                  4422  
+    clk_pixel_cw_hdmi       -1.299      -30.840                     24                11047        0.003        0.000                      0                11047        5.754        0.000                       0                  4422  
     clk_tmds_cw_hdmi                                                                                                                                                     0.538        0.000                       0                     8  
     clkfbout_cw_hdmi                                                                                                                                                    47.845        0.000                       0                     3  
   clk_camera_cw_fast        -0.513      -14.355                     28                  723        0.045        0.000                      0                  723        2.000        0.000                       0                   294  
@@ -260,7 +260,7 @@ High Pulse Width  Slow    MMCME2_ADV/CLKIN1  n/a            2.000         5.000 
 From Clock:  clk_pixel_cw_hdmi
   To Clock:  clk_pixel_cw_hdmi
 
-Setup :           24  Failing Endpoints,  Worst Slack       -1.306ns,  Total Violation      -31.008ns
+Setup :           24  Failing Endpoints,  Worst Slack       -1.299ns,  Total Violation      -30.840ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.003ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (VIOLATED) :        -1.306ns  (required time - arrival time)
+Slack (VIOLATED) :        -1.299ns  (required time - arrival time)
   Source:                 vsg/v_count_reg[0]/C
                             (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Destination:            vid_blue_reg[2]/D
@@ -276,7 +276,7 @@ Slack (VIOLATED) :        -1.306ns  (required time - arrival time)
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        14.448ns  (logic 6.875ns (47.584%)  route 7.573ns (52.416%))
+  Data Path Delay:        14.441ns  (logic 6.875ns (47.608%)  route 7.566ns (52.393%))
   Logic Levels:           18  (CARRY4=10 LUT1=1 LUT3=1 LUT4=1 LUT6=5)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    -2.578ns = ( 10.890 - 13.468 ) 
@@ -308,53 +308,53 @@ Slack (VIOLATED) :        -1.306ns  (required time - arrival time)
                          FDRE                                         r  vsg/v_count_reg[0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.456    -2.436 r  vsg/v_count_reg[0]/Q
-                         net (fo=46, unplaced)        0.746    -1.690    vsg/v_count[0]
+                         net (fo=35, unplaced)        0.739    -1.697    vsg/v_count[0]
                          CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.808    -0.882 r  vsg/vid_blue_reg[7]_i_404/CO[3]
-                         net (fo=1, unplaced)         0.009    -0.873    vsg/vid_blue_reg[7]_i_404_n_0
+                                                      0.808    -0.889 r  vsg/vid_blue_reg[7]_i_328/CO[3]
+                         net (fo=1, unplaced)         0.009    -0.880    vsg/vid_blue_reg[7]_i_328_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    -0.756 r  vsg/vid_blue_reg[7]_i_264/CO[3]
-                         net (fo=1, unplaced)         0.000    -0.756    vsg/vid_blue_reg[7]_i_264_n_0
+                                                      0.117    -0.763 r  vsg/vid_blue_reg[7]_i_216/CO[3]
+                         net (fo=1, unplaced)         0.000    -0.763    vsg/vid_blue_reg[7]_i_216_n_0
                          CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337    -0.419 r  vsg/vid_blue_reg[7]_i_267/O[1]
-                         net (fo=10, unplaced)        0.760     0.341    vsg/vid_blue_reg[7]_i_267_n_6
+                                                      0.337    -0.426 r  vsg/vid_blue_reg[7]_i_219/O[1]
+                         net (fo=10, unplaced)        0.760     0.334    vsg/vid_blue_reg[7]_i_219_n_6
                          CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.819     1.160 r  vsg/vid_blue_reg[7]_i_403/CO[3]
-                         net (fo=1, unplaced)         0.009     1.169    vsg/vid_blue_reg[7]_i_403_n_0
+                                                      0.819     1.153 r  vsg/vid_blue_reg[7]_i_327/CO[3]
+                         net (fo=1, unplaced)         0.009     1.162    vsg/vid_blue_reg[7]_i_327_n_0
                          CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     1.506 r  vsg/vid_blue_reg[7]_i_263/O[1]
-                         net (fo=3, unplaced)         0.629     2.135    vsg/vid_blue_reg[7]_i_263_n_6
-                         LUT4 (Prop_lut4_I1_O)        0.306     2.441 r  vsg/vid_blue[7]_i_399/O
-                         net (fo=1, unplaced)         0.000     2.441    vsg/vid_blue[7]_i_399_n_0
+                                                      0.337     1.499 r  vsg/vid_blue_reg[7]_i_215/O[1]
+                         net (fo=3, unplaced)         0.629     2.128    vsg/vid_blue_reg[7]_i_215_n_6
+                         LUT4 (Prop_lut4_I1_O)        0.306     2.434 r  vsg/vid_blue[7]_i_323/O
+                         net (fo=1, unplaced)         0.000     2.434    vsg/vid_blue[7]_i_323_n_0
                          CARRY4 (Prop_carry4_S[3]_CO[3])
-                                                      0.376     2.817 f  vsg/vid_blue_reg[7]_i_262/CO[3]
-                         net (fo=8, unplaced)         0.956     3.773    vsg/vid_blue_reg[7]_i_262_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.124     3.897 r  vsg/vid_blue[7]_i_266/O
-                         net (fo=14, unplaced)        0.500     4.397    vsg/vid_blue[7]_i_266_n_0
-                         LUT3 (Prop_lut3_I0_O)        0.124     4.521 r  vsg/vid_blue[7]_i_184/O
-                         net (fo=1, unplaced)         0.474     4.995    vsg/vid_blue[7]_i_184_n_0
+                                                      0.376     2.810 f  vsg/vid_blue_reg[7]_i_214/CO[3]
+                         net (fo=8, unplaced)         0.956     3.766    vsg/vid_blue_reg[7]_i_214_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.124     3.890 r  vsg/vid_blue[7]_i_218/O
+                         net (fo=14, unplaced)        0.500     4.390    vsg/vid_blue[7]_i_218_n_0
+                         LUT3 (Prop_lut3_I0_O)        0.124     4.514 r  vsg/vid_blue[7]_i_164/O
+                         net (fo=1, unplaced)         0.474     4.988    vsg/vid_blue[7]_i_164_n_0
                          CARRY4 (Prop_carry4_DI[2]_CO[3])
-                                                      0.404     5.399 r  vsg/vid_blue_reg[7]_i_91/CO[3]
-                         net (fo=1, unplaced)         0.009     5.408    vsg/vid_blue_reg[7]_i_91_n_0
+                                                      0.404     5.392 r  vsg/vid_blue_reg[7]_i_91/CO[3]
+                         net (fo=1, unplaced)         0.009     5.401    vsg/vid_blue_reg[7]_i_91_n_0
                          CARRY4 (Prop_carry4_CI_O[0])
-                                                      0.232     5.640 r  vsg/vid_blue_reg[7]_i_90/O[0]
-                         net (fo=1, unplaced)         0.664     6.304    vsg/renderer_inst/on_p1_cell4[8]
+                                                      0.232     5.633 r  vsg/vid_blue_reg[7]_i_90/O[0]
+                         net (fo=1, unplaced)         0.664     6.297    vsg/renderer_inst/on_p1_cell4[8]
                          CARRY4 (Prop_carry4_S[1]_O[2])
-                                                      0.873     7.177 f  vsg/vid_blue_reg[7]_i_34/O[2]
-                         net (fo=4, unplaced)         0.476     7.653    vsg/vid_blue_reg[7]_i_91_0[2]
-                         LUT1 (Prop_lut1_I0_O)        0.294     7.947 r  vsg/vid_blue[7]_i_81/O
-                         net (fo=1, unplaced)         0.000     7.947    vsg/vid_blue[7]_i_81_n_0
+                                                      0.873     7.170 f  vsg/vid_blue_reg[7]_i_34/O[2]
+                         net (fo=4, unplaced)         0.476     7.646    vsg/vid_blue_reg[7]_i_91_0[2]
+                         LUT1 (Prop_lut1_I0_O)        0.294     7.940 r  vsg/vid_blue[7]_i_81/O
+                         net (fo=1, unplaced)         0.000     7.940    vsg/vid_blue[7]_i_81_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[2])
-                                                      0.586     8.533 r  vsg/vid_blue_reg[7]_i_32/CO[2]
-                         net (fo=1, unplaced)         0.905     9.438    vsg/renderer_inst/on_p1_cell2
-                         LUT6 (Prop_lut6_I2_O)        0.310     9.748 r  vsg/vid_blue[7]_i_15/O
-                         net (fo=20, unplaced)        0.509    10.257    renderer_inst/ocean_tex/mud_pal_rom/on_p1_pix
-                         LUT6 (Prop_lut6_I4_O)        0.124    10.381 r  renderer_inst/ocean_tex/mud_pal_rom/vid_blue[7]_i_7/O
-                         net (fo=3, unplaced)         0.467    10.848    fsm_inst/vid_blue_reg[2]_0
-                         LUT6 (Prop_lut6_I3_O)        0.124    10.972 r  fsm_inst/vid_blue[7]_i_4/O
-                         net (fo=2, unplaced)         0.460    11.432    fsm_inst/vid_blue[7]_i_4_n_0
-                         LUT6 (Prop_lut6_I3_O)        0.124    11.556 r  fsm_inst/vid_blue[2]_i_1/O
-                         net (fo=1, unplaced)         0.000    11.556    blue[2]
+                                                      0.586     8.526 r  vsg/vid_blue_reg[7]_i_32/CO[2]
+                         net (fo=1, unplaced)         0.905     9.431    vsg/renderer_inst/on_p1_cell2
+                         LUT6 (Prop_lut6_I2_O)        0.310     9.741 r  vsg/vid_blue[7]_i_15/O
+                         net (fo=20, unplaced)        0.509    10.250    renderer_inst/ocean_tex/mud_pal_rom/on_p1_pix
+                         LUT6 (Prop_lut6_I4_O)        0.124    10.374 r  renderer_inst/ocean_tex/mud_pal_rom/vid_blue[7]_i_7/O
+                         net (fo=3, unplaced)         0.467    10.841    vsg/vid_blue_reg[2]
+                         LUT6 (Prop_lut6_I3_O)        0.124    10.965 r  vsg/vid_blue[7]_i_4/O
+                         net (fo=2, unplaced)         0.460    11.425    fsm_inst/vid_blue_reg[2]
+                         LUT6 (Prop_lut6_I3_O)        0.124    11.549 r  fsm_inst/vid_blue[2]_i_1/O
+                         net (fo=1, unplaced)         0.000    11.549    blue[2]
                          FDRE                                         r  vid_blue_reg[2]/D
   -------------------------------------------------------------------    -------------------
 
@@ -380,9 +380,9 @@ Slack (VIOLATED) :        -1.306ns  (required time - arrival time)
                          FDRE (Setup_fdre_C_D)        0.029    10.250    vid_blue_reg[2]
   -------------------------------------------------------------------
                          required time                         10.250    
-                         arrival time                         -11.556    
+                         arrival time                         -11.549    
   -------------------------------------------------------------------
-                         slack                                 -1.306    
+                         slack                                 -1.299    
 
 
 
