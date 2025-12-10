@@ -11,12 +11,13 @@ module path_checker #(
     input  wire                          rst,
     input  wire                          new_frame,
 
-    // Player centers in pixel coords
+    // Player centers in pixel coords (0..639, 0..719 for each half)
     input  wire [10:0]                   p1_x,
     input  wire [9:0]                    p1_y,
     input  wire [10:0]                   p2_x,
     input  wire [9:0]                    p2_y,
 
+    // GRID_W x GRID_H path grid: 1 = on path, 0 = off path (row-major)
     input  wire [GRID_W*GRID_H-1:0]      path_grid_p1,
     input  wire [GRID_W*GRID_H-1:0]      path_grid_p2, 
 
@@ -24,8 +25,9 @@ module path_checker #(
     output logic                         p2_life_lost
 );
 
-    localparam int WINDOW_TILES = 2;              
-    localparam int WIN_DIAM     = 2*WINDOW_TILES+1; 
+    // Geometry / width bookkeeping
+    localparam int WINDOW_TILES = 2;                // 5×5 neighborhood
+    localparam int WIN_DIAM     = 2*WINDOW_TILES+1; // = 5
     localparam int OFF_BITS     = $clog2(WIN_DIAM);
 
     localparam int MAX_X     = GRID_W * CELL_W;
@@ -41,13 +43,14 @@ module path_checker #(
 
     localparam logic [DIST_BITS-1:0] R2 = RADIUS * RADIUS;
 
+    // Registers for frame-local data
     logic [XY_BITS-1:0] p1_x_reg, p1_y_reg;
     logic [XY_BITS-1:0] p2_x_reg, p2_y_reg;
 
     logic [GRID_W_BITS-1:0] cx1_reg, cx2_reg;
     logic [GRID_H_BITS-1:0] cy1_reg, cy2_reg;
 
-    logic                    scanning;    
+    logic                    scanning;    // are we currently sweeping tiles?
     logic                    cur_player;  // 0 = p1, 1 = p2
     logic [OFF_BITS-1:0]     off_x, off_y;
     logic                    new_frame_d; // for edge detect
@@ -58,7 +61,7 @@ module path_checker #(
     assign p1_life_lost = p1_life_lost_reg;
     assign p2_life_lost = p2_life_lost_reg;
 
-    // tile coordinates around current player
+    // For 5×5 tile neighborhood
     logic signed [GRID_W_BITS:0] tile_x_s;
     logic signed [GRID_H_BITS:0] tile_y_s;
     logic [GRID_W_BITS-1:0]      tile_x_u;
@@ -67,13 +70,49 @@ module path_checker #(
 
     logic [XY_BITS-1:0] x_min, x_max, y_min, y_max;
     logic [XY_BITS-1:0] closest_x, closest_y;
-    logic signed [D_BITS-1:0] dx, dy;
-    logic [DIST_BITS-1:0]     dist2;
 
-    logic hit_tile;  // "this tile causes a violation" for current player
+    // *** NEW: pipelined distance math ***
+    // stage-0 / combinational outputs
+    logic                      tile_en_c;      // "this tile is in-bounds AND off-path and needs distance check"
+    logic signed [D_BITS-1:0]  dx_c, dy_c;
+    logic                      cur_player_c;   // which player this tile belongs to
 
+    // stage-1 registers
+    logic signed [D_BITS-1:0]  dx_s1, dy_s1;
+    logic                      tile_en_s1;
+    logic                      cur_player_s1;
+
+    // stage-2 registers (distance + compare)
+    logic [DIST_BITS-1:0]      dist2_s2;
+    logic                      hit_tile_s2;
+    logic                      cur_player_s2;
+
+    // flush pipeline after last tile so we see all hits
+    logic                      flushing;
+    logic [1:0]                flush_count;
+
+    // ---------------------------------------------------------
+    // Combinational: prepare one tile’s dx,dy for the pipeline
+    // ---------------------------------------------------------
     always_comb begin
-        hit_tile = 1'b0;
+        // defaults
+        tile_en_c     = 1'b0;
+        dx_c          = '0;
+        dy_c          = '0;
+        cur_player_c  = cur_player;
+
+        tile_x_s      = '0;
+        tile_y_s      = '0;
+        tile_x_u      = '0;
+        tile_y_u      = '0;
+        idx           = '0;
+
+        x_min         = '0;
+        x_max         = '0;
+        y_min         = '0;
+        y_max         = '0;
+        closest_x     = '0;
+        closest_y     = '0;
 
         if (scanning) begin
             // pick which player we’re currently checking
@@ -106,11 +145,11 @@ module path_checker #(
 
                 idx = tile_y_u * GRID_W + tile_x_u;
 
-                // Only care if this tile is OFF path 
+                // Only care if this tile is OFF path (bit == 0)
                 if ( (cur_player == 1'b0 && path_grid_p1[idx] == 1'b0) ||
                      (cur_player == 1'b1 && path_grid_p2[idx] == 1'b0) ) begin
 
-                    // tile bounds in pixels
+                    // Tile bounds in pixels
                     x_min = tile_x_u * CELL_W;
                     x_max = x_min + CELL_W - 1;
                     y_min = tile_y_u * CELL_H;
@@ -125,19 +164,49 @@ module path_checker #(
                     else if (py > y_max) closest_y = y_max;
                     else                 closest_y = py;
 
-                    // dx, dy and distance squared
-                    dx    = $signed(closest_x) - $signed(px);
-                    dy    = $signed(closest_y) - $signed(py);
-                    dist2 = dx*dx + dy*dy;
-
-                    if (dist2 <= R2)
-                        hit_tile = 1'b1;
+                    // dx, dy to feed the pipeline
+                    dx_c         = $signed(closest_x) - $signed(px);
+                    dy_c         = $signed(closest_y) - $signed(py);
+                    tile_en_c    = 1'b1;
+                    cur_player_c = cur_player;
                 end
             end
         end
     end
 
-    // sweep the neighborhood
+    // ---------------------------------------------------------
+    // Pipeline: 2 stages of distance^2 and compare
+    //  - stage 1: register dx,dy and tile_en
+    //  - stage 2: dx^2 + dy^2 <= R^2
+    // ---------------------------------------------------------
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            dx_s1         <= '0;
+            dy_s1         <= '0;
+            tile_en_s1    <= 1'b0;
+            cur_player_s1 <= 1'b0;
+
+            dist2_s2      <= '0;
+            hit_tile_s2   <= 1'b0;
+            cur_player_s2 <= 1'b0;
+        end else begin
+            // stage 1
+            dx_s1         <= dx_c;
+            dy_s1         <= dy_c;
+            tile_en_s1    <= tile_en_c;
+            cur_player_s1 <= cur_player_c;
+
+            // stage 2
+            dist2_s2      <= dx_s1*dx_s1 + dy_s1*dy_s1;
+            hit_tile_s2   <= tile_en_s1 && (dist2_s2 <= R2);
+            cur_player_s2 <= cur_player_s1;
+        end
+    end
+
+    // ---------------------------------------------------------
+    // Sequential: frame control + sweep the neighborhood
+    //  - also consumes pipeline hits (hit_tile_s2)
+    // ---------------------------------------------------------
     always_ff @(posedge clk) begin
         if (rst) begin
             new_frame_d      <= 1'b0;
@@ -145,6 +214,9 @@ module path_checker #(
             cur_player       <= 1'b0;
             off_x            <= '0;
             off_y            <= '0;
+            flushing         <= 1'b0;
+            flush_count      <= '0;
+
             p1_ok_reg        <= 1'b1;
             p2_ok_reg        <= 1'b1;
             p1_life_lost_reg <= 1'b0;
@@ -162,39 +234,43 @@ module path_checker #(
         end else begin
             new_frame_d <= new_frame;
 
+            // consume pipeline hits every cycle (from tiles a couple cycles ago)
+            if (hit_tile_s2) begin
+                if (cur_player_s2 == 1'b0)
+                    p1_ok_reg <= 1'b0;
+                else
+                    p2_ok_reg <= 1'b0;
+            end
+
+            // Rising edge of new_frame = start of a new evaluation
             if (new_frame && !new_frame_d) begin
+                // latch positions (zero-extend into XY_BITS)
                 p1_x_reg <= p1_x;
                 p1_y_reg <= p1_y;
                 p2_x_reg <= p2_x;
                 p2_y_reg <= p2_y;
 
-                // coarse tile coords
+                // coarse tile coords via integer division
                 cx1_reg <= p1_x / CELL_W;
                 cy1_reg <= p1_y / CELL_H;
                 cx2_reg <= p2_x / CELL_W;
                 cy2_reg <= p2_y / CELL_H;
 
-                // assume good until a bad tile
+                // assume OK until we find a bad tile
                 p1_ok_reg        <= 1'b1;
                 p2_ok_reg        <= 1'b1;
                 p1_life_lost_reg <= 1'b0;
                 p2_life_lost_reg <= 1'b0;
 
-                scanning   <= 1'b1;
-                cur_player <= 1'b0;   // start with player 1
-                off_x      <= '0;
-                off_y      <= '0;
+                scanning    <= 1'b1;
+                flushing    <= 1'b0;
+                flush_count <= '0;
+                cur_player  <= 1'b0;   // start with player 1
+                off_x       <= '0;
+                off_y       <= '0;
 
             end else if (scanning) begin
-                // Update OK flags based on the tile
-                if (cur_player == 1'b0) begin
-                    if (hit_tile)
-                        p1_ok_reg <= 1'b0;
-                end else begin
-                    if (hit_tile)
-                        p2_ok_reg <= 1'b0;
-                end
-
+                // Advance tile offsets (5×5 window)
                 if (off_x == WIN_DIAM-1) begin
                     off_x <= '0;
                     if (off_y == WIN_DIAM-1) begin
@@ -204,16 +280,27 @@ module path_checker #(
                             cur_player <= 1'b1;
                             off_y      <= '0;
                         end else begin
-                            // finished both players for this frame
-                            scanning         <= 1'b0;
-                            p1_life_lost_reg <= ~p1_ok_reg;
-                            p2_life_lost_reg <= ~p2_ok_reg;
+                            // finished both players for this frame:
+                            // stop feeding new tiles, start flushing pipeline
+                            scanning    <= 1'b0;
+                            flushing    <= 1'b1;
+                            flush_count <= '0;
                         end
                     end else begin
                         off_y <= off_y + 1'b1;
                     end
                 end else begin
                     off_x <= off_x + 1'b1;
+                end
+
+            end else if (flushing) begin
+                // wait for the 2-stage pipeline to fully drain
+                if (flush_count == 2) begin
+                    flushing         <= 1'b0;
+                    p1_life_lost_reg <= ~p1_ok_reg;
+                    p2_life_lost_reg <= ~p2_ok_reg;
+                end else begin
+                    flush_count <= flush_count + 1'b1;
                 end
             end
         end
