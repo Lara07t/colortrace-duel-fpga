@@ -147,13 +147,14 @@ module autopath_gen #(
 
                         // map random code to steering choices 
                         case (lfsr[4:0])
-                            5'h00, 5'h01, 5'h02, 5'h03, 5'h0E,:  dv = -2;
-                            5'h04, 5'h05, 5'h06, 5'h07, 5'h08, 5'h09: dv = -1;
-                            5'h0A, 5'h0B, 5'h0C, 5'h0D, 5'h0F, 5'h10, 5'h11,: dv = 0;
-                            5'h13, 5'h14, 5'h15, 5'h16, 5'h17:  dv = 1;
-                            5'h18, 5'h19, 5'h1A, 5'h1B, 5'h12: dv = 2;
-                            default:  dv = 2;
+                            5'h00, 5'h01, 5'h02, 5'h03, 5'h0E:                dv = -2;
+                            5'h04, 5'h05, 5'h06, 5'h07, 5'h08, 5'h09:         dv = -1;
+                            5'h0A, 5'h0B, 5'h0C, 5'h0D, 5'h0F, 5'h10, 5'h11:  dv = 0;
+                            5'h13, 5'h14, 5'h15, 5'h16, 5'h17:                dv = 1;
+                            5'h18, 5'h19, 5'h1A, 5'h1B, 5'h12:                dv = 2;
+                            default:                                          dv = 2;
                         endcase
+
 
                         center_mid = (MIN_CENTER + MAX_CENTER) >> 1;
 

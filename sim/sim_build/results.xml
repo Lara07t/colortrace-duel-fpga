@@ -1,6 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1760548014" />
-    <testcase name="test_command_fifo" classname="command_fifo_test" file="/home/lara/lab06/sim/command_fifo_test.py" lineno="13" time="0.008177518844604492" sim_time_ns="310.001" ratio_time="37908.93128965859" />
+    <property name="random_seed" value="1765349365" />
+    <testcase name="test_a" classname="path_checker" file="/home/lara/fa25-6205-team17/sim/path_checker.py" lineno="12" time="0.04887795448303223" sim_time_ns="6110.001" ratio_time="125005.25164409367" />
   </testsuite>
 </testsuites>
