@@ -54,6 +54,12 @@ module top_level
     // rgb output values
     logic [7:0]     red,green,blue;
 
+    // pipelined RGB + control to ease timing into TMDS
+    logic [7:0]     vid_red, vid_green, vid_blue;
+    logic           active_draw_hdmi_d;
+    logic           h_sync_hdmi_d;
+    logic           v_sync_hdmi_d;
+
     // GAME + PATH SHARED SIGNALS (used by renderer, path, checker, FSM)
     logic [2:0] game_state;
     logic [1:0] p1_lives, p2_lives;
@@ -458,6 +464,25 @@ module top_level
                     && active_d4 
                     && (h_d4 >= 11'd640);
 
+    logic [10:0] px_com;
+    logic [9:0]  py_com;
+    logic        mask_p1_reg;
+    logic        mask_p2_reg;
+
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel) begin
+            px_com      <= 11'd0;
+            py_com      <= 10'd0;
+            mask_p1_reg <= 1'b0;
+            mask_p2_reg <= 1'b0;
+        end else begin
+            px_com      <= h_d4;
+            py_com      <= v_d4;
+            mask_p1_reg <= mask_p1;
+            mask_p2_reg <= mask_p2;
+        end
+    end
+
     logic [6:0] ss_c;
 
     // displays winner on seven segment display on fpga 
@@ -479,9 +504,9 @@ module top_level
     center_of_mass com_p1 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d4),
-        .pixel_y     (v_d4),
-        .pixel_valid (mask_p1),
+        .pixel_x     (px_com),
+        .pixel_y     (py_com),
+        .pixel_valid (mask_p1_reg),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com1_calc),
         .com_y       (y_com1_calc),
@@ -491,9 +516,9 @@ module top_level
     center_of_mass com_p2 (
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .pixel_x     (h_d4),
-        .pixel_y     (v_d4),
-        .pixel_valid (mask_p2),
+        .pixel_x     (px_com),
+        .pixel_y     (py_com),
+        .pixel_valid (mask_p2_reg),
         .calculate   (new_frame_hdmi),
         .com_x       (x_com2_calc),
         .com_y       (y_com2_calc),
@@ -744,6 +769,25 @@ module top_level
         .B           (blue)
     );
 
+    // pipeline RGB + control into TMDS encoders
+    always_ff @(posedge clk_pixel) begin
+        if (sys_rst_pixel) begin
+            vid_red            <= 8'd0;
+            vid_green          <= 8'd0;
+            vid_blue           <= 8'd0;
+            active_draw_hdmi_d <= 1'b0;
+            h_sync_hdmi_d      <= 1'b0;
+            v_sync_hdmi_d      <= 1'b0;
+        end else begin
+            vid_red            <= red;
+            vid_green          <= green;
+            vid_blue           <= blue;
+            active_draw_hdmi_d <= active_draw_hdmi;
+            h_sync_hdmi_d      <= h_sync_hdmi;
+            v_sync_hdmi_d      <= v_sync_hdmi;
+        end
+    end
+
        //**^end of rendering portion^**
 
 
@@ -758,25 +802,25 @@ module top_level
     tmds_encoder tmds_red(
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .video_data  (red),
+        .video_data  (vid_red),
         .control     (2'b0),
-        .video_enable(active_draw_hdmi),
+        .video_enable(active_draw_hdmi_d),
         .tmds        (tmds_10b[2])
     );
     tmds_encoder tmds_green(
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .video_data  (green),
+        .video_data  (vid_green),
         .control     (2'b0),
-        .video_enable(active_draw_hdmi),
+        .video_enable(active_draw_hdmi_d),
         .tmds        (tmds_10b[1])
     );
     tmds_encoder tmds_blue(
         .clk         (clk_pixel),
         .rst         (sys_rst_pixel),
-        .video_data  (blue),
-        .control     ({v_sync_hdmi,h_sync_hdmi}),
-        .video_enable(active_draw_hdmi),
+        .video_data  (vid_blue),
+        .control     ({v_sync_hdmi_d,h_sync_hdmi_d}),
+        .video_enable(active_draw_hdmi_d),
         .tmds        (tmds_10b[0])
     );
 
