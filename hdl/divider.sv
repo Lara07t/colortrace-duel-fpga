@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
+//divider FSM 
 module divider #(parameter WIDTH = 32)
     (   input wire clk,
         input wire rst,
@@ -45,7 +46,7 @@ module divider #(parameter WIDTH = 32)
                 end
                 DIVIDING: begin
                     if (dividend_h<=0)begin
-                        state <= RESTING; //similar to return statement
+                        state <= RESTING; 
                         remainder <= dividend_h;
                         quotient <= quotient_g;
                         busy <= 1'b0; //tell outside world i'm done
@@ -64,7 +65,7 @@ module divider #(parameter WIDTH = 32)
                         quotient <= quotient_g;
                         busy <= 1'b0;
                         error <= 1'b0;
-                        data_out_valid <= 1'b1; //good stuff!
+                        data_out_valid <= 1'b1; 
                     end else begin
                         //continuing onwards.
                         state <= DIVIDING;

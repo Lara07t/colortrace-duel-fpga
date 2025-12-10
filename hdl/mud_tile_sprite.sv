@@ -2,8 +2,7 @@
 `default_nettype none
 
 // Takes (x,y) and returns RGB from a palettized tile image.
-// - mud_image.mem  : 8-bit indices, size TILE_W x TILE_H
-// - mud_palette.mem: 16-bit RGB565 colors (one per index)
+
 module mud_tile_sprite #(
     parameter integer TILE_W         = 64,
     parameter integer TILE_H         = 64,
@@ -11,14 +10,13 @@ module mud_tile_sprite #(
     parameter string  PAL_INIT_FILE  = "mud_palette.mem"
 )(
     input  wire        clk,
-    input  wire [10:0] x,    // pixel x (local to the region you care about)
-    input  wire [9:0]  y,    // pixel y
+    input  wire [10:0] x,    
+    input  wire [9:0]  y,    
     output logic [7:0] R,
     output logic [7:0] G,
     output logic [7:0] B
 );
     // Tile coordinates: wrap every TILE_W/TILE_H
-    // (TILE_W & TILE_H are powers of 2 in most cases)
     localparam int TX_BITS = $clog2(TILE_W);
     localparam int TY_BITS = $clog2(TILE_H);
 
@@ -76,11 +74,11 @@ module mud_tile_sprite #(
     wire [5:0] G6 = c565[10:5];
     wire [4:0] B5 = c565[4:0];
 
-    // Expand to 8-bit  (standard 5/6→8 bit expansion)
+    // Expand to 8-bit 
     always_comb begin
-        R = {R5, R5[4:2]};   // 5→8
-        G = {G6, G6[5:4]};   // 6→8
-        B = {B5, B5[4:2]};   // 5→8
+        R = {R5, R5[4:2]};  
+        G = {G6, G6[5:4]};  
+        B = {B5, B5[4:2]};  
     end
 
 endmodule

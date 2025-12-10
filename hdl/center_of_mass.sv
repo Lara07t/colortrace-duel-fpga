@@ -1,4 +1,6 @@
 `default_nettype none
+
+// center of mass module 
 module center_of_mass (
         input wire clk,
         input wire rst,
@@ -10,8 +12,7 @@ module center_of_mass (
         output logic [9:0] com_y,
         output logic com_valid
     );
-    // REPLACE ME!
-    //assign com_valid = 0;
+
 
     //counter of pixels 
     logic [31:0] number_pixels; 
@@ -86,7 +87,6 @@ module center_of_mass (
                 if (com_valid_x) begin 
                     x_high <= 1;
                 end 
-                //if (x_high && y_high) begin 
                 if ((x_high && com_valid_y) || (y_high && com_valid_x) || (com_valid_x && com_valid_y) ) begin 
                     com_valid <=1; 
                     com_x <= com_x_div;
@@ -111,7 +111,6 @@ module center_of_mass (
             end 
             endcase 
         end 
-    //your code here
     end 
 endmodule
 

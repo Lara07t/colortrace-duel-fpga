@@ -27,7 +27,6 @@ module top_level
         output logic [2:0]  hdmi_tx_n, //hdmi output signals (negatives) (blue, green, red)
         output logic        hdmi_clk_p, hdmi_clk_n //differential hdmi clock
     );
-    // shut up those RGBs
     assign rgb1 = 0;
 
     // Clock and Reset Signals
@@ -55,22 +54,15 @@ module top_level
     // rgb output values
     logic [7:0]     red,green,blue;
 
-    // *********************************************************
     // GAME + PATH SHARED SIGNALS (used by renderer, path, checker, FSM)
-
     logic [2:0] game_state;
-
     logic [1:0] p1_lives, p2_lives;
     logic       blink_p1, blink_p2;
     logic [1:0] winner;
-
     logic p1_life_lost_raw, p2_life_lost_raw;
     logic p1_life_lost,     p2_life_lost;
-
     localparam [2:0] GAME_OVER_STATE = 3'd4;
     logic            new_frame_paths;
-
-    // *********************************************************
 
     // clocking wizards to generate the clock speeds we need for our different domains
     // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
@@ -80,7 +72,6 @@ module top_level
         .clk_tmds(clk_5x),
         .reset(0)
     );
-
     cw_fast_clk_wiz wizard_migcam(
         .clk_in1(clk_100mhz),
         .clk_camera(clk_camera),
@@ -90,12 +81,8 @@ module top_level
         .reset(0)
     );
 
-    // assign camera's xclk to pmod port: drive the operating clock of the camera!
-    // this port also is specifically set to high drive by the XDC file.
+    // assign camera's xclk to pmod port: drive the operating clock of the camera
     assign cam_xclk = clk_xc;
-    //assign sys_rst_camera = btn[0]; //use for resetting camera side of logic
-    //assign sys_rst_pixel = btn[0]; //use for resetting hdmi/draw side of logic
-
 
     // ** Handling input from the camera **
 
@@ -104,7 +91,6 @@ module top_level
     logic           cam_h_sync_buf [1:0];
     logic           cam_v_sync_buf [1:0];
     logic           cam_pclk_buf [1:0];
-
     logic           sys_rst_camera_buf [1:0];
     logic           sys_rst_pixel_buf  [1:0];
 
@@ -128,8 +114,7 @@ module top_level
     logic [15:0]    camera_pixel;
     logic           camera_valid;
 
-    // your pixel_reconstruct module, from the exercise!
-    // hook it up to buffered inputs.
+    // matched to buffered inputs
     pixel_reconstruct pixel_rec (
         .clk(clk_camera),
         .rst(sys_rst_camera),
@@ -144,17 +129,13 @@ module top_level
     );
 
 
-    //----------------BEGIN NEW STUFF FOR LAB 07------------------
     //clock domain cross (from clk_camera to clk_pixel)
     //switching from camera clock domain to pixel clock domain early
-    //this lets us do convolution on the 74.25 MHz clock rather than the
-    //200 MHz clock domain that the camera lives on.
     logic empty;
     logic cdc_valid;
     logic [15:0] cdc_pixel;
     logic [10:0] cdc_h_count;
     logic [9:0]  cdc_v_count;
-
 
     xpm_fifo_async #(
        .CASCADE_HEIGHT(0),            // DECIMAL
@@ -204,57 +185,24 @@ module top_level
     logic [15:0] ds_pixel;    //pixel data to downsample line buffer
     logic        ds_valid;    //valid signals to downsample line buffer
 
-    // One-shot enable for camera streaming, triggered by btn[2]
-    logic [1:0] btn2_pix_sync;
-    logic       cam_stream_en;
-
-    // Sync btn[2] into pixel clock domain
-    always_ff @(posedge clk_pixel) begin
-        if (sys_rst_pixel) begin
-            btn2_pix_sync <= 2'b00;
-        end else begin
-            btn2_pix_sync <= {btn[2], btn2_pix_sync[1]};
-        end
-    end
-
-    // Rising edge detect (in pixel domain)
-    wire btn2_pix_rise = btn2_pix_sync[1] & ~btn2_pix_sync[0];
-
-    // Latch camera streaming enable when btn[2] is pressed
-    always_ff @(posedge clk_pixel) begin
-        if (sys_rst_pixel) begin
-            cam_stream_en <= 1'b0;
-        end else if (btn2_pix_rise) begin
-            cam_stream_en <= 1'b1;
-        end
-    end
-
-    //selection logic:
-    // once cam_stream_en is set by pressing btn[2], we
-    // continuously pass camera pixels into the downsample line buffer.
-    // (you no longer need to hold btn[1]; btn[1] is just an extra override)
+    //selection logic
     always_ff @(posedge clk_pixel) begin
         if (sys_rst_pixel) begin
             ds_h_count <= '0;
             ds_v_count <= '0;
             ds_pixel   <= 16'd0;
             ds_valid   <= 1'b0;
-        end else if (cam_stream_en || btn[1]) begin
+        end else begin
             ds_h_count <= cdc_h_count;
             ds_v_count <= cdc_v_count;
             ds_pixel   <= cdc_pixel;
             ds_valid   <= cdc_valid;
-        end else begin
-            ds_valid   <= 1'b0;
-        end
+        end 
     end
 
     //----
     //A line buffer that, in conjunction with the control signal will down sample
-    //the camera (or f0 filter) values from 1280x720 to 320x180
-    //in reality we could get by without this, but it does make things a little easier
-    //and we've also added it since it gives us a means of testing the line buffer
-    //design outside of the filter.
+    //the camera values from 1280x720 to 320x180
     logic [2:0][15:0] lb_buffs;   //grab output of down sample line buffer
     logic             ds_control; //controlling when to write (every fourth pixel and line)
     assign ds_control = ds_valid&&(ds_h_count[1:0]==2'b0)&&(ds_v_count[1:0]==2'b0);
@@ -303,9 +251,8 @@ module top_level
     //two-port BRAM used to hold image from camera.
     //The camera is producing video at 720p and 30fps, but we can't store all of that
     //we're going to down-sample by a factor of 4 in both dimensions
-    //so we have 320 by 180.  this is kinda a bummer, but we'll fix it
-    //in future weeks by using off-chip DRAM.
-    //even with the down-sample, because our camera is producing data at 30fps
+    //so we have 320 by 180, good enough for our center of mass use case  
+    //because our camera is producing data at 30fps
     //and  our display is running at 720p at 60 fps, there's no hope to have the
     //production and consumption of inew_frameormation be synchronized in this system.
     //even if we could line it up once, the clocks of both systems will drift over time
@@ -325,14 +272,14 @@ module top_level
         .RAM_WIDTH(16), //each entry in this memory is 16 bits
         .RAM_DEPTH(FB_DEPTH)) //there are 320*180 or 57600 entries for full frame
     frame_buffer (
-        .addra(addra),       //pixels are stored using this math
-        .clka(clk_pixel),    //was previous clk_camera!!! but clock-domain crossing happens earlier now!
+        .addra(addra),      
+        .clka(clk_pixel),    //clock-domain crossing happens earlier 
         .wea(valid_camera_mem),
         .dina(camera_mem),
         .ena(1'b1),
         .regcea(1'b1),
         .rsta(sys_rst_camera),
-        .douta(), //never read from this side
+        .douta(), 
         .addrb(addrb),//transformed lookup pixel
         .dinb(16'b0),
         .clkb(clk_pixel),
@@ -343,9 +290,7 @@ module top_level
         .doutb(frame_buff_raw)
     );
 
-    //TO DO in camera part 1:
     // Scale pixel coordinates from HDMI to the frame buffer to grab the right pixel
-    //scaling logic!!! You need to complete!!! We want 1X, 2X, and 4X!
     always_ff @(posedge clk_pixel)begin
         addrb      <= ((h_count_hdmi >> 2)) + 320*(v_count_hdmi >> 2);
         good_addrb <= (h_count_hdmi<1280)&&(v_count_hdmi<720);
@@ -368,8 +313,7 @@ module top_level
     //bottom 8 of y, cr, cb conversions:
     logic [7:0] y, cr, cb; //ycrcb conversion of full pixel
     //Convert RGB of full pixel to YCrCb
-    //See lecture 07 for YCrCb discussion.
-    //Module has a 3 cycle latency
+    //(Module has a 3 cycle latency)
     rgb_to_ycrcb rgbtoycrcb_m(
         .clk(clk_pixel),
         .r(fb_red),
@@ -480,27 +424,9 @@ module top_level
     logic [9:0]  y_com2, y_com2_calc;
     logic        new_com2;
 
-
-    // Map 2-bit channel selection to the 3-bit channel_select encoding:
-    // * 2'b00 → y  (3'b100)
-    // * 2'b01 → Cr (3'b101)
-    // * 2'b10 → Cb (3'b110)
-    // * 2'b11 → red fallback (3'b001)
-    // always_comb begin
-    //     case (chan_sel_active)
-    //         2'b00: channel_sel_active_3b = 3'b100; // y (luminance)
-    //         2'b01: channel_sel_active_3b = 3'b101; // Cr (chroma red)
-    //         2'b10: channel_sel_active_3b = 3'b110; // Cb (chroma blue)
-    //         default: channel_sel_active_3b = 3'b001; // red (fallback)
-    //     endcase
-    // end
-
-    //assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
     assign channel_sel = channel_sel_active_3b;
 
     //threshold values used to determine what value  passes:
-    // assign lower_threshold = {sw[11:8],4'b0};
-    // assign upper_threshold = {sw[15:12],4'b0};
     assign lower_threshold = thresh_active;
     assign upper_threshold = 8'hFF;
 
@@ -534,25 +460,20 @@ module top_level
 
     logic [6:0] ss_c;
 
+    // displays winner on seven segment display on fpga 
     score_ssc #(.COUNT_TO(100000)) score_disp (
         .clk     (clk_pixel),
         .rst     (sys_rst_pixel),
         .state   (game_state),  // from game_fsm
         .p1_lives(p1_lives),
         .p2_lives(p2_lives),
-        .winner  (winner),      // NEW
+        .winner  (winner),   
         .cathode (ss_c),
         .anode   ({ss0_an, ss1_an})
     );
 
-
     assign ss0_c = ss_c; //control upper four digit's cathodes!
     assign ss1_c = ss_c; //same as above but for lower four digits!
-
-    //Center of Mass Calculation: (you need to do)
-    //using x_com_calc and y_com_calc values
-    //Center of Mass:
-
 
     // Center of Mass: Player 1 (red / Cr)
     center_of_mass com_p1 (
@@ -580,7 +501,7 @@ module top_level
     );
 
 
-    // Latch COM values once per frame, but freeze them in GAME_OVER
+    // gets COM values once per frame-- freezes them in GAME_OVER
     always_ff @(posedge clk_pixel) begin
         if (sys_rst_pixel) begin
             x_com1 <= 0;
@@ -600,40 +521,15 @@ module top_level
         // else: GAME_OVER hold previous positions (freeze)
     end
 
-    //image_sprite output:
-
-    //bring in an instance of your popcat image sprite! remember the correct mem files too!
-
-    logic [31:0] pop_counter;
-    logic        pop;
-
-    always_ff @(posedge clk_pixel)begin
-        if (pop_counter==30_000_000)begin
-            pop_counter <= 0;
-            pop         <= ~pop;
-        end else begin
-            pop_counter <= pop_counter + 1 ;
-        end
-    end
-    //bring in an instance of your popcat image sprite! remember the correct mem files too!
-
-    //crosshair output:
+    //crosshair output for com:
     logic [7:0] ch_red, ch_green, ch_blue;
 
     //Create Crosshair patter on center of mass:
-    //0 cycle latency
-    // always_comb begin
-    //     ch_red   = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
-    //     ch_green = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
-    //     ch_blue  = ((v_count_hdmi==y_com) || (h_count_hdmi==x_com))?8'hFF:8'h00;
-    // end
-
     always_comb begin
         ch_red   = ((v_count_hdmi==y_com1) || (h_count_hdmi==x_com1))?8'hFF:8'h00;
         ch_green = ch_red;
         ch_blue  = ch_red;
     end
-
 
     // HDMI video signal generator
     video_sig_gen vsg(
@@ -647,7 +543,6 @@ module top_level
         .active_draw (active_draw_hdmi),
         .frame_count (frame_count_hdmi)
     );
-
 
     localparam int GRID_W = 40;
     localparam int GRID_H = 40;
@@ -668,9 +563,8 @@ module top_level
     logic                      region_left,  region_right;
     logic [10:0]               x_rel;
 
-
-       //********************************************************* 
-       //left/right divisions, path gen, drawings and rendering:
+ 
+    //** left/right divisions, path gen, drawings and rendering: **
 
     always_comb begin
         cell_x_left  = '0;
@@ -703,15 +597,14 @@ module top_level
     logic [GRID_W*GRID_H-1:0] path_grid_left;
     logic [GRID_W*GRID_H-1:0] path_grid_right;
 
-    //new: shrink when state not in init (or in game) 
+    // shrink when state not in init (or, in game) 
     logic game_initiated;
     assign game_initiated = (game_state == 3'd0) ? 1'b0 : 1'b1;
-    //
 
     // new_frame_paths: drive autopath only while not in GAME_OVER
     assign new_frame_paths = new_frame_hdmi && (game_state != GAME_OVER_STATE);
 
-    // Left player auto path (40x40 static pattern from BRAM, shrinks after 30s)
+    // Left player auto path (40x40 static pattern from BRAM, shrinks after)
     autopath_gen #(
         .GRID_W(GRID_W),
         .GRID_H(GRID_H),
@@ -721,7 +614,7 @@ module top_level
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
         .new_frame      (new_frame_paths),  // uses shared new_frame_paths
-        .game_initiated (game_initiated), // new for shrink condition 
+        .game_initiated (game_initiated), // for shrink condition 
         .cell_x         (cell_x_left),
         .cell_y         (cell_y_left),
         .shift_left_req (1'b0),
@@ -739,7 +632,7 @@ module top_level
         .clk            (clk_pixel),
         .rst            (sys_rst_pixel),
         .new_frame      (new_frame_paths),  // uses shared new_frame_paths
-        .game_initiated (game_initiated), // new for shrink condition 
+        .game_initiated (game_initiated), 
         .cell_x         (cell_x_right),
         .cell_y         (cell_y_right),
         .shift_left_req (1'b0),
@@ -755,7 +648,7 @@ module top_level
 
 
     localparam int PLAYER_RADIUS    = 18;
-    localparam int PLAYER_RADIUS_SQ = PLAYER_RADIUS * PLAYER_RADIUS; // 576
+    localparam int PLAYER_RADIUS_SQ = PLAYER_RADIUS * PLAYER_RADIUS; 
 
     logic signed [11:0] dx1, dy1, dx2, dy2;
     logic [23:0]        dx1_sq, dy1_sq, dx2_sq, dy2_sq;
@@ -777,7 +670,7 @@ module top_level
         dy2_sq = dy2 * dy2;
         dist2_2 = dx2_sq + dy2_sq;
 
-        // True circle: dx^2 + dy^2 <= R^2
+        // circle: dx^2 + dy^2 <= R^2
         player1_pix = active_draw_hdmi && (dist2_1 <= PLAYER_RADIUS_SQ);
         player2_pix = active_draw_hdmi && (dist2_2 <= PLAYER_RADIUS_SQ);
     end
@@ -802,7 +695,7 @@ module top_level
 
     assign btn3_rise = (btn3_sync == 2'b01);
 
-    // latch theme when btn3 pressed
+    // confirm theme when btn3 pressed
     always_ff @(posedge clk_pixel) begin
         if (sys_rst_pixel)
             theme_latched <= 1'b0;
@@ -851,20 +744,16 @@ module top_level
         .B           (blue)
     );
 
-       //*********************************************************end of rendering portion
+       //**^end of rendering portion^**
 
 
-////////////////////////////////////////
-    // HDMI Output: just like before!
+////////////////////////////////////
+    // HDMI Output
 
     logic [9:0] tmds_10b [0:2]; //output of each TMDS encoder!
     logic       tmds_signal [2:0]; //output of each TMDS serializer!
 
     //three tmds_encoders (blue, green, red)
-    //note green should have no control signal like red
-    //the blue channel DOES carry the two sync signals:
-    //  * control[0] = horizontal sync signal
-    //  * control[1] = vertical sync signal
 
     tmds_encoder tmds_red(
         .clk         (clk_pixel),
@@ -926,18 +815,7 @@ module top_level
     OBUFDS OBUFDS_red  (.I(tmds_signal[2]), .O(hdmi_tx_p[2]), .OB(hdmi_tx_n[2]));
     OBUFDS OBUFDS_clock(.I(clk_pixel),      .O(hdmi_clk_p),   .OB(hdmi_clk_n));
 
-    // Nothing To Touch Down Here:
     // register writes to the camera
-
-    // The OV5640 has an I2C bus connected to the board, which is used
-    // for setting all the hardware settings (gain, white balance,
-    // compression, image quality, etc) needed to start the camera up.
-    // We've taken care of setting these all these values for you:
-    // "rom.mem" holds a sequence of bytes to be sent over I2C to get
-    // the camera up and running, and we've written a design that sends
-    // them just after a reset completes.
-
-    // If the camera is not giving data, press your reset button.
 
     logic  busy, bus_active;
     logic  cr_init_valid, cr_init_ready;
@@ -1000,12 +878,11 @@ module top_level
     logic       con_scl_i, con_scl_o, con_scl_t;
     logic       con_sda_i, con_sda_o, con_sda_t;
 
-    // NOTE these also have pullup specified in the xdc file!
     // access our inouts properly as tri-state pins
     IOBUF IOBUF_scl (.I(con_scl_o), .IO(i2c_scl), .O(con_scl_i), .T(con_scl_t) );
     IOBUF IOBUF_sda (.I(con_sda_o), .IO(i2c_sda), .O(con_sda_i), .T(con_sda_t) );
 
-    // provided module to send data BRAM -> I2C
+    // provided module to send data BRAM to I2C
     camera_registers crw
     (   .clk_in    (clk_camera),
         .rst_in    (sys_rst_camera),
@@ -1033,13 +910,13 @@ module top_level
     assign led[4]  = cr_init_ready;
     assign led[15:5] = 0;
 
-       //*********************************************************
-    // PATH CHECKER + GAME FSM
+    // ** PATH CHECKER + GAME FSM: **
 
     // life-lost masking is handled in FSM; here we just use raw signals
     assign p1_life_lost = p1_life_lost_raw;
     assign p2_life_lost = p2_life_lost_raw;
 
+    // path edge detection, checks of user out of bounds 
     path_checker #(
         .GRID_W(GRID_W),
         .GRID_H(GRID_H),
@@ -1064,7 +941,7 @@ module top_level
         .p2_life_lost(p2_life_lost_raw)
     );
 
-
+    // game logic 
     game_fsm fsm_inst (
         .clk          (clk_pixel),
         .rst          (sys_rst_pixel),
@@ -1073,7 +950,6 @@ module top_level
         .p1_life_lost (p1_life_lost),
         .p2_life_lost (p2_life_lost),
 
-        // NEW: only start when both COMs have been computed on-path
         .p1_com_valid (new_com1),
         .p2_com_valid (new_com2),
         .start_game   (btn3_rise),

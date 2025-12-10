@@ -8,9 +8,9 @@ module score_ssc #(
     input  wire        rst,
 
     input  wire [2:0]  state,      // from game_fsm
-    input  wire [1:0]  p1_lives,   // 0..3
-    input  wire [1:0]  p2_lives,   // 0..3
-    input  wire [1:0]  winner,     // 0=none,1=P1,2=P2
+    input  wire [1:0]  p1_lives,   
+    input  wire [1:0]  p2_lives,   
+    input  wire [1:0]  winner,     
 
     output logic [6:0] cathode,
     output logic [7:0] anode
@@ -50,11 +50,8 @@ module score_ssc #(
     end
 
     // decide what each digit displays
-    //   - digit with bit 0  => P1 score (bottom-right)
-    //   - digit with bit 4  => P2 score (top-right)
-    // Everything else is blank.
     always_comb begin
-        // default = blank
+        // default 
         routed_vals = 4'h0;
         led_out     = 7'b0000000;
 
@@ -68,12 +65,12 @@ module score_ssc #(
                         2'd2: routed_vals = 4'd2;  // P2
                         default: routed_vals = 4'd0;
                     endcase
-                    led_out = bto7s_led_out;       // use normal digit encoding
+                    led_out = bto7s_led_out;    
                 end
 
                 // Upper-right digit: show "P"
                 8'b0001_0000: begin
-                    // segments for "P": a, b, e, f, g on; c, d off
+                    // segments for "P"
                     // {g,f,e,d,c,b,a} = 7'b1110011
                     led_out = 7'b1110011;
                 end
@@ -88,7 +85,7 @@ module score_ssc #(
             unique case (segment_state)
                 // Lower-right digit: player 1 lives
                 8'b0000_0001: begin
-                    routed_vals = {2'b00, p1_lives}; // 0..3
+                    routed_vals = {2'b00, p1_lives}; 
                     led_out     = bto7s_led_out;
                 end
 
@@ -118,7 +115,6 @@ module bto7s(
     logic sa, sb, sc, sd, se, sf, sg;
     assign s = {sg, sf, se, sd, sc, sb, sa};
 
-    // array of bits that are "one hot" with numbers 0 through 15
     logic [15:0] num;
 
     assign num[0] = ~x[3] && ~x[2] && ~x[1] && ~x[0];

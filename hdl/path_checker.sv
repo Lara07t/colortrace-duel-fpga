@@ -11,13 +11,12 @@ module path_checker #(
     input  wire                          rst,
     input  wire                          new_frame,
 
-    // Player centers in pixel coords (0..639, 0..719 for each half)
+    // Player centers in pixel coords
     input  wire [10:0]                   p1_x,
     input  wire [9:0]                    p1_y,
     input  wire [10:0]                   p2_x,
     input  wire [9:0]                    p2_y,
 
-    // GRID_W x GRID_H path grid: 1 = on path, 0 = off path (row-major)
     input  wire [GRID_W*GRID_H-1:0]      path_grid_p1,
     input  wire [GRID_W*GRID_H-1:0]      path_grid_p2, 
 
@@ -25,9 +24,8 @@ module path_checker #(
     output logic                         p2_life_lost
 );
 
-    // Geometry / width bookkeeping
-    localparam int WINDOW_TILES = 2;                // 5×5 neighborhood
-    localparam int WIN_DIAM     = 2*WINDOW_TILES+1; // = 5
+    localparam int WINDOW_TILES = 2;              
+    localparam int WIN_DIAM     = 2*WINDOW_TILES+1; 
     localparam int OFF_BITS     = $clog2(WIN_DIAM);
 
     localparam int MAX_X     = GRID_W * CELL_W;
@@ -43,14 +41,13 @@ module path_checker #(
 
     localparam logic [DIST_BITS-1:0] R2 = RADIUS * RADIUS;
 
-    // Registers for frame-local data
     logic [XY_BITS-1:0] p1_x_reg, p1_y_reg;
     logic [XY_BITS-1:0] p2_x_reg, p2_y_reg;
 
     logic [GRID_W_BITS-1:0] cx1_reg, cx2_reg;
     logic [GRID_H_BITS-1:0] cy1_reg, cy2_reg;
 
-    logic                    scanning;    // are we currently sweeping tiles?
+    logic                    scanning;    
     logic                    cur_player;  // 0 = p1, 1 = p2
     logic [OFF_BITS-1:0]     off_x, off_y;
     logic                    new_frame_d; // for edge detect
@@ -61,8 +58,7 @@ module path_checker #(
     assign p1_life_lost = p1_life_lost_reg;
     assign p2_life_lost = p2_life_lost_reg;
 
-    // Combinational: check *one* tile per cycle
-    // tile coordinates around current player's coarse tile
+    // tile coordinates around current player
     logic signed [GRID_W_BITS:0] tile_x_s;
     logic signed [GRID_H_BITS:0] tile_y_s;
     logic [GRID_W_BITS-1:0]      tile_x_u;
@@ -110,11 +106,11 @@ module path_checker #(
 
                 idx = tile_y_u * GRID_W + tile_x_u;
 
-                // Only care if this tile is OFF path (bit == 0)
+                // Only care if this tile is OFF path 
                 if ( (cur_player == 1'b0 && path_grid_p1[idx] == 1'b0) ||
                      (cur_player == 1'b1 && path_grid_p2[idx] == 1'b0) ) begin
 
-                    // Tile bounds in pixels
+                    // tile bounds in pixels
                     x_min = tile_x_u * CELL_W;
                     x_max = x_min + CELL_W - 1;
                     y_min = tile_y_u * CELL_H;
@@ -141,7 +137,7 @@ module path_checker #(
         end
     end
 
-    // Sequential: frame control + sweep the neighborhood
+    // sweep the neighborhood
     always_ff @(posedge clk) begin
         if (rst) begin
             new_frame_d      <= 1'b0;
@@ -166,21 +162,19 @@ module path_checker #(
         end else begin
             new_frame_d <= new_frame;
 
-            // Rising edge of new_frame = start of a new evaluation
             if (new_frame && !new_frame_d) begin
-                // latch positions (zero-extend into XY_BITS)
                 p1_x_reg <= p1_x;
                 p1_y_reg <= p1_y;
                 p2_x_reg <= p2_x;
                 p2_y_reg <= p2_y;
 
-                // coarse tile coords via integer division
+                // coarse tile coords
                 cx1_reg <= p1_x / CELL_W;
                 cy1_reg <= p1_y / CELL_H;
                 cx2_reg <= p2_x / CELL_W;
                 cy2_reg <= p2_y / CELL_H;
 
-                // assume OK until we find a bad tile
+                // assume good until a bad tile
                 p1_ok_reg        <= 1'b1;
                 p2_ok_reg        <= 1'b1;
                 p1_life_lost_reg <= 1'b0;
@@ -192,7 +186,7 @@ module path_checker #(
                 off_y      <= '0;
 
             end else if (scanning) begin
-                // Update OK flags based on the tile we just checked
+                // Update OK flags based on the tile
                 if (cur_player == 1'b0) begin
                     if (hit_tile)
                         p1_ok_reg <= 1'b0;
@@ -201,7 +195,6 @@ module path_checker #(
                         p2_ok_reg <= 1'b0;
                 end
 
-                // Advance tile offsets (5×5 window)
                 if (off_x == WIN_DIAM-1) begin
                     off_x <= '0;
                     if (off_y == WIN_DIAM-1) begin

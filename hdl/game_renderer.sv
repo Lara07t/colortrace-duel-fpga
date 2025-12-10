@@ -9,7 +9,7 @@ module game_renderer #(
     parameter integer TILE_W = 64,
     parameter integer TILE_H = 64
 )(
-    input  wire        clk,        // not strictly needed, but fine to keep
+    input  wire        clk,       
     input  wire        active,     // active_draw_hdmi
     input  wire [2:0]  game_state,
     input  wire        blink_p1,
@@ -18,11 +18,9 @@ module game_renderer #(
     // theme: 0 = mud/grass, 1 = ocean/ice
     input  wire        theme,
 
-    // full path grids (40x40 each)
     input  wire [GRID_W*GRID_H-1:0] path_p1,
     input  wire [GRID_W*GRID_H-1:0] path_p2,
 
-    // current pixel coordinates
     input  wire [10:0] x,
     input  wire [9:0]  y,
 
@@ -52,7 +50,6 @@ module game_renderer #(
     output logic [7:0] B
 );
 
-    //  Path decode: LEFT and RIGHT
     integer addr_left, addr_right;
     logic   on_p1_cell, on_p2_cell;
 
@@ -115,24 +112,24 @@ module game_renderer #(
             heart_p2_0 | heart_p2_1 | heart_p2_2;
     end
 
-    // path colors per theme (only used if you ever want solid colors)
+    // path colors per theme (only used for solid colors initially-- not currently used since images are used instead)
     logic [7:0] p1_R, p1_G, p1_B;
     logic [7:0] p2_R, p2_G, p2_B;
 
-    //  MENU THEME IMAGES (grass & snow)
+    //  menu images (grass & snow)
     logic [7:0] grass_R, grass_G, grass_B;
     logic [7:0] snow_R,  snow_G,  snow_B;
 
-    // grass + mud tiled background (used in mud theme during game)
+    // grass + mud  
     logic [7:0] mud_R,   mud_G,   mud_B;
 
-    // ocean tiled path
+    // ocean 
     logic [7:0] ocean_R, ocean_G, ocean_B;
 
-    // ice tiled background (theme=1 off-path)
+    // ice 
     logic [7:0] ice_R,   ice_G,   ice_B;
 
-    // treat each half-screen independently for tiling
+    // treat each half-screen independently
     wire [10:0] x_local = (x < HALF_W) ? x : (x - HALF_W);
 
     // mud tiles (theme=0)
@@ -150,7 +147,7 @@ module game_renderer #(
         .B   (mud_B)
     );
 
-    // ocean tiles (theme=1 path)
+    // ocean tiles (theme=1)
     mud_tile_sprite #(
         .TILE_W       (TILE_W),
         .TILE_H       (TILE_H),
@@ -213,6 +210,7 @@ module game_renderer #(
         .pixel_blue (snow_B)
     );
 
+    // solid colors (not currently used)
     always_comb begin
         if (!theme) begin
             p1_R = 8'hC0; p1_G = 8'h10; p1_B = 8'h10;
@@ -252,20 +250,20 @@ module game_renderer #(
             end
         end
 
-        // READY + PLAY + LIFE_LOSS
+        // READY, PLAY, LIFE_LOSS
         else if (game_state == 3'd1 ||
                  game_state == 3'd2 ||
                  game_state == 3'd3)
         begin
             // PATH + BACKGROUND
             if (!theme) begin
-                // theme 0: grass + mud path
+                // theme 0: grass and mud path
                 if (on_any_path) begin
                     R = mud_R;
                     G = mud_G;
                     B = mud_B;
                 end else begin
-                    R = 8'd10; G = 8'd70; B = 8'd10; // grass background
+                    R = 8'd10; G = 8'd70; B = 8'd10; // grass green background
                 end
             end else begin
                 // theme 1: ocean path, ice background
@@ -280,7 +278,7 @@ module game_renderer #(
                 end
             end
 
-            // PLAYER CIRCLES (hide on blink in LIFE_LOSS)
+            // PLAYER CIRCLES 
             if (draw_p1_circle && !(game_state==3'd3 && blink_p1)) begin
                 R = 8'hFF; G = 8'hFF; B = 8'hFF;
             end

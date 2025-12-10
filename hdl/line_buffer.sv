@@ -31,9 +31,6 @@ module line_buffer #(
   logic [1:0] bram_i;        // which BRAM to write
   logic [1:0] valid_pipe;       // pipeline delay
 
-  // to help you get started, here's a bram instantiation.
-  // you'll want to create one BRAM for each row in the kernel, plus one more to
-  // buffer incoming data from the wire:
   generate
     genvar i;
     for (i=0; i<4; i=i+1)begin
@@ -72,9 +69,7 @@ module line_buffer #(
       valid_pipe <= 0;
     end else begin
       if (data_in_valid && (h_count_in == HRES - 1)) begin // last pxl
-        // if (bram_i == 3) begin
-        //   bram_i <= 0;
-        // end else begin
+
         bram_i <= bram_i + 1;
         // end
         

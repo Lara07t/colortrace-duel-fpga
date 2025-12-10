@@ -18,17 +18,13 @@ module pixel_reconstruct
      output logic [VCOUNT_WIDTH-1:0]    pixel_v_count,
      output logic [15:0]                pixel_data
      );
-    // your code here! and here's a handful of logics that you may find helpful to utilize.
 
     // previous value of PCLK
     logic  pclk_prev;
-    // can be assigned combinationally:
     //  true when pclk transitions from 0 to 1
     logic camera_sample_valid;
-    assign camera_sample_valid = (~pclk_prev) & camera_pclk; // TODO: fix this assign
-    // previous value of camera data, from last valid sample!
-    // should NOT update on every cycle of clk, only
-    // when samples are valid.
+    assign camera_sample_valid = (~pclk_prev) & camera_pclk; 
+
     logic last_sampled_hs;
     logic last_sampled_vs;
     logic [7:0] last_sampled_data;
