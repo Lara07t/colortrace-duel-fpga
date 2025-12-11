@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2025.1 (lin64) Build 6140274 Wed May 21 22:58:25 MDT 2025
-| Date             : Wed Dec 10 01:00:40 2025
-| Host             : eecs-digital-05 running 64-bit Ubuntu 24.04.3 LTS
+| Date             : Wed Dec 10 17:58:18 2025
+| Host             : eecs-digital-07 running 64-bit Ubuntu 24.04.3 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7s50csga324-1
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.564        |
+| Total On-Chip Power (W)  | 0.588        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.489        |
-| Device Static (W)        | 0.075        |
+| Dynamic (W)              | 0.512        |
+| Device Static (W)        | 0.076        |
 | Effective TJA (C/W)      | 4.9          |
-| Max Ambient (C)          | 82.2         |
-| Junction Temperature (C) | 27.8         |
+| Max Ambient (C)          | 82.1         |
+| Junction Temperature (C) | 27.9         |
 | Confidence Level         | Low          |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,22 +52,22 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.016 |       10 |       --- |             --- |
-| Slice Logic             |     0.009 |    13750 |       --- |             --- |
-|   LUT as Logic          |     0.008 |     5490 |     32600 |           16.84 |
+| Clocks                  |     0.017 |       10 |       --- |             --- |
+| Slice Logic             |     0.016 |    15128 |       --- |             --- |
+|   LUT as Logic          |     0.014 |     6564 |     32600 |           20.13 |
+|   CARRY4                |    <0.001 |      440 |      8150 |            5.40 |
 |   F7/F8 Muxes           |    <0.001 |     1258 |     32600 |            3.86 |
-|   CARRY4                |    <0.001 |      282 |      8150 |            3.46 |
-|   Register              |    <0.001 |     4638 |     65200 |            7.11 |
+|   Register              |    <0.001 |     4757 |     65200 |            7.30 |
 |   LUT as Shift Register |    <0.001 |       16 |      9600 |            0.17 |
-|   Others                |     0.000 |      130 |       --- |             --- |
-| Signals                 |     0.014 |     7233 |       --- |             --- |
-| Block RAM               |     0.085 |       53 |        75 |           70.67 |
+|   Others                |     0.000 |      131 |       --- |             --- |
+| Signals                 |     0.022 |     8537 |       --- |             --- |
+| Block RAM               |     0.082 |       53 |        75 |           70.67 |
 | MMCM                    |     0.105 |        1 |         5 |           20.00 |
 | PLL                     |     0.101 |        1 |         5 |           20.00 |
-| DSPs                    |     0.007 |       11 |       120 |            9.17 |
-| I/O                     |     0.153 |       71 |       210 |           33.81 |
-| Static Power            |     0.075 |          |           |                 |
-| Total                   |     0.564 |          |           |                 |
+| DSPs                    |     0.015 |       23 |       120 |           19.17 |
+| I/O                     |     0.154 |       71 |       210 |           33.81 |
+| Static Power            |     0.076 |          |           |                 |
+| Total                   |     0.588 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -77,9 +77,9 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.143 |       0.131 |      0.012 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.165 |       0.153 |      0.012 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.125 |       0.112 |      0.013 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.046 |       0.045 |      0.001 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.047 |       0.046 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -151,20 +151,20 @@ Table of Contents
 +------------------------------------------+-----------+
 | Name                                     | Power (W) |
 +------------------------------------------+-----------+
-| top_level                                |     0.489 |
+| top_level                                |     0.512 |
 |   IOBUF_sda                              |     0.003 |
-|   cdc_fifo                               |     0.004 |
-|     gnuram_async_fifo.xpm_fifo_base_inst |     0.004 |
+|   cdc_fifo                               |     0.005 |
+|     gnuram_async_fifo.xpm_fifo_base_inst |     0.005 |
 |       gen_sdpram.xpm_memory_base_inst    |     0.002 |
 |   checker_inst                           |     0.008 |
 |   crw                                    |     0.003 |
 |     sccb_c                               |     0.002 |
 |   ds_lbuff                               |     0.004 |
-|   frame_buffer                           |     0.051 |
-|   path_left                              |     0.006 |
-|   path_right                             |     0.006 |
+|   frame_buffer                           |     0.048 |
+|   path_left                              |     0.013 |
+|   path_right                             |     0.013 |
 |   pixel_rec                              |     0.001 |
-|   renderer_inst                          |     0.032 |
+|   renderer_inst                          |     0.043 |
 |     grass_menu_inst                      |     0.011 |
 |       u_img_rom                          |     0.009 |
 |       u_pal_rom                          |     0.002 |

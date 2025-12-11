@@ -26,12 +26,12 @@ module autopath_gen #(
     logic [$clog2(TRACK_HALF_WIDTH+1)-1:0] cur_half_width; // shrinking width
 
     // Velocity range: we only need about -3..+3, be generous and give -7..+7 // TIME REQ CHANGE
-    typedef logic signed [3:0] vel_t;  // -8..+7
-    typedef logic        [5:0] x_t;    // 0..63 (enough for GRID_W <= 40)
+    // typedef logic signed [3:0] vel_t;  // -8..+7
+    // typedef logic        [5:0] x_t;    // 0..63 (enough for GRID_W <= 40)
+    // vel_t head_v;
+    int head_v;  // horizontal velocity
 
-    vel_t head_v;
-
-    //int head_v;  // horizontal velocity
+    
     localparam int MAX_VEL = 3;  // clamp speed at this point 
 
     logic [15:0] lfsr;    
@@ -133,15 +133,15 @@ module autopath_gen #(
                     end
 
                     begin
-                        // int dv;  // delta-velocity from LFSR
-                        // int new_v;  // updated velocity
-                        // int new_x;  // updated center position
-                        // int center_mid;
+                        int dv;  // delta-velocity from LFSR
+                        int new_v;  // updated velocity
+                        int new_x;  // updated center position
+                        int center_mid;
                         // TIME REQ CHANGE
-                        vel_t dv;
-                        vel_t new_v;
-                        x_t   new_x;
-                        x_t   center_mid;
+                        // vel_t dv;
+                        // vel_t new_v;
+                        // x_t   new_x;
+                        // x_t   center_mid;
 
 
 
